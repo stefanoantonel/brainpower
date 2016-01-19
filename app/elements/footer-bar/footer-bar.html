@@ -1,0 +1,38 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="footer-bar">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        width: 100%;
+        background-color: lightgray;
+      }
+      .language-selector {
+        display: inline-flex;
+        width: 90px;
+        position: relative;
+        left: calc(80% - 100px);
+      }
+      .name {
+        display: inline-flex;
+      }
+    </style>
+    <h3 class="name">BrainPower</h3>
+    <language-selector class="language-selector"></language-selector>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'footer-bar',
+
+        properties: {
+        }
+      });
+    })();
+  </script>
+</dom-module>

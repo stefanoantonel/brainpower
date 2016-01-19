@@ -1,0 +1,33 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<dom-module id="language-selector">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-dropdown-menu label="language" no-label-float>
+      <paper-listbox class="dropdown-content" selected="1">
+        <paper-item>Español</paper-item>
+        <paper-item>English</paper-item>
+      </paper-listbox>
+    </paper-dropdown-menu>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'language-selector',
+
+        properties: {
+        }
+      });
+    })();
+  </script>
+</dom-module>

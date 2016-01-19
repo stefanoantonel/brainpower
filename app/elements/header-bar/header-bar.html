@@ -1,23 +1,50 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+
 
 <dom-module id="header-bar">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
+        --paper-tab-ink: var(--paper-blue-100);
       }
-
-      span,
-      input {
+      span, input {
         @apply(--paper-font-body2);
+      }
+      .toolbar-header {
+        background-color: lightgray;
+      }
+      a.link {
+        color: inherit;
+        background-color: inherit;
+        display: flex;
+        justify-content: center;
+        text-decoration: none;
+        height: 100%;
+        align-items: center;
       }
     </style>
 
-    <h2 class="page-title">{{greeting}}</h2>
-    <span>Update text to change the greeting.</span>
-    <!-- Listens for "input" event and sets greeting to <input>.value -->
-    <input value="{{greeting::input}}">
+    <!-- Main Toolbar -->
+    <div class="toolbar-header">
+      <paper-tabs attr-for-selected="data-route">
+        <paper-tab link><a data-route="home" href="{{baseUrl}}/" class="link">Home</a></paper-tab>
+        <paper-tab link><a data-route="product" href="{{baseUrl}}product" class="link">Productos</a></paper-tab>
+        <paper-tab link><a data-route="service" href="{{baseUrl}}service" class="link">Servicios</a></paper-tab>
+        <paper-tab link><a data-route="contact" href="{{baseUrl}}contact" class="link">Contacto</a></paper-tab>
+
+
+        <!-- <paper-tab data-route="home">Home</paper-tab>
+        <paper-tab data-route="product">Productos</paper-tab>
+        <paper-tab data-route="service">Servicios</paper-tab>
+        <paper-tab data-route="contact">Contacto</paper-tab> -->
+
+      </paper-tabs>
+      
+    </div>
   </template>
 
   <script>
@@ -30,9 +57,17 @@
         properties: {
           greeting: {
             type: String,
-            value: 'Welcome!',
+            value: 'BrainPower',
             notify: true
           }
+        },
+        changeTab: function() {
+          // this.async(function() {
+          //   console.log(this.route);
+          //   var pages = document.getElementById('main-pages');
+          //   pages.selected = this.route;
+          //   window.location = window.location.href + this.route;
+          // });
         }
       });
     })();
