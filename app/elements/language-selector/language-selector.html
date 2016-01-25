@@ -9,8 +9,20 @@
       :host {
         display: block;
       }
+
     </style>
-    <paper-dropdown-menu label="language" no-label-float>
+    <style is="custom-style">
+       paper-dropdown-menu.custom {
+         /* no underline */
+         --paper-input-container-underline: {
+           display: none;
+         }
+         --paper-input-container-input: {
+           color: white;
+         }
+       }
+     </style>
+    <paper-dropdown-menu class="custom" label="language" no-label-float>
       <paper-listbox class="dropdown-content" selected="1">
         <paper-item>Español</paper-item>
         <paper-item>English</paper-item>
