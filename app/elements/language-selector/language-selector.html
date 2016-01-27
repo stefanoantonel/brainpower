@@ -2,17 +2,20 @@
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
 <dom-module id="language-selector">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
+        width: 82px;
       }
 
     </style>
     <style is="custom-style">
        paper-dropdown-menu.custom {
+         width: 70%;
          /* no underline */
          --paper-input-container-underline: {
            display: none;
@@ -21,11 +24,16 @@
            color: white;
          }
        }
+       iron-icon {
+         width: 25%;
+         height: auto;
+       }
      </style>
+    <iron-icon icon="icons:language"></iron-icon>
     <paper-dropdown-menu class="custom" label="language" no-label-float>
       <paper-listbox class="dropdown-content" selected="1">
-        <paper-item>Español</paper-item>
-        <paper-item>English</paper-item>
+        <paper-item>ES</paper-item>
+        <paper-item>EN</paper-item>
       </paper-listbox>
     </paper-dropdown-menu>
   </template>

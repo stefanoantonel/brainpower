@@ -51,11 +51,11 @@
         margin-left: 25%;
         color: white;
       }
-      .top-header b {
-        font-size: 70px;
+      .top-header .name {
+        font-size: 6vw;
       }
-      .middle-header b{
-        font-size: 40px;
+      .middle-header .subtitle {
+        font-size: 3vw;
       }
       .bottom-header {
       }
@@ -69,7 +69,18 @@
         background-color: var(--my-custom-color) ;
       }
       @media (max-width: 600px) {
-
+        .top-header .name {
+          font-size: 9vw;
+        }
+        .middle-header .subtitle {
+          font-size: 4vw;
+        }
+        .language-selector {
+          display: none;
+        }
+        a.link {
+          font-size: 5vw;
+        }
       }
     </style>
 
@@ -79,11 +90,11 @@
     </div>
 
     <div class="middle-header">
-      <b>El poder de la mente avocado a la Ingenieria</b>
+      <b class="subtitle">El poder de la mente avocado a la Ingenieria</b>
     </div>
 
     <div class="bottom-header">
-      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab">
+      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab" no-bar>
         <paper-tab link><a href="{{baseUrl}}/" class="link">Home</a></paper-tab>
         <paper-tab link><a href="{{baseUrl}}product" class="link">Products</a></paper-tab>
         <paper-tab link><a href="{{baseUrl}}service" class="link">Services</a></paper-tab>
