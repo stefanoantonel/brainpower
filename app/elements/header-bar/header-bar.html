@@ -9,7 +9,8 @@
     <style include="shared-styles">
       :host {
         display: block;
-        --paper-tab-ink: var(--paper-blue-100);
+        --my-custom-color: lightblue;
+        --paper-tab-ink: var(--my-custom-color);
       }
       span, input {
         @apply(--paper-font-body2);
@@ -56,11 +57,22 @@
       .middle-header b{
         font-size: 40px;
       }
+      .bottom-header {
+      }
+      paper-tabs.custom-link {
+        background-color: rgba(158, 156, 156, 0.52);
 
+        /*--paper-tabs-selection-bar-color: rgba(255, 255, 141, 0.46);*/
+        /*--paper-tabs-selection-bar-height: 8px;*/
+      }
+      .current-tab-selected {
+        background-color: var(--my-custom-color) ;
+      }
       @media (max-width: 600px) {
 
       }
     </style>
+
     <div class="top-header">
       <b class="name">BrainPower</b>
       <language-selector class="language-selector"></language-selector>
@@ -69,22 +81,16 @@
     <div class="middle-header">
       <b>El poder de la mente avocado a la Ingenieria</b>
     </div>
-    <div class="toolbar-header">
-      <paper-tabs attr-for-selected="data-route">
-        <paper-tab link><a data-route="home" href="{{baseUrl}}/" class="link">Home</a></paper-tab>
-        <paper-tab link><a data-route="product" href="{{baseUrl}}product" class="link">Productos</a></paper-tab>
-        <paper-tab link><a data-route="service" href="{{baseUrl}}service" class="link">Servicios</a></paper-tab>
-        <paper-tab link><a data-route="contact" href="{{baseUrl}}contact" class="link">Contacto</a></paper-tab>
 
-
-        <!-- <paper-tab data-route="home">Home</paper-tab>
-        <paper-tab data-route="product">Productos</paper-tab>
-        <paper-tab data-route="service">Servicios</paper-tab>
-        <paper-tab data-route="contact">Contacto</paper-tab> -->
-
+    <div class="bottom-header">
+      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab">
+        <paper-tab link><a href="{{baseUrl}}/" class="link">Home</a></paper-tab>
+        <paper-tab link><a href="{{baseUrl}}product" class="link">Products</a></paper-tab>
+        <paper-tab link><a href="{{baseUrl}}service" class="link">Services</a></paper-tab>
+        <paper-tab link><a href="{{baseUrl}}contact" class="link">Contact</a></paper-tab>
       </paper-tabs>
-
     </div>
+
   </template>
 
   <script>
@@ -99,15 +105,25 @@
             type: String,
             value: 'BrainPower',
             notify: true
+          },
+          selected: {
+            type: Number,
+            value: 0
           }
         },
         changeTab: function() {
-          // this.async(function() {
-          //   console.log(this.route);
-          //   var pages = document.getElementById('main-pages');
-          //   pages.selected = this.route;
-          //   window.location = window.location.href + this.route;
-          // });
+          /* If you dont give time this.selected dont change */
+          var previousTab = document.getElementsByTagName("paper-tab")[this.selected];
+          previousTab.classList.remove("current-tab-selected");
+          this.async(function() {
+            var currentTab = document.getElementsByTagName("paper-tab")[this.selected];
+            currentTab.classList.add("current-tab-selected");
+          });
+
+        },
+        attached: function() {
+          var initialTab = document.getElementsByTagName("paper-tab")[0];
+          initialTab.classList.add("current-tab-selected");
         }
       });
     })();
