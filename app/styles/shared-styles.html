@@ -12,10 +12,16 @@
       paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
         pointer-events: none;
       }
-
+      .language-selector-bottom {
+        display: none;
+      }
       @media (max-width: 600px) {
         .page-title {
           font-size: 24px!important;
+        }
+        .language-selector-bottom {
+          float: right;
+          display: flex;
         }
       }
     </style>
