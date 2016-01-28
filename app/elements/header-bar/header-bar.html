@@ -9,7 +9,7 @@
     <style include="shared-styles">
       :host {
         display: block;
-        --my-custom-color: lightblue;
+        --my-custom-color: black;
         --paper-tab-ink: var(--my-custom-color);
       }
       span, input {
@@ -65,8 +65,18 @@
         /*--paper-tabs-selection-bar-color: rgba(255, 255, 141, 0.46);*/
         /*--paper-tabs-selection-bar-height: 8px;*/
       }
-      .current-tab-selected {
+      /*.current-tab-selected {
         background-color: var(--my-custom-color) ;
+        color: white;
+      }
+      .current-tab-selected a {
+        color: white;
+      }*/
+      .iron-selected {
+        background-color: var(--my-custom-color);
+      }
+      .iron-selected a {
+        color: white;
       }
       @media (max-width: 600px) {
         .top-header .name {
@@ -94,7 +104,7 @@
     </div>
 
     <div class="bottom-header">
-      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab" no-bar>
+      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab" no-bar noink>
         <paper-tab link><a href="{{baseUrl}}/" class="link">{{getElementByLang(home,lang)}}</a></paper-tab>
         <paper-tab link><a href="{{baseUrl}}product" class="link">{{getElementByLang(product,lang)}}</a></paper-tab>
         <paper-tab link><a href="{{baseUrl}}service" class="link">{{getElementByLang(service,lang)}}</a></paper-tab>
@@ -161,23 +171,11 @@
           }
         },
         changeTab: function() {
-          /* If you dont give time this.selected dont change */
-          var previousTab = document.getElementsByTagName("paper-tab")[this.selected];
-          previousTab.classList.remove("current-tab-selected");
-          this.async(function() {
-            var currentTab = document.getElementsByTagName("paper-tab")[this.selected];
-            currentTab.classList.add("current-tab-selected");
-          });
+
         },
 
         getElementByLang: function(elemRecord, currentLang) {
           return elemRecord[currentLang];
-        },
-
-        attached: function() {
-          // Select the current tab with color
-          var initialTab = document.getElementsByTagName("paper-tab")[0];
-          initialTab.classList.add("current-tab-selected");
         }
 
       });
