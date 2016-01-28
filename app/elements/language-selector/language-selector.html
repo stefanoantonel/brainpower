@@ -29,11 +29,12 @@
          height: auto;
        }
      </style>
+     
     <iron-icon icon="icons:language"></iron-icon>
     <paper-dropdown-menu class="custom" label="language" no-label-float>
-      <paper-listbox class="dropdown-content" selected="1">
-        <paper-item>ES</paper-item>
-        <paper-item>EN</paper-item>
+      <paper-listbox class="dropdown-content" selected={{lang}} attr-for-selected="name">
+        <paper-item name="es">ES</paper-item>
+        <paper-item name="en">EN</paper-item>
       </paper-listbox>
     </paper-dropdown-menu>
   </template>
@@ -46,6 +47,11 @@
         is: 'language-selector',
 
         properties: {
+          lang: {
+            type: String,
+            value: 'en',
+            notify: true
+          }
         }
       });
     })();

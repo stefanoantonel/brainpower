@@ -20,7 +20,8 @@
       }
     </style>
     <h3 class="name">BrainPower</h3>
-    <language-selector class="language-selector"></language-selector>
+    <h2>[[lang]]</h2>
+    <h2>[[greet]]</h2>
   </template>
 
   <script>
@@ -31,6 +32,14 @@
         is: 'footer-bar',
 
         properties: {
+          lang: {
+            type: String,
+            value: 'en'
+          },
+          greet: {
+            type: String,
+            value: 'Welcome!'
+          }
         }
       });
     })();
