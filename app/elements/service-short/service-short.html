@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../slider-component/slider-component.html">
+
 
 <dom-module id="service-short">
   <template>
@@ -8,21 +10,31 @@
         display: block;
       }
       .description {
-        width: 70%;
+        /*width: 100%;*/
       }
       .image {
-        width: 30%;
+        width: 80%;
+        /* align-self: center; */
+        margin: auto;
+        max-height: 200px;
         height: auto;
+        overflow-y: hidden;
       }
-      .image img {
-        width: 100%;
+      .image iron-image {
+        /*width: 100%;
         height: auto;
+        background-color: lightgray;*/
       }
       .service {
-        display: flex;
-        justify-content: space-around;
+        /*display: flex;
+        justify-content: space-around;*/
+      }
+      .service b {
+        font-size: 3vw;
       }
     </style>
+
+
     <div class="service">
       <div class="description">
         <b>{{getElementByLang(service.title,lang)}}</b>
@@ -30,7 +42,7 @@
         <b>{{getElementByLang(service.description,lang)}}</b>
       </div>
       <div class="image">
-        <img src="{{service.image-preview}}"></img>
+        <slider-component pictures="{{service.images}}"></slider-component>
       </div>
     </div>
 
