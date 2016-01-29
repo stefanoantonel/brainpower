@@ -1,0 +1,63 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="service-short">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      .description {
+        width: 70%;
+      }
+      .image {
+        width: 30%;
+        height: auto;
+      }
+      .image img {
+        width: 100%;
+        height: auto;
+      }
+      .service {
+        display: flex;
+        justify-content: space-around;
+      }
+    </style>
+    <div class="service">
+      <div class="description">
+        <b>{{getElementByLang(service.title,lang)}}</b>
+        <br>
+        <b>{{getElementByLang(service.description,lang)}}</b>
+      </div>
+      <div class="image">
+        <img src="{{service.image-preview}}"></img>
+      </div>
+    </div>
+
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'service-short',
+
+        properties: {
+          lang: {
+            type: String,
+            value: 'en',
+            notify: true
+          },
+          service: Object
+        },
+
+        getElementByLang: function(elemRecord, currentLang) {
+          return elemRecord[currentLang];
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

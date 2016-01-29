@@ -1,0 +1,55 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="service-section">
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    
+    </style>
+
+    <iron-ajax
+        auto
+        url="./service.json"
+        params='{"alt":"json", "q":"chrome"}'
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+
+    <template is="dom-repeat" items="{{services}}">
+      <paper-material elevation="1">
+        <service-short service={{item}} lang="{{lang}}"></service-short>
+      </paper-material>
+    </template>
+
+  <!-- END TEMPLATE -->
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'service-section',
+
+        properties: {
+          lang: {
+            type: String,
+            value: 'en',
+            notify: true
+          },
+          services: Object
+        },
+
+        handleResponse: function(event, res) {
+          this.services = res.response;
+        }
+      });
+    })();
+  </script>
+</dom-module>
