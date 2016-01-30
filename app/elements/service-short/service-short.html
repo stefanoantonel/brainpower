@@ -13,12 +13,12 @@
         /*width: 100%;*/
       }
       .image {
-        width: 80%;
-        /* align-self: center; */
+        /*width: 80%;
+        align-self: center;
         margin: auto;
         max-height: 200px;
         height: auto;
-        overflow-y: hidden;
+        overflow-y: hidden;*/
       }
       .image iron-image {
         /*width: 100%;
@@ -30,7 +30,13 @@
         justify-content: space-around;*/
       }
       .service b {
-        font-size: 3vw;
+        font-size: 2.5vw;
+      }
+      slider-component.slider {
+        overflow: hidden;
+        max-width: 63%;
+        margin: auto;
+        max-height: 450px;
       }
     </style>
 
@@ -42,8 +48,9 @@
         <b>{{getElementByLang(service.description,lang)}}</b>
       </div>
       <div class="image">
-        <slider-component pictures="{{service.images}}"></slider-component>
+        <slider-component class="slider" pictures="{{service.images}}"></slider-component>
       </div>
+
     </div>
 
 
