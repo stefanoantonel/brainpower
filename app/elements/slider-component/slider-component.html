@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<!-- <link rel="import" href="../../bower_components/iron-image/iron-image.html"> -->
 
 <dom-module id="slider-component">
   <template>
@@ -23,6 +24,10 @@
       body { margin: 0; }
       div.slider { overflow: hidden; }
       div.slider figure img { width: 20%; float: left; }
+      /*div.slider figure iron-image {
+        width: 20%; float: left;
+        background-color: lightgray;
+      }*/
       div.slider figure {
         position: relative;
         width: 500%;
@@ -39,6 +44,7 @@
     <div class="slider">
       <figure>
         <template is="dom-repeat" items="{{pictures}}">
+          <!-- <iron-image src="{{item}}" preload sizing="contain"></iron-image> -->
           <img src="{{item}}" alt="">
         </template>
       </figure>
@@ -57,7 +63,7 @@
             type: String,
             value: 'Welcome!'
           },
-          picture: {
+          pictures: {
             type: Object
           }
         }

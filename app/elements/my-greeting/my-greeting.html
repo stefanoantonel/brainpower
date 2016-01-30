@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../slider-component/slider-component.html">
 
 <dom-module id="my-greeting">
   <template>
@@ -12,12 +13,18 @@
       input {
         @apply(--paper-font-body2);
       }
+      slider-component {
+        width: 60%;
+        height: 220px;
+        overflow: hidden;
+      }
     </style>
     <b>{{defaultLang}}</b>
     <h2 class="page-title">{{greeting}}</h2>
     <span>Update text to change the greeting.</span>
     <!-- Listens for "input" event and sets greeting to <input>.value -->
     <input value="{{greeting::input}}">
+    <slider-component pictures="[[pictures]]"></slider-component>
   </template>
 
   <script>
@@ -31,6 +38,13 @@
           greeting: {
             type: String,
             value: 'Welcome!'
+          },
+          pictures: {
+            type: Array,
+            value: [
+              '/images/services/serv2.png',
+              '/images/services/serv3.png'
+            ]
           }
         }
       });
