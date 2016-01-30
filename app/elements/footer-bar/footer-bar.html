@@ -7,8 +7,9 @@
       :host {
         display: block;
         width: 100%;
-        background-color: black;
-        color: white; 
+        background-color: var(--color-background);
+        color: white;
+        --color-background: rgb(158, 156, 156);
       }
       .language-selector {
         display: inline-flex;
@@ -19,10 +20,18 @@
       .name {
         display: inline-flex;
       }
+      b.name {
+        font-size: 4vw;
+      }
+      .container {
+        height: 100px;
+      }
     </style>
-    <h3 class="name">BrainPower</h3>
-    <h2>[[lang]]</h2>
-    <h2>[[greet]]</h2>
+    <div class="container">
+      <b class="name">BrainPower</b>
+    </div>
+
+
   </template>
 
   <script>
