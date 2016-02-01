@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../facebook-share/facebook-share.html">
 
 <dom-module id="footer-bar">
   <template>
@@ -32,9 +33,7 @@
     </style>
     <div class="container">
       <b class="name">BrainPower</b>
-      <div class="fb-share-button" data-href="https://www.facebook.com/brainpoweringenieria/" data-layout="button"></div>
-      <div id="fb-root"></div>
-      <script></script>
+      <facebook-share></facebook-share>
     </div>
 
 
@@ -56,16 +55,6 @@
             type: String,
             value: 'Welcome!'
           }
-        },
-        ready: function() {
-          console.log("ready");
-          (function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
-            fjs.parentNode.insertBefore(js, fjs);
-          }(document, 'script', 'facebook-jssdk'));
         }
       });
     })();

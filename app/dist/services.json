@@ -1,0 +1,47 @@
+[
+  {
+    "title": {
+      "es": "Diseño",
+      "en": "Design"
+    },
+    "description": {
+      "es": "Hacemos diseño a medida",
+      "en": "We made the design thinking about you"
+    },
+    "images": [
+      "/images/services/serv1.png",
+      "/images/services/serv2.png",
+      "/images/services/serv3.png"
+    ]
+  },
+  {
+    "title": {
+      "es": "Simulacion",
+      "en": "Simulation"
+    },
+    "description": {
+      "es": "Hacemos simulacion a medida",
+      "en": "We made the simulation thinking about you"
+    },
+    "images": [
+      "/images/services/serv3.png",
+      "/images/services/serv2.png",
+      "/images/services/serv1.png"
+    ]
+  },
+  {
+    "title": {
+      "es": "Pruebas",
+      "en": "Tests"
+    },
+    "description": {
+      "es": "Hacemos pruebas a medida",
+      "en": "We made the test thinking about you"
+    },
+    "images": [
+      "/images/services/serv2.png",
+      "/images/services/serv1.png",
+      "/images/services/serv3.png"
+    ]
+  }
+]
