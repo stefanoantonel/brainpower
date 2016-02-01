@@ -13,10 +13,6 @@
         --color-background: rgb(158, 156, 156);
       }
       .language-selector {
-        display: inline-flex;
-        width: 90px;
-        position: relative;
-        left: calc(80% - 100px);
       }
       .name {
         display: inline-flex;
@@ -31,9 +27,11 @@
         width: 20px;
       }
     </style>
+
     <div class="container">
       <b class="name">BrainPower</b>
       <facebook-share></facebook-share>
+      <language-selector lang='{{lang}}' class="language-selector"></language-selector>
     </div>
 
 
@@ -49,12 +47,18 @@
         properties: {
           lang: {
             type: String,
-            value: 'en'
+            value: 'en',
+            notify: true
           },
           greet: {
             type: String,
             value: 'Welcome!'
           }
+        },
+        attached: function() {
+          var dropDownSelector = this.getElementsByTagName('paper-dropdown-menu')[0];
+          dropDownSelector.setAttribute('vertical-align','bottom');
+          dropDownSelector.setAttribute('horizontal-align','left');
         }
       });
     })();

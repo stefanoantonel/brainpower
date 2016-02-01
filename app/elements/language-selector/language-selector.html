@@ -9,34 +9,51 @@
     <style include="shared-styles">
       :host {
         display: block;
-        width: 82px;
+        width: 100px;
       }
-
+      iron-icon {
+        width: 100%;
+        height: auto;
+        color: white;
+      }
+      .container-icon {
+        width: 15%;
+        align-self: center;
+      }
+      .container-dropdown {
+        width: 80%;
+      }
+      .container-lang-selector {
+        display: flex;
+        justify-content: space-around;
+      }
+      paper-dropdown-menu {
+        --paper-dropdown-menu-icon: {
+          color: white;
+        }
+        --paper-input-container-input: {
+          color: white;
+        }
+        --paper-input-container-underline: {
+           visibility:hidden;
+        }
+      }
     </style>
-    <style is="custom-style">
-       paper-dropdown-menu.custom {
-         width: 70%;
-         /* no underline */
-         --paper-input-container-underline: {
-           display: none;
-         }
-         --paper-input-container-input: {
-           color: white;
-         }
-       }
-       iron-icon {
-         width: 25%;
-         height: auto;
-       }
-     </style>
 
-    <iron-icon icon="icons:language"></iron-icon>
-    <paper-dropdown-menu class="custom" label="language" no-label-float>
-      <paper-listbox class="dropdown-content" selected={{lang}} attr-for-selected="name">
-        <paper-item name="es">Español</paper-item>
-        <paper-item name="en">English</paper-item>
-      </paper-listbox>
-    </paper-dropdown-menu>
+     <div class="container-lang-selector">
+       <div class="container-icon">
+         <iron-icon icon="icons:language"></iron-icon>
+       </div>
+       <div class="container-dropdown">
+         <paper-dropdown-menu class="custom" label="language" no-label-float>
+           <paper-listbox class="dropdown-content" selected={{lang}} attr-for-selected="name">
+             <paper-item name="es">Español</paper-item>
+             <paper-item name="en">English</paper-item>
+           </paper-listbox>
+         </paper-dropdown-menu>
+       </div>
+     </div>
+
   </template>
 
   <script>
