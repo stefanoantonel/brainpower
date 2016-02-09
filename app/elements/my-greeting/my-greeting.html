@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
-<link rel="import" href="../slider-component/slider-component.html">
+<link rel="import" href="../slider-elem/slider-elem.html">
 
 <dom-module id="my-greeting">
   <template>
@@ -24,7 +24,7 @@
     <span>Update text to change the greeting.</span>
     <!-- Listens for "input" event and sets greeting to <input>.value -->
     <input value="{{greeting::input}}">
-    <slider-component pictures="[[pictures]]"></slider-component>
+    <slider-elem last-path="/home" pictures="[[pictures]]"></slider-elem>
   </template>
 
   <script>
@@ -42,8 +42,8 @@
           pictures: {
             type: Array,
             value: [
-              '/images/services/serv2.png',
-              '/images/services/serv3.png'
+              '/images/services/ex1.png',
+              '/images/services/ex2.png'
             ]
           }
         }

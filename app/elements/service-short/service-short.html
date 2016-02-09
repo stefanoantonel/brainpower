@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
-<link rel="import" href="../slider-component/slider-component.html">
+<link rel="import" href="../slider-elem/slider-elem.html">
 
 
 <dom-module id="service-short">
@@ -48,7 +48,7 @@
         <b>{{getElementByLang(service.description,lang)}}</b>
       </div>
       <div class="image">
-        <slider-component class="slider" pictures="{{service.images}}"></slider-component>
+        <slider-elem last-path="/service" class="slider" pictures="{{service.images}}"></slider-elem>
       </div>
 
     </div>

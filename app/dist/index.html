@@ -2506,7 +2506,7 @@ window.CustomElements.addModule(function(scope) {
   <style is="custom-style" include="shared-styles"></style>
 </head>
 
-<body unresolved=""><div hidden="" by-vulcanize=""><script>(function () {
+<body><div hidden="" by-vulcanize=""><script>(function () {
 function resolve() {
 document.body.removeAttribute('unresolved');
 }
@@ -18253,2647 +18253,6 @@ be used as the label of the toolbar via `aria-labelledby`.
     });
   </script>
 </dom-module>
-<script>!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.page=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (process){
-  /* globals require, module */
-
-  'use strict';
-
-  /**
-   * Module dependencies.
-   */
-
-  var pathtoRegexp = require('path-to-regexp');
-
-  /**
-   * Module exports.
-   */
-
-  module.exports = page;
-
-  /**
-   * Detect click event
-   */
-  var clickEvent = ('undefined' !== typeof document) && document.ontouchstart ? 'touchstart' : 'click';
-
-  /**
-   * To work properly with the URL
-   * history.location generated polyfill in https://github.com/devote/HTML5-History-API
-   */
-
-  var location = ('undefined' !== typeof window) && (window.history.location || window.location);
-
-  /**
-   * Perform initial dispatch.
-   */
-
-  var dispatch = true;
-
-
-  /**
-   * Decode URL components (query string, pathname, hash).
-   * Accommodates both regular percent encoding and x-www-form-urlencoded format.
-   */
-  var decodeURLComponents = true;
-
-  /**
-   * Base path.
-   */
-
-  var base = '';
-
-  /**
-   * Running flag.
-   */
-
-  var running;
-
-  /**
-   * HashBang option
-   */
-
-  var hashbang = false;
-
-  /**
-   * Previous context, for capturing
-   * page exit events.
-   */
-
-  var prevContext;
-
-  /**
-   * Register `path` with callback `fn()`,
-   * or route `path`, or redirection,
-   * or `page.start()`.
-   *
-   *   page(fn);
-   *   page('*', fn);
-   *   page('/user/:id', load, user);
-   *   page('/user/' + user.id, { some: 'thing' });
-   *   page('/user/' + user.id);
-   *   page('/from', '/to')
-   *   page();
-   *
-   * @param {String|Function} path
-   * @param {Function} fn...
-   * @api public
-   */
-
-  function page(path, fn) {
-    // <callback>
-    if ('function' === typeof path) {
-      return page('*', path);
-    }
-
-    // route <path> to <callback ...>
-    if ('function' === typeof fn) {
-      var route = new Route(path);
-      for (var i = 1; i < arguments.length; ++i) {
-        page.callbacks.push(route.middleware(arguments[i]));
-      }
-      // show <path> with [state]
-    } else if ('string' === typeof path) {
-      page['string' === typeof fn ? 'redirect' : 'show'](path, fn);
-      // start [options]
-    } else {
-      page.start(path);
-    }
-  }
-
-  /**
-   * Callback functions.
-   */
-
-  page.callbacks = [];
-  page.exits = [];
-
-  /**
-   * Current path being processed
-   * @type {String}
-   */
-  page.current = '';
-
-  /**
-   * Number of pages navigated to.
-   * @type {number}
-   *
-   *     page.len == 0;
-   *     page('/login');
-   *     page.len == 1;
-   */
-
-  page.len = 0;
-
-  /**
-   * Get or set basepath to `path`.
-   *
-   * @param {String} path
-   * @api public
-   */
-
-  page.base = function(path) {
-    if (0 === arguments.length) return base;
-    base = path;
-  };
-
-  /**
-   * Bind with the given `options`.
-   *
-   * Options:
-   *
-   *    - `click` bind to click events [true]
-   *    - `popstate` bind to popstate [true]
-   *    - `dispatch` perform initial dispatch [true]
-   *
-   * @param {Object} options
-   * @api public
-   */
-
-  page.start = function(options) {
-    options = options || {};
-    if (running) return;
-    running = true;
-    if (false === options.dispatch) dispatch = false;
-    if (false === options.decodeURLComponents) decodeURLComponents = false;
-    if (false !== options.popstate) window.addEventListener('popstate', onpopstate, false);
-    if (false !== options.click) {
-      document.addEventListener(clickEvent, onclick, false);
-    }
-    if (true === options.hashbang) hashbang = true;
-    if (!dispatch) return;
-    var url = (hashbang && ~location.hash.indexOf('#!')) ? location.hash.substr(2) + location.search : location.pathname + location.search + location.hash;
-    page.replace(url, null, true, dispatch);
-  };
-
-  /**
-   * Unbind click and popstate event handlers.
-   *
-   * @api public
-   */
-
-  page.stop = function() {
-    if (!running) return;
-    page.current = '';
-    page.len = 0;
-    running = false;
-    document.removeEventListener(clickEvent, onclick, false);
-    window.removeEventListener('popstate', onpopstate, false);
-  };
-
-  /**
-   * Show `path` with optional `state` object.
-   *
-   * @param {String} path
-   * @param {Object} state
-   * @param {Boolean} dispatch
-   * @return {Context}
-   * @api public
-   */
-
-  page.show = function(path, state, dispatch, push) {
-    var ctx = new Context(path, state);
-    page.current = ctx.path;
-    if (false !== dispatch) page.dispatch(ctx);
-    if (false !== ctx.handled && false !== push) ctx.pushState();
-    return ctx;
-  };
-
-  /**
-   * Goes back in the history
-   * Back should always let the current route push state and then go back.
-   *
-   * @param {String} path - fallback path to go back if no more history exists, if undefined defaults to page.base
-   * @param {Object} [state]
-   * @api public
-   */
-
-  page.back = function(path, state) {
-    if (page.len > 0) {
-      // this may need more testing to see if all browsers
-      // wait for the next tick to go back in history
-      history.back();
-      page.len--;
-    } else if (path) {
-      setTimeout(function() {
-        page.show(path, state);
-      });
-    }else{
-      setTimeout(function() {
-        page.show(base, state);
-      });
-    }
-  };
-
-
-  /**
-   * Register route to redirect from one path to other
-   * or just redirect to another route
-   *
-   * @param {String} from - if param 'to' is undefined redirects to 'from'
-   * @param {String} [to]
-   * @api public
-   */
-  page.redirect = function(from, to) {
-    // Define route from a path to another
-    if ('string' === typeof from && 'string' === typeof to) {
-      page(from, function(e) {
-        setTimeout(function() {
-          page.replace(to);
-        }, 0);
-      });
-    }
-
-    // Wait for the push state and replace it with another
-    if ('string' === typeof from && 'undefined' === typeof to) {
-      setTimeout(function() {
-        page.replace(from);
-      }, 0);
-    }
-  };
-
-  /**
-   * Replace `path` with optional `state` object.
-   *
-   * @param {String} path
-   * @param {Object} state
-   * @return {Context}
-   * @api public
-   */
-
-
-  page.replace = function(path, state, init, dispatch) {
-    var ctx = new Context(path, state);
-    page.current = ctx.path;
-    ctx.init = init;
-    ctx.save(); // save before dispatching, which may redirect
-    if (false !== dispatch) page.dispatch(ctx);
-    return ctx;
-  };
-
-  /**
-   * Dispatch the given `ctx`.
-   *
-   * @param {Object} ctx
-   * @api private
-   */
-
-  page.dispatch = function(ctx) {
-    var prev = prevContext,
-      i = 0,
-      j = 0;
-
-    prevContext = ctx;
-
-    function nextExit() {
-      var fn = page.exits[j++];
-      if (!fn) return nextEnter();
-      fn(prev, nextExit);
-    }
-
-    function nextEnter() {
-      var fn = page.callbacks[i++];
-
-      if (ctx.path !== page.current) {
-        ctx.handled = false;
-        return;
-      }
-      if (!fn) return unhandled(ctx);
-      fn(ctx, nextEnter);
-    }
-
-    if (prev) {
-      nextExit();
-    } else {
-      nextEnter();
-    }
-  };
-
-  /**
-   * Unhandled `ctx`. When it's not the initial
-   * popstate then redirect. If you wish to handle
-   * 404s on your own use `page('*', callback)`.
-   *
-   * @param {Context} ctx
-   * @api private
-   */
-
-  function unhandled(ctx) {
-    if (ctx.handled) return;
-    var current;
-
-    if (hashbang) {
-      current = base + location.hash.replace('#!', '');
-    } else {
-      current = location.pathname + location.search;
-    }
-
-    if (current === ctx.canonicalPath) return;
-    page.stop();
-    ctx.handled = false;
-    location.href = ctx.canonicalPath;
-  }
-
-  /**
-   * Register an exit route on `path` with
-   * callback `fn()`, which will be called
-   * on the previous context when a new
-   * page is visited.
-   */
-  page.exit = function(path, fn) {
-    if (typeof path === 'function') {
-      return page.exit('*', path);
-    }
-
-    var route = new Route(path);
-    for (var i = 1; i < arguments.length; ++i) {
-      page.exits.push(route.middleware(arguments[i]));
-    }
-  };
-
-  /**
-   * Remove URL encoding from the given `str`.
-   * Accommodates whitespace in both x-www-form-urlencoded
-   * and regular percent-encoded form.
-   *
-   * @param {str} URL component to decode
-   */
-  function decodeURLEncodedURIComponent(val) {
-    if (typeof val !== 'string') { return val; }
-    return decodeURLComponents ? decodeURIComponent(val.replace(/\+/g, ' ')) : val;
-  }
-
-  /**
-   * Initialize a new "request" `Context`
-   * with the given `path` and optional initial `state`.
-   *
-   * @param {String} path
-   * @param {Object} state
-   * @api public
-   */
-
-  function Context(path, state) {
-    if ('/' === path[0] && 0 !== path.indexOf(base)) path = base + (hashbang ? '#!' : '') + path;
-    var i = path.indexOf('?');
-
-    this.canonicalPath = path;
-    this.path = path.replace(base, '') || '/';
-    if (hashbang) this.path = this.path.replace('#!', '') || '/';
-
-    this.title = document.title;
-    this.state = state || {};
-    this.state.path = path;
-    this.querystring = ~i ? decodeURLEncodedURIComponent(path.slice(i + 1)) : '';
-    this.pathname = decodeURLEncodedURIComponent(~i ? path.slice(0, i) : path);
-    this.params = {};
-
-    // fragment
-    this.hash = '';
-    if (!hashbang) {
-      if (!~this.path.indexOf('#')) return;
-      var parts = this.path.split('#');
-      this.path = parts[0];
-      this.hash = decodeURLEncodedURIComponent(parts[1]) || '';
-      this.querystring = this.querystring.split('#')[0];
-    }
-  }
-
-  /**
-   * Expose `Context`.
-   */
-
-  page.Context = Context;
-
-  /**
-   * Push state.
-   *
-   * @api private
-   */
-
-  Context.prototype.pushState = function() {
-    page.len++;
-    history.pushState(this.state, this.title, hashbang && this.path !== '/' ? '#!' + this.path : this.canonicalPath);
-  };
-
-  /**
-   * Save the context state.
-   *
-   * @api public
-   */
-
-  Context.prototype.save = function() {
-    history.replaceState(this.state, this.title, hashbang && this.path !== '/' ? '#!' + this.path : this.canonicalPath);
-  };
-
-  /**
-   * Initialize `Route` with the given HTTP `path`,
-   * and an array of `callbacks` and `options`.
-   *
-   * Options:
-   *
-   *   - `sensitive`    enable case-sensitive routes
-   *   - `strict`       enable strict matching for trailing slashes
-   *
-   * @param {String} path
-   * @param {Object} options.
-   * @api private
-   */
-
-  function Route(path, options) {
-    options = options || {};
-    this.path = (path === '*') ? '(.*)' : path;
-    this.method = 'GET';
-    this.regexp = pathtoRegexp(this.path,
-      this.keys = [],
-      options.sensitive,
-      options.strict);
-  }
-
-  /**
-   * Expose `Route`.
-   */
-
-  page.Route = Route;
-
-  /**
-   * Return route middleware with
-   * the given callback `fn()`.
-   *
-   * @param {Function} fn
-   * @return {Function}
-   * @api public
-   */
-
-  Route.prototype.middleware = function(fn) {
-    var self = this;
-    return function(ctx, next) {
-      if (self.match(ctx.path, ctx.params)) return fn(ctx, next);
-      next();
-    };
-  };
-
-  /**
-   * Check if this route matches `path`, if so
-   * populate `params`.
-   *
-   * @param {String} path
-   * @param {Object} params
-   * @return {Boolean}
-   * @api private
-   */
-
-  Route.prototype.match = function(path, params) {
-    var keys = this.keys,
-      qsIndex = path.indexOf('?'),
-      pathname = ~qsIndex ? path.slice(0, qsIndex) : path,
-      m = this.regexp.exec(decodeURIComponent(pathname));
-
-    if (!m) return false;
-
-    for (var i = 1, len = m.length; i < len; ++i) {
-      var key = keys[i - 1];
-      var val = decodeURLEncodedURIComponent(m[i]);
-      if (val !== undefined || !(hasOwnProperty.call(params, key.name))) {
-        params[key.name] = val;
-      }
-    }
-
-    return true;
-  };
-
-
-  /**
-   * Handle "populate" events.
-   */
-
-  var onpopstate = (function () {
-    var loaded = false;
-    if ('undefined' === typeof window) {
-      return;
-    }
-    if (document.readyState === 'complete') {
-      loaded = true;
-    } else {
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          loaded = true;
-        }, 0);
-      });
-    }
-    return function onpopstate(e) {
-      if (!loaded) return;
-      if (e.state) {
-        var path = e.state.path;
-        page.replace(path, e.state);
-      } else {
-        page.show(location.pathname + location.hash, undefined, undefined, false);
-      }
-    };
-  })();
-  /**
-   * Handle "click" events.
-   */
-
-  function onclick(e) {
-
-    if (1 !== which(e)) return;
-
-    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-    if (e.defaultPrevented) return;
-
-
-
-    // ensure link
-    var el = e.target;
-    while (el && 'A' !== el.nodeName) el = el.parentNode;
-    if (!el || 'A' !== el.nodeName) return;
-
-
-
-    // Ignore if tag has
-    // 1. "download" attribute
-    // 2. rel="external" attribute
-    if (el.hasAttribute('download') || el.getAttribute('rel') === 'external') return;
-
-    // ensure non-hash for the same path
-    var link = el.getAttribute('href');
-    if (!hashbang && el.pathname === location.pathname && (el.hash || '#' === link)) return;
-
-
-
-    // Check for mailto: in the href
-    if (link && link.indexOf('mailto:') > -1) return;
-
-    // check target
-    if (el.target) return;
-
-    // x-origin
-    if (!sameOrigin(el.href)) return;
-
-
-
-    // rebuild path
-    var path = el.pathname + el.search + (el.hash || '');
-
-    // strip leading "/[drive letter]:" on NW.js on Windows
-    if (typeof process !== 'undefined' && path.match(/^\/[a-zA-Z]:\//)) {
-      path = path.replace(/^\/[a-zA-Z]:\//, '/');
-    }
-
-    // same page
-    var orig = path;
-
-    if (path.indexOf(base) === 0) {
-      path = path.substr(base.length);
-    }
-
-    if (hashbang) path = path.replace('#!', '');
-
-    if (base && orig === path) return;
-
-    e.preventDefault();
-    page.show(orig);
-  }
-
-  /**
-   * Event button.
-   */
-
-  function which(e) {
-    e = e || window.event;
-    return null === e.which ? e.button : e.which;
-  }
-
-  /**
-   * Check if `href` is the same origin.
-   */
-
-  function sameOrigin(href) {
-    var origin = location.protocol + '//' + location.hostname;
-    if (location.port) origin += ':' + location.port;
-    return (href && (0 === href.indexOf(origin)));
-  }
-
-  page.sameOrigin = sameOrigin;
-
-}).call(this,require('_process'))
-},{"_process":2,"path-to-regexp":3}],2:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canMutationObserver = typeof window !== 'undefined'
-    && window.MutationObserver;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    var queue = [];
-
-    if (canMutationObserver) {
-        var hiddenDiv = document.createElement("div");
-        var observer = new MutationObserver(function () {
-            var queueList = queue.slice();
-            queue.length = 0;
-            queueList.forEach(function (fn) {
-                fn();
-            });
-        });
-
-        observer.observe(hiddenDiv, { attributes: true });
-
-        return function nextTick(fn) {
-            if (!queue.length) {
-                hiddenDiv.setAttribute('yes', 'no');
-            }
-            queue.push(fn);
-        };
-    }
-
-    if (canPost) {
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],3:[function(require,module,exports){
-var isarray = require('isarray')
-
-/**
- * Expose `pathToRegexp`.
- */
-module.exports = pathToRegexp
-module.exports.parse = parse
-module.exports.compile = compile
-module.exports.tokensToFunction = tokensToFunction
-module.exports.tokensToRegExp = tokensToRegExp
-
-/**
- * The main path matching regexp utility.
- *
- * @type {RegExp}
- */
-var PATH_REGEXP = new RegExp([
-  // Match escaped characters that would otherwise appear in future matches.
-  // This allows the user to escape special characters that won't transform.
-  '(\\\\.)',
-  // Match Express-style parameters and un-named parameters with a prefix
-  // and optional suffixes. Matches appear as:
-  //
-  // "/:test(\\d+)?" => ["/", "test", "\d+", undefined, "?", undefined]
-  // "/route(\\d+)"  => [undefined, undefined, undefined, "\d+", undefined, undefined]
-  // "/*"            => ["/", undefined, undefined, undefined, undefined, "*"]
-  '([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^()])+)\\))?|\\(((?:\\\\.|[^()])+)\\))([+*?])?|(\\*))'
-].join('|'), 'g')
-
-/**
- * Parse a string for the raw tokens.
- *
- * @param  {String} str
- * @return {Array}
- */
-function parse (str) {
-  var tokens = []
-  var key = 0
-  var index = 0
-  var path = ''
-  var res
-
-  while ((res = PATH_REGEXP.exec(str)) != null) {
-    var m = res[0]
-    var escaped = res[1]
-    var offset = res.index
-    path += str.slice(index, offset)
-    index = offset + m.length
-
-    // Ignore already escaped sequences.
-    if (escaped) {
-      path += escaped[1]
-      continue
-    }
-
-    // Push the current path onto the tokens.
-    if (path) {
-      tokens.push(path)
-      path = ''
-    }
-
-    var prefix = res[2]
-    var name = res[3]
-    var capture = res[4]
-    var group = res[5]
-    var suffix = res[6]
-    var asterisk = res[7]
-
-    var repeat = suffix === '+' || suffix === '*'
-    var optional = suffix === '?' || suffix === '*'
-    var delimiter = prefix || '/'
-    var pattern = capture || group || (asterisk ? '.*' : '[^' + delimiter + ']+?')
-
-    tokens.push({
-      name: name || key++,
-      prefix: prefix || '',
-      delimiter: delimiter,
-      optional: optional,
-      repeat: repeat,
-      pattern: escapeGroup(pattern)
-    })
-  }
-
-  // Match any characters still remaining.
-  if (index < str.length) {
-    path += str.substr(index)
-  }
-
-  // If the path exists, push it onto the end.
-  if (path) {
-    tokens.push(path)
-  }
-
-  return tokens
-}
-
-/**
- * Compile a string to a template function for the path.
- *
- * @param  {String}   str
- * @return {Function}
- */
-function compile (str) {
-  return tokensToFunction(parse(str))
-}
-
-/**
- * Expose a method for transforming tokens into the path function.
- */
-function tokensToFunction (tokens) {
-  // Compile all the tokens into regexps.
-  var matches = new Array(tokens.length)
-
-  // Compile all the patterns before compilation.
-  for (var i = 0; i < tokens.length; i++) {
-    if (typeof tokens[i] === 'object') {
-      matches[i] = new RegExp('^' + tokens[i].pattern + '$')
-    }
-  }
-
-  return function (obj) {
-    var path = ''
-    var data = obj || {}
-
-    for (var i = 0; i < tokens.length; i++) {
-      var token = tokens[i]
-
-      if (typeof token === 'string') {
-        path += token
-
-        continue
-      }
-
-      var value = data[token.name]
-      var segment
-
-      if (value == null) {
-        if (token.optional) {
-          continue
-        } else {
-          throw new TypeError('Expected "' + token.name + '" to be defined')
-        }
-      }
-
-      if (isarray(value)) {
-        if (!token.repeat) {
-          throw new TypeError('Expected "' + token.name + '" to not repeat, but received "' + value + '"')
-        }
-
-        if (value.length === 0) {
-          if (token.optional) {
-            continue
-          } else {
-            throw new TypeError('Expected "' + token.name + '" to not be empty')
-          }
-        }
-
-        for (var j = 0; j < value.length; j++) {
-          segment = encodeURIComponent(value[j])
-
-          if (!matches[i].test(segment)) {
-            throw new TypeError('Expected all "' + token.name + '" to match "' + token.pattern + '", but received "' + segment + '"')
-          }
-
-          path += (j === 0 ? token.prefix : token.delimiter) + segment
-        }
-
-        continue
-      }
-
-      segment = encodeURIComponent(value)
-
-      if (!matches[i].test(segment)) {
-        throw new TypeError('Expected "' + token.name + '" to match "' + token.pattern + '", but received "' + segment + '"')
-      }
-
-      path += token.prefix + segment
-    }
-
-    return path
-  }
-}
-
-/**
- * Escape a regular expression string.
- *
- * @param  {String} str
- * @return {String}
- */
-function escapeString (str) {
-  return str.replace(/([.+*?=^!:${}()[\]|\/])/g, '\\$1')
-}
-
-/**
- * Escape the capturing group by escaping special characters and meaning.
- *
- * @param  {String} group
- * @return {String}
- */
-function escapeGroup (group) {
-  return group.replace(/([=!:$\/()])/g, '\\$1')
-}
-
-/**
- * Attach the keys as a property of the regexp.
- *
- * @param  {RegExp} re
- * @param  {Array}  keys
- * @return {RegExp}
- */
-function attachKeys (re, keys) {
-  re.keys = keys
-  return re
-}
-
-/**
- * Get the flags for a regexp from the options.
- *
- * @param  {Object} options
- * @return {String}
- */
-function flags (options) {
-  return options.sensitive ? '' : 'i'
-}
-
-/**
- * Pull out keys from a regexp.
- *
- * @param  {RegExp} path
- * @param  {Array}  keys
- * @return {RegExp}
- */
-function regexpToRegexp (path, keys) {
-  // Use a negative lookahead to match only capturing groups.
-  var groups = path.source.match(/\((?!\?)/g)
-
-  if (groups) {
-    for (var i = 0; i < groups.length; i++) {
-      keys.push({
-        name: i,
-        prefix: null,
-        delimiter: null,
-        optional: false,
-        repeat: false,
-        pattern: null
-      })
-    }
-  }
-
-  return attachKeys(path, keys)
-}
-
-/**
- * Transform an array into a regexp.
- *
- * @param  {Array}  path
- * @param  {Array}  keys
- * @param  {Object} options
- * @return {RegExp}
- */
-function arrayToRegexp (path, keys, options) {
-  var parts = []
-
-  for (var i = 0; i < path.length; i++) {
-    parts.push(pathToRegexp(path[i], keys, options).source)
-  }
-
-  var regexp = new RegExp('(?:' + parts.join('|') + ')', flags(options))
-
-  return attachKeys(regexp, keys)
-}
-
-/**
- * Create a path regexp from string input.
- *
- * @param  {String} path
- * @param  {Array}  keys
- * @param  {Object} options
- * @return {RegExp}
- */
-function stringToRegexp (path, keys, options) {
-  var tokens = parse(path)
-  var re = tokensToRegExp(tokens, options)
-
-  // Attach keys back to the regexp.
-  for (var i = 0; i < tokens.length; i++) {
-    if (typeof tokens[i] !== 'string') {
-      keys.push(tokens[i])
-    }
-  }
-
-  return attachKeys(re, keys)
-}
-
-/**
- * Expose a function for taking tokens and returning a RegExp.
- *
- * @param  {Array}  tokens
- * @param  {Array}  keys
- * @param  {Object} options
- * @return {RegExp}
- */
-function tokensToRegExp (tokens, options) {
-  options = options || {}
-
-  var strict = options.strict
-  var end = options.end !== false
-  var route = ''
-  var lastToken = tokens[tokens.length - 1]
-  var endsWithSlash = typeof lastToken === 'string' && /\/$/.test(lastToken)
-
-  // Iterate over the tokens and create our regexp string.
-  for (var i = 0; i < tokens.length; i++) {
-    var token = tokens[i]
-
-    if (typeof token === 'string') {
-      route += escapeString(token)
-    } else {
-      var prefix = escapeString(token.prefix)
-      var capture = token.pattern
-
-      if (token.repeat) {
-        capture += '(?:' + prefix + capture + ')*'
-      }
-
-      if (token.optional) {
-        if (prefix) {
-          capture = '(?:' + prefix + '(' + capture + '))?'
-        } else {
-          capture = '(' + capture + ')?'
-        }
-      } else {
-        capture = prefix + '(' + capture + ')'
-      }
-
-      route += capture
-    }
-  }
-
-  // In non-strict mode we allow a slash at the end of match. If the path to
-  // match already ends with a slash, we remove it for consistency. The slash
-  // is valid at the end of a path match, not in the middle. This is important
-  // in non-ending mode, where "/test/" shouldn't match "/test//route".
-  if (!strict) {
-    route = (endsWithSlash ? route.slice(0, -2) : route) + '(?:\\/(?=$))?'
-  }
-
-  if (end) {
-    route += '$'
-  } else {
-    // In non-ending mode, we need the capturing groups to match as much as
-    // possible by using a positive lookahead to the end or next path segment.
-    route += strict && endsWithSlash ? '' : '(?=\\/|$)'
-  }
-
-  return new RegExp('^' + route, flags(options))
-}
-
-/**
- * Normalize the given path string, returning a regular expression.
- *
- * An empty array can be passed in for the keys, which will hold the
- * placeholder key descriptions. For example, using `/user/:id`, `keys` will
- * contain `[{ name: 'id', delimiter: '/', optional: false, repeat: false }]`.
- *
- * @param  {(String|RegExp|Array)} path
- * @param  {Array}                 [keys]
- * @param  {Object}                [options]
- * @return {RegExp}
- */
-function pathToRegexp (path, keys, options) {
-  keys = keys || []
-
-  if (!isarray(keys)) {
-    options = keys
-    keys = []
-  } else if (!options) {
-    options = {}
-  }
-
-  if (path instanceof RegExp) {
-    return regexpToRegexp(path, keys, options)
-  }
-
-  if (isarray(path)) {
-    return arrayToRegexp(path, keys, options)
-  }
-
-  return stringToRegexp(path, keys, options)
-}
-
-},{"isarray":4}],4:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}]},{},[1])(1)
-});</script>
-<script>
-  window.addEventListener('WebComponentsReady', function() {
-
-    // We use Page.js for routing. This is a Micro
-    // client-side router inspired by the Express router
-    // More info: https://visionmedia.github.io/page.js/
-
-    // Removes end / from app.baseUrl which page.base requires for production
-    if (window.location.port === '') {  // if production
-      page.base(app.baseUrl.replace(/\/$/, ''));
-    }
-
-    // Middleware
-    // function scrollToTop(ctx, next) {
-    //   app.scrollPageToTop();
-    //   next();
-    // }
-
-    // Routes
-    // page('*', scrollToTop, function(ctx, next) {
-    page('*', function(ctx, next) {
-      next();
-    });
-
-    page('/', function() {
-      app.route = 'home';
-    });
-
-    page(app.baseUrl, function() {
-      app.route = 'home';
-    });
-
-    page('/users', function() {
-      app.route = 'users';
-    });
-
-    page('/users/:name', function(data) {
-      app.route = 'user-info';
-      app.params = data.params;
-    });
-
-    page('/contact', function() {
-      app.route = 'contact';
-    });
-
-    page('/product', function() {
-      app.route = 'product';
-    });
-
-    page('/service', function() {
-      app.route = 'service';
-    });
-
-    // 404
-    page('*', function() {
-      app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
-      app.$.toast.show();
-      page.redirect(app.baseUrl);
-    });
-
-    // add #! before urls
-    page({
-      hashbang: false
-    });
-
-  });
-</script>
-<style is="custom-style">
-
-  /*
-   Polymer includes a shim for CSS Custom Properties that we can use for application theming.
-   Below, you'll find the default palette for the Polymer Starter Kit layout. Feel free to play
-   with changing the colors used or generate your own palette of colours at MaterialPalette.com.
-
-   See https://www.polymer-project.org/1.0/docs/devguide/styling.html#xscope-styling-details
-   for further information on custom CSS properties.
-   */
-
-  /* Application theme */
-
-  :root {
-    --primary-text-color: #212121;
-    --primary-background-color: #ffffff;
-    --secondary-text-color: #737373;
-    --disabled-text-color: #9b9b9b;
-    --divider-color: #dbdbdb;
-    --primary-color: #3f51b5;
-    --light-primary-color: #c5cae9;
-    --dark-primary-color: #303f9f;
-    --accent-color: #ff4081;
-    --light-accent-color: #ff80ab;
-    --dark-accent-color: #f50057;
-
-    /* Components */
-
-    /* paper-drawer-panel */
-    --drawer-menu-color: #ffffff;
-    --drawer-border-color: 1px solid #ccc;
-    --drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
-
-    /* paper-menu */
-    --paper-menu-background-color: #fff;
-    --menu-link-color: #111111;
-  }
-
-  /* General styles */
-
-  body {
-    @apply(--layout-fullbleed);
-    @apply(--layout-vertical);
-  }
-
-  .space {
-    @apply(--layout-flex);
-  }
-
-  #drawerToolbar {
-    color: var(--secondary-text-color);
-    background-color: var(--drawer-menu-color);
-    border-bottom: var(--drawer-toolbar-border-color);
-  }
-
-  #drawerToolbar .menu-name {
-    @apply(--paper-font-title);
-  }
-
-  paper-scroll-header-panel {
-    height: 100%;
-  }
-
-  paper-menu {
-    --paper-menu-selected-item: {
-      color: var(--primary-color);
-    }
-
-    --paper-menu-focused-item-after: {
-      background: var(--primary-color);
-    }
-  }
-
-  paper-menu iron-icon {
-    margin-right: 33px;
-    opacity: 0.54;
-  }
-
-  paper-menu a {
-    @apply(--layout-horizontal);
-    @apply(--layout-center);
-
-    text-decoration: none;
-    color: var(--menu-link-color);
-    /*font-family: 'Roboto', 'Noto', sans-serif;*/
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 24px;
-    min-height: 48px;
-    padding: 0 16px;
-  }
-
-  #mainToolbar.tall .app-name {
-    font-size: 40px;
-    font-weight: 300;
-    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
-    -webkit-transform-origin: left center;
-    transform-origin: left center;
-  }
-
-  #mainToolbar .middle-container,
-  #mainToolbar .bottom-container {
-    @apply(--layout-horizontal);
-    @apply(--layout-center);
-  }
-
-  #mainToolbar .middle-container  {
-    height: 100%;
-    margin-left: 48px;
-  }
-
-  #mainToolbar:not(.tall) .middle-container {
-    font-size: 18px;
-    padding-bottom: 0;
-  }
-
-  #mainToolbar .bottom-container {
-    @apply(--paper-font-subhead);
-
-    margin-left: 48px;
-    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
-    -webkit-transform-origin: left center;
-    transform-origin: left center;
-  }
-
-  /* Height of the scroll area */
-  .content {
-    height: 900px;
-  }
-
-  section[data-route="home"] paper-material {
-    @apply(--paper-font-body2);
-  }
-
-  section[data-route="home"] paper-material .subhead {
-    @apply(--paper-font-subhead);
-  }
-
-  paper-material {
-    border-radius: 2px;
-    height: 100%;
-    padding: 16px 0 16px 0;
-    width: calc(98.66% - 16px);
-    margin: 16px auto;
-    background: white;
-  }
-
-  #toast .toast-hide-button {
-    color: #eeff41;
-    margin: 10px;
-  }
-
-  /* Breakpoints */
-
-  /* Small */
-  @media (max-width: 600px) {
-
-    #drawer .paper-toolbar {
-      margin-left: 16px;
-    }
-
-    #mainToolbar.tall .app-name {
-      font-size: 24px;
-      font-weight: 400;
-    }
-
-    paper-material {
-      --menu-container-display: none;
-      width: calc(97.33% - 32px);
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-
-  }
-
-  /* Tablet+ */
-  @media (min-width: 601px) {
-
-    #drawer.paper-drawer-panel > [drawer] {
-      border-right: 1px solid rgba(0, 0, 0, 0.14);
-    }
-
-    iron-pages {
-      padding: 48px 62px;
-    }
-
-    paper-material {
-      width: calc(98% - 46px);
-      margin-bottom: 32px;
-      padding-left: 30px;
-      padding-right: 30px;
-    }
-
-  }
-
-  /* Material Design Adaptive Breakpoints */
-  /*
-    Below you'll find CSS media queries based on the breakpoint guidance
-    published by the Material Design team. You can choose to use, customise
-    or remove these breakpoints based on your needs.
-
-    http://www.google.com/design/spec/layout/adaptive-ui.html#adaptive-ui-breakpoints
-   */
-
-  /* mobile-small */
-  @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) { }
-  /* mobile-large */
-  @media all and (min-width: 361px) and (orientation: portrait) { }
-  /* mobile-small-landscape */
-  @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
-  /* mobile-large-landscape */
-  @media all and (min-width: 481px) and (orientation: landscape) { }
-  /* tablet-small-landscape */
-  @media all and (min-width: 600px) and (max-width: 960px) and (orientation: landscape) { }
-  /* tablet-large-landscape */
-  @media all and (min-width: 961px) and (orientation: landscape) { }
-  /* tablet-small */
-  @media all and (min-width: 600px) and (orientation: portrait) { }
-  /* tablet-large */
-  @media all and (min-width: 601px) and (max-width: 840px) and (orientation : portrait) { }
-  /* desktop-x-small-landscape */
-  @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
-  /* desktop-x-small */
-  @media all and (min-width: 0) and (max-width: 480px) and (max-aspect-ratio: 4/3) { }
-  /* desktop-small-landscape */
-  @media all and (min-width: 481px) and (max-width: 840px) and (orientation: landscape) { }
-  /* desktop-small */
-  @media all and (min-width: 481px) and (max-width: 840px) and (max-aspect-ratio: 4/3) { }
-  /* desktop-medium-landscape */
-  @media all and (min-width: 841px) and (max-width: 1280px) and (orientation: landscape) { }
-  /* desktop-medium */
-  @media all and (min-width: 841px) and (max-width: 1280px) and (max-aspect-ratio: 4/3) { }
-  /* desktop-large */
-  @media all and (min-width: 1281px) and (max-width: 1600px) { }
-  /* desktop-xlarge */
-  @media all and (min-width: 1601px) and (max-width: 1920px) { }
-</style>
-<!-- shared styles for all elements and index.html -->
-<dom-module id="shared-styles" assetpath="styles/">
-  <template>
-    <style>
-      .page-title {
-        @apply(--paper-font-display2);
-      }
-      paper-scroll-header-panel div.content {
-        height: auto;
-      }
-      paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
-        pointer-events: none;
-      }
-      .language-selector-bottom {
-        display: none;
-      }
-      paper-menu {
-        --paper-menu-selected-item: {
-          color: var(--primary-color);
-        }
-
-        --paper-menu-focused-item-after: {
-          background: var(--primary-color);
-        }
-      }
-
-      paper-menu iron-icon {
-        margin-right: 33px;
-        opacity: 0.54;
-      }
-
-      paper-menu a {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-
-        text-decoration: none;
-        color: var(--menu-link-color);
-        /*font-family: 'Roboto', 'Noto', sans-serif;*/
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 24px;
-        min-height: 48px;
-        padding: 0 16px;
-      }
-      paper-material {
-        border-radius: 2px;
-        height: 100%;
-        padding: 16px 0 16px 0;
-        width: calc(98.66% - 16px);
-        margin: 16px auto;
-        background: white;
-      }
-      section[data-route="home"] paper-material {
-        @apply(--paper-font-body2);
-      }
-
-      section[data-route="home"] paper-material .subhead {
-        @apply(--paper-font-subhead);
-      }
-
-      @media (max-width: 600px) {
-        .page-title {
-          font-size: 24px!important;
-        }
-        .language-selector-bottom {
-          float: right;
-          display: flex;
-        }
-        paper-material {
-          --menu-container-display: none;
-          width: calc(97.33% - 32px);
-          padding-left: 16px;
-          padding-right: 16px;
-        }
-      }
-
-      /* Tablet+ */
-      @media (min-width: 601px) {
-        #drawer.paper-drawer-panel > [drawer] {
-          border-right: 1px solid rgba(0, 0, 0, 0.14);
-        }
-
-        iron-pages {
-          padding: 48px 62px;
-        }
-
-        paper-material {
-          width: calc(98% - 46px);
-          margin-bottom: 32px;
-          padding-left: 30px;
-          padding-right: 30px;
-        }
-      }
-    </style>
-  </template>
-</dom-module>
-<!-- <link rel="import" href="../../bower_components/iron-image/iron-image.html"> -->
-
-<dom-module id="slider-component" assetpath="elements/slider-component/">
-  <template>
-    <style include="shared-styles">
-      :host {
-        display: block;
-      }
-
-      @keyframes slidy {
-        0% { left: 0%; }
-        20% { left: 0%; }
-        25% { left: -100%; }
-        45% { left: -100%; }
-        50% { left: -200%; }
-        70% { left: -200%; }
-        75% { left: -300%; }
-        95% { left: -300%; }
-        100% { left: -400%; }
-      }
-
-      body { margin: 0; }
-      div.slider { overflow: hidden; }
-      div.slider figure img { width: 20%; float: left; }
-      /*div.slider figure iron-image {
-        width: 20%; float: left;
-        background-color: lightgray;
-      }*/
-      div.slider figure {
-        position: relative;
-        width: 500%;
-        margin: 0;
-        left: 0;
-        text-align: left;
-        font-size: 0;
-        animation: 30s slidy infinite;
-      }
-
-    </style>
-
-
-    <div class="slider">
-      <figure>
-        <template is="dom-repeat" items="{{pictures}}">
-          <!-- <iron-image src="{{item}}" preload sizing="contain"></iron-image> -->
-          <img src="{{item}}" alt="">
-        </template>
-      </figure>
-    </div>
-  </template>
-
-  <script>
-    (function() {
-      'use strict';
-
-      Polymer({
-        is: 'slider-component',
-
-        properties: {
-          greeting: {
-            type: String,
-            value: 'Welcome!'
-          },
-          pictures: {
-            type: Object
-          }
-        }
-
-      });
-    })();
-  </script>
-</dom-module>
-<dom-module id="my-greeting" assetpath="elements/my-greeting/">
-  <template>
-    <style include="shared-styles">
-      :host {
-        display: block;
-      }
-
-      span,
-      input {
-        @apply(--paper-font-body2);
-      }
-      slider-component {
-        width: 60%;
-        height: 220px;
-        overflow: hidden;
-      }
-    </style>
-    <b>{{defaultLang}}</b>
-    <h2 class="page-title">{{greeting}}</h2>
-    <span>Update text to change the greeting.</span>
-    <!-- Listens for "input" event and sets greeting to <input>.value -->
-    <input value="{{greeting::input}}">
-    <slider-component pictures="[[pictures]]"></slider-component>
-  </template>
-
-  <script>
-    (function() {
-      'use strict';
-
-      Polymer({
-        is: 'my-greeting',
-
-        properties: {
-          greeting: {
-            type: String,
-            value: 'Welcome!'
-          },
-          pictures: {
-            type: Array,
-            value: [
-              '/images/services/serv2.png',
-              '/images/services/serv3.png'
-            ]
-          }
-        }
-      });
-    })();
-  </script>
-</dom-module>
-<dom-module id="my-list" assetpath="elements/my-list/">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-
-      span {
-        @apply(--paper-font-body1);
-      }
-    </style>
-
-    <ul>
-      <template is="dom-repeat" items="{{items}}">
-        <li><span>{{item}}</span></li>
-      </template>
-    </ul>
-  </template>
-
-  <script>
-    (function() {
-      'use strict';
-
-      Polymer({
-        is: 'my-list',
-
-        properties: {
-          items: {
-            type: Array,
-            notify: true,
-          }
-        },
-
-        ready: function() {
-          this.items = [
-            'Responsive Web App boilerplate',
-            'Iron Elements and Paper Elements',
-            'End-to-end Build Tooling (including Vulcanize)',
-            'Unit testing with Web Component Tester',
-            'Routing with Page.js',
-            'Offline support with the Platinum Service Worker Elements'
-          ];
-        }
-      });
-    })();
-  </script>
-</dom-module>
-<script>
-
-  /**
-   * `Polymer.IronMenubarBehavior` implements accessible menubar behavior.
-   *
-   * @polymerBehavior Polymer.IronMenubarBehavior
-   */
-  Polymer.IronMenubarBehaviorImpl = {
-
-    hostAttributes: {
-      'role': 'menubar'
-    },
-
-    keyBindings: {
-      'left': '_onLeftKey',
-      'right': '_onRightKey'
-    },
-
-    _onUpKey: function(event) {
-      this.focusedItem.click();
-      event.detail.keyboardEvent.preventDefault();
-    },
-
-    _onDownKey: function(event) {
-      this.focusedItem.click();
-      event.detail.keyboardEvent.preventDefault();
-    },
-
-    _onLeftKey: function() {
-      this._focusPrevious();
-    },
-
-    _onRightKey: function() {
-      this._focusNext();
-    },
-
-    _onKeydown: function(event) {
-      if (this.keyboardEventMatchesKeys(event, 'up down left right esc')) {
-        return;
-      }
-
-      // all other keys focus the menu item starting with that character
-      this._focusWithKeyboardEvent(event);
-    }
-
-  };
-
-  /** @polymerBehavior Polymer.IronMenubarBehavior */
-  Polymer.IronMenubarBehavior = [
-    Polymer.IronMenuBehavior,
-    Polymer.IronMenubarBehaviorImpl
-  ];
-
-</script>
-<iron-iconset-svg name="paper-tabs" size="24">
-<svg><defs>
-<g id="chevron-left"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></g>
-<g id="chevron-right"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></g>
-</defs></svg>
-</iron-iconset-svg>
-<!--
-`paper-tab` is styled to look like a tab.  It should be used in conjunction with
-`paper-tabs`.
-
-Example:
-
-    <paper-tabs selected="0">
-      <paper-tab>TAB 1</paper-tab>
-      <paper-tab>TAB 2</paper-tab>
-      <paper-tab>TAB 3</paper-tab>
-    </paper-tabs>
-
-### Styling
-
-The following custom properties and mixins are available for styling:
-
-Custom property | Description | Default
-----------------|-------------|----------
-`--paper-tab-ink` | Ink color | `--paper-yellow-a100`
-`--paper-tab` | Mixin applied to the tab | `{}`
-`--paper-tab-content` | Mixin applied to the tab content | `{}`
-`--paper-tab-content-unselected` | Mixin applied to the tab content when the tab is not selected | `{}`
-
--->
-
-<dom-module id="paper-tab" assetpath="bower_components/paper-tabs/">
-  <template>
-    <style>
-      :host {
-        @apply(--layout-inline);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
-        @apply(--layout-flex);
-
-        position: relative;
-        padding: 0 12px;
-        overflow: hidden;
-        cursor: pointer;
-
-        @apply(--paper-tab);
-      }
-
-      :host(:focus) {
-        outline: none;
-      }
-
-      :host([link]) {
-        padding: 0;
-      }
-
-      .tab-content {
-        height: 100%;
-        transform: translateZ(0);
-          -webkit-transform: translateZ(0);
-        transition: opacity 0.1s cubic-bezier(0.4, 0.0, 1, 1);
-        @apply(--layout-horizontal);
-        @apply(--layout-center-center);
-        @apply(--layout-flex-auto);
-        @apply(--paper-tab-content);
-      }
-
-      :host(:not(.iron-selected)) > .tab-content {
-        opacity: 0.8;
-
-        @apply(--paper-tab-content-unselected);
-      }
-
-      :host(:focus) .tab-content {
-        opacity: 1;
-        font-weight: 700;
-      }
-
-      paper-ripple {
-        color: var(--paper-tab-ink, --paper-yellow-a100);
-      }
-
-      .tab-content > ::content > a {
-        @apply(--layout-flex)
-
-        height: 100%;
-      }
-    </style>
-
-    <div class="tab-content">
-      <content></content>
-    </div>
-  </template>
-
-  <script>
-    Polymer({
-      is: 'paper-tab',
-
-      behaviors: [
-        Polymer.IronControlState,
-        Polymer.IronButtonState,
-        Polymer.PaperRippleBehavior
-      ],
-
-      hostAttributes: {
-        role: 'tab'
-      },
-
-      listeners: {
-        down: '_updateNoink'
-      },
-
-      ready: function() {
-        var ripple = this.getRipple();
-        ripple.initialOpacity = 0.95;
-        ripple.opacityDecayVelocity = 0.98;
-      },
-
-      attached: function() {
-        this._updateNoink();
-      },
-
-      get _parentNoink () {
-        var parent = Polymer.dom(this).parentNode;
-        return !!parent && !!parent.noink;
-      },
-
-      _updateNoink: function() {
-        this.noink = !!this.noink || !!this._parentNoink;
-      }
-    });
-  </script>
-</dom-module>
-<!--
-Material design: [Tabs](https://www.google.com/design/spec/components/tabs.html)
-
-`paper-tabs` makes it easy to explore and switch between different views or functional aspects of
-an app, or to browse categorized data sets.
-
-Use `selected` property to get or set the selected tab.
-
-Example:
-
-    <paper-tabs selected="0">
-      <paper-tab>TAB 1</paper-tab>
-      <paper-tab>TAB 2</paper-tab>
-      <paper-tab>TAB 3</paper-tab>
-    </paper-tabs>
-
-See <a href="#paper-tab">paper-tab</a> for more information about
-`paper-tab`.
-
-A common usage for `paper-tabs` is to use it along with `iron-pages` to switch
-between different views.
-
-    <paper-tabs selected="{{selected}}">
-      <paper-tab>Tab 1</paper-tab>
-      <paper-tab>Tab 2</paper-tab>
-      <paper-tab>Tab 3</paper-tab>
-    </paper-tabs>
-
-    <iron-pages selected="{{selected}}">
-      <div>Page 1</div>
-      <div>Page 2</div>
-      <div>Page 3</div>
-    </iron-pages>
-
-
-To use links in tabs, add `link` attribute to `paper-tab` and put an `<a>`
-element in `paper-tab`.
-
-Example:
-
-    <style is="custom-style">
-      .link {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-center);
-      }
-    }
-    </style>
-
-    <paper-tabs selected="0">
-      <paper-tab link>
-        <a href="#link1" class="link">TAB ONE</a>
-      </paper-tab>
-      <paper-tab link>
-        <a href="#link2" class="link">TAB TWO</a>
-      </paper-tab>
-      <paper-tab link>
-        <a href="#link3" class="link">TAB THREE</a>
-      </paper-tab>
-    </paper-tabs>
-
-### Styling
-
-The following custom properties and mixins are available for styling:
-
-Custom property | Description | Default
-----------------|-------------|----------
-`--paper-tabs-selection-bar-color` | Color for the selection bar | `--paper-yellow-a100`
-`--paper-tabs` | Mixin applied to the tabs | `{}`
-
-@hero hero.svg
-@demo demo/index.html
--->
-
-<dom-module id="paper-tabs" assetpath="bower_components/paper-tabs/">
-  <template>
-    <style>
-      :host {
-        @apply(--layout);
-        @apply(--layout-center);
-
-        height: 48px;
-        font-size: 14px;
-        font-weight: 500;
-        overflow: hidden;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          -webkit-user-select: none;
-        user-select: none;
-        -webkit-tap-highlight-color: rgba(0,0,0,0);
-
-        @apply(--paper-tabs);
-      }
-
-      :host-context([dir=rtl]) {
-        @apply(--layout-horizontal-reverse);
-      }
-
-      #tabsContainer {
-        position: relative;
-        height: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        @apply(--layout-flex);
-      }
-
-      #tabsContent {
-        height: 100%;
-      }
-
-      #tabsContent.scrollable {
-        position: absolute;
-        white-space: nowrap;
-      }
-
-      #tabsContent.horizontal {
-        @apply(--layout-horizontal);
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      .not-visible {
-        opacity: 0;
-        cursor: default;
-      }
-
-      paper-icon-button {
-        width: 48px;
-        height: 48px;
-        padding: 12px;
-        margin: 0 4px;
-      }
-
-      #selectionBar {
-        position: absolute;
-        height: 2px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: var(--paper-tabs-selection-bar-color, --paper-yellow-a100);
-          -webkit-transform: scale(0);
-        transform: scale(0);
-          -webkit-transform-origin: left center;
-        transform-origin: left center;
-          transition: -webkit-transform;
-        transition: transform;
-
-        @apply(--paper-tabs-selection-bar);
-      }
-
-      #selectionBar.align-bottom {
-        top: 0;
-        bottom: auto;
-      }
-
-      #selectionBar.expand {
-        transition-duration: 0.15s;
-        transition-timing-function: cubic-bezier(0.4, 0.0, 1, 1);
-      }
-
-      #selectionBar.contract {
-        transition-duration: 0.18s;
-        transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
-      }
-
-      #tabsContent > ::content > *:not(#selectionBar) {
-        height: 100%;
-      }
-    </style>
-
-    <paper-icon-button icon="paper-tabs:chevron-left" class$="[[_computeScrollButtonClass(_leftHidden, scrollable, hideScrollButtons)]]" on-up="_onScrollButtonUp" on-down="_onLeftScrollButtonDown" tabindex="-1"></paper-icon-button>
-
-    <div id="tabsContainer" on-track="_scroll" on-down="_down">
-      <div id="tabsContent" class$="[[_computeTabsContentClass(scrollable)]]">
-        <content select="*"></content>
-        <div id="selectionBar" class$="[[_computeSelectionBarClass(noBar, alignBottom)]]" on-transitionend="_onBarTransitionEnd"></div>
-      </div>
-    </div>
-
-    <paper-icon-button icon="paper-tabs:chevron-right" class$="[[_computeScrollButtonClass(_rightHidden, scrollable, hideScrollButtons)]]" on-up="_onScrollButtonUp" on-down="_onRightScrollButtonDown" tabindex="-1"></paper-icon-button>
-
-  </template>
-
-  <script>
-    Polymer({
-      is: 'paper-tabs',
-
-      behaviors: [
-        Polymer.IronResizableBehavior,
-        Polymer.IronMenubarBehavior
-      ],
-
-      properties: {
-        /**
-         * If true, ink ripple effect is disabled. When this property is changed,
-         * all descendant `<paper-tab>` elements have their `noink` property
-         * changed to the new value as well.
-         */
-        noink: {
-          type: Boolean,
-          value: false,
-          observer: '_noinkChanged'
-        },
-
-        /**
-         * If true, the bottom bar to indicate the selected tab will not be shown.
-         */
-        noBar: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
-         * If true, the slide effect for the bottom bar is disabled.
-         */
-        noSlide: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
-         * If true, tabs are scrollable and the tab width is based on the label width.
-         */
-        scrollable: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
-         * If true, dragging on the tabs to scroll is disabled.
-         */
-        disableDrag: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
-         * If true, scroll buttons (left/right arrow) will be hidden for scrollable tabs.
-         */
-        hideScrollButtons: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
-         * If true, the tabs are aligned to bottom (the selection bar appears at the top).
-         */
-        alignBottom: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
-         * Gets or sets the selected element. The default is to use the index of the item.
-         */
-        selected: {
-          type: String,
-          notify: true
-        },
-
-        selectable: {
-          type: String,
-          value: 'paper-tab'
-        },
-
-        _step: {
-          type: Number,
-          value: 10
-        },
-
-        _holdDelay: {
-          type: Number,
-          value: 1
-        },
-
-        _leftHidden: {
-          type: Boolean,
-          value: false
-        },
-
-        _rightHidden: {
-          type: Boolean,
-          value: false
-        },
-
-        _previousTab: {
-          type: Object
-        }
-      },
-
-      hostAttributes: {
-        role: 'tablist'
-      },
-
-      listeners: {
-        'iron-resize': '_onResize',
-        'iron-select': '_onIronSelect',
-        'iron-deselect': '_onIronDeselect'
-      },
-
-      created: function() {
-        this._holdJob = null;
-      },
-
-      ready: function() {
-        this.setScrollDirection('y', this.$.tabsContainer);
-      },
-
-      _noinkChanged: function(noink) {
-        var childTabs = Polymer.dom(this).querySelectorAll('paper-tab');
-        childTabs.forEach(noink ? this._setNoinkAttribute : this._removeNoinkAttribute);
-      },
-
-      _setNoinkAttribute: function(element) {
-        element.setAttribute('noink', '');
-      },
-
-      _removeNoinkAttribute: function(element) {
-        element.removeAttribute('noink');
-      },
-
-      _computeScrollButtonClass: function(hideThisButton, scrollable, hideScrollButtons) {
-        if (!scrollable || hideScrollButtons) {
-          return 'hidden';
-        }
-
-        if (hideThisButton) {
-          return 'not-visible';
-        }
-
-        return '';
-      },
-
-      _computeTabsContentClass: function(scrollable) {
-        return scrollable ? 'scrollable' : 'horizontal';
-      },
-
-      _computeSelectionBarClass: function(noBar, alignBottom) {
-        if (noBar) {
-          return 'hidden';
-        } else if (alignBottom) {
-          return 'align-bottom';
-        }
-
-        return '';
-      },
-
-      // TODO(cdata): Add `track` response back in when gesture lands.
-
-      _onResize: function() {
-        this.debounce('_onResize', function() {
-          this._scroll();
-          this._tabChanged(this.selectedItem);
-        }, 10);
-      },
-
-      _onIronSelect: function(event) {
-        this._tabChanged(event.detail.item, this._previousTab);
-        this._previousTab = event.detail.item;
-        this.cancelDebouncer('tab-changed');
-      },
-
-      _onIronDeselect: function(event) {
-        this.debounce('tab-changed', function() {
-          this._tabChanged(null, this._previousTab);
-        // See polymer/polymer#1305
-        }, 1);
-      },
-
-      get _tabContainerScrollSize () {
-        return Math.max(
-          0,
-          this.$.tabsContainer.scrollWidth -
-            this.$.tabsContainer.offsetWidth
-        );
-      },
-
-
-      _scroll: function(e, detail) {
-        if (!this.scrollable) {
-          return;
-        }
-
-        var ddx = (detail && -detail.ddx) || 0;
-        this._affectScroll(ddx);
-      },
-
-      _down: function(e) {
-        // go one beat async to defeat IronMenuBehavior
-        // autorefocus-on-no-selection timeout
-        this.async(function() {
-          if (this._defaultFocusAsync) {
-            this.cancelAsync(this._defaultFocusAsync);
-            this._defaultFocusAsync = null;
-          }
-        }, 1);
-      },
-
-      _affectScroll: function(dx) {
-        this.$.tabsContainer.scrollLeft += dx;
-
-        var scrollLeft = this.$.tabsContainer.scrollLeft;
-
-        this._leftHidden = scrollLeft === 0;
-        this._rightHidden = scrollLeft === this._tabContainerScrollSize;
-      },
-
-      _onLeftScrollButtonDown: function() {
-        this._scrollToLeft();
-        this._holdJob = setInterval(this._scrollToLeft.bind(this), this._holdDelay);
-      },
-
-      _onRightScrollButtonDown: function() {
-        this._scrollToRight();
-        this._holdJob = setInterval(this._scrollToRight.bind(this), this._holdDelay);
-      },
-
-      _onScrollButtonUp: function() {
-        clearInterval(this._holdJob);
-        this._holdJob = null;
-      },
-
-      _scrollToLeft: function() {
-        this._affectScroll(-this._step);
-      },
-
-      _scrollToRight: function() {
-        this._affectScroll(this._step);
-      },
-
-      _tabChanged: function(tab, old) {
-        if (!tab) {
-          this._positionBar(0, 0);
-          return;
-        }
-
-        var r = this.$.tabsContent.getBoundingClientRect();
-        var w = r.width;
-        var tabRect = tab.getBoundingClientRect();
-        var tabOffsetLeft = tabRect.left - r.left;
-
-        this._pos = {
-          width: this._calcPercent(tabRect.width, w),
-          left: this._calcPercent(tabOffsetLeft, w)
-        };
-
-        if (this.noSlide || old == null) {
-          // position bar directly without animation
-          this._positionBar(this._pos.width, this._pos.left);
-          return;
-        }
-
-        var oldRect = old.getBoundingClientRect();
-        var oldIndex = this.items.indexOf(old);
-        var index = this.items.indexOf(tab);
-        var m = 5;
-
-        // bar animation: expand
-        this.$.selectionBar.classList.add('expand');
-
-        if (oldIndex < index) {
-          this._positionBar(this._calcPercent(tabRect.left + tabRect.width - oldRect.left, w) - m,
-              this._left);
-        } else {
-          this._positionBar(this._calcPercent(oldRect.left + oldRect.width - tabRect.left, w) - m,
-              this._calcPercent(tabOffsetLeft, w) + m);
-        }
-
-        if (this.scrollable) {
-          this._scrollToSelectedIfNeeded(tabRect.width, tabOffsetLeft);
-        }
-      },
-
-      _scrollToSelectedIfNeeded: function(tabWidth, tabOffsetLeft) {
-        var l = tabOffsetLeft - this.$.tabsContainer.scrollLeft;
-        if (l < 0) {
-          this.$.tabsContainer.scrollLeft += l;
-        } else {
-          l += (tabWidth - this.$.tabsContainer.offsetWidth);
-          if (l > 0) {
-            this.$.tabsContainer.scrollLeft += l;
-          }
-        }
-      },
-
-      _calcPercent: function(w, w0) {
-        return 100 * w / w0;
-      },
-
-      _positionBar: function(width, left) {
-        width = width || 0;
-        left = left || 0;
-
-        this._width = width;
-        this._left = left;
-        this.transform(
-            'translate3d(' + left + '%, 0, 0) scaleX(' + (width / 100) + ')',
-            this.$.selectionBar);
-      },
-
-      _onBarTransitionEnd: function(e) {
-        var cl = this.$.selectionBar.classList;
-        // bar animation: expand -> contract
-        if (cl.contains('expand')) {
-          cl.remove('expand');
-          cl.add('contract');
-          this._positionBar(this._pos.width, this._pos.left);
-        // bar animation done
-        } else if (cl.contains('contract')) {
-          cl.remove('contract');
-        }
-      }
-    });
-  </script>
-</dom-module>
-<dom-module id="header-bar" assetpath="elements/header-bar/">
-  <template>
-    <style include="shared-styles">
-      :host {
-        display: block;
-        --color-selected: rgba(45, 45, 45, 0.6);
-        --color-background: rgba(158, 156, 156, 0.52);
-        --color-hover-tab: lightblue;
-        --paper-tab-ink: var(--color-selected);
-      }
-      span, input {
-        @apply(--paper-font-body2);
-      }
-
-      a.link {
-        color: black;
-        background-color: inherit;
-        display: flex;
-        justify-content: center;
-        text-decoration: none;
-        height: 100%;
-        align-items: center;
-        font-size: 20px;
-        font-weight: bold;
-        transition: color 0.5s;
-      }
-      .language-selector {
-        display: inline-flex;
-        width: 119px;
-        position: relative;
-        float: right;
-        margin: 10px 5px;
-      }
-      .name {
-        display: inline-flex;
-      }
-      .middle-header {
-        margin-top: 0;
-        margin-bottom: 12px;
-      }
-      .middle-header, .top-header {
-        margin-left: 25%;
-        color: white;
-      }
-      .top-header .name {
-        font-size: 6vw;
-      }
-      .middle-header .subtitle {
-        font-size: 3vw;
-      }
-      .bottom-header {
-      }
-
-      .bottom-header paper-tab {
-        background-color: var(--color-background);
-        transition: background-color 0.5s ease;
-      }
-      .bottom-header paper-tab:hover:not(.iron-selected) {
-        background-color: var(--color-hover-tab);
-      }
-      .bottom-header paper-tab.iron-selected {
-        background-color: var(--color-selected);
-      }
-      .bottom-header paper-tab.iron-selected a.link {
-        color: white;
-      }
-
-      /*Media queries*/
-      @media (max-width: 600px) {
-        .top-header .name {
-          font-size: 9vw;
-        }
-        .middle-header .subtitle {
-          font-size: 4vw;
-        }
-        .language-selector {
-          display: none;
-        }
-        a.link {
-          font-size: 3.5vw;
-        }
-      }
-    </style>
-
-    <div class="top-header">
-      <b class="name">BrainPower</b>
-      <language-selector lang="{{lang}}" class="language-selector"></language-selector>
-    </div>
-
-    <div class="middle-header">
-      <b class="subtitle">{{getElementByLang(subtitle,lang)}}</b>
-    </div>
-
-    <div class="bottom-header">
-      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab" no-bar="" noink="">
-        <paper-tab link=""><a href="{{baseUrl}}/" class="link">{{getElementByLang(home,lang)}}</a></paper-tab>
-        <paper-tab link=""><a href="{{baseUrl}}product" class="link">{{getElementByLang(product,lang)}}</a></paper-tab>
-        <paper-tab link=""><a href="{{baseUrl}}service" class="link">{{getElementByLang(service,lang)}}</a></paper-tab>
-        <paper-tab link=""><a href="{{baseUrl}}contact" class="link">{{getElementByLang(contact,lang)}}</a></paper-tab>
-      </paper-tabs>
-    </div>
-
-  </template>
-
-  <script>
-    (function() {
-      'use strict';
-
-      Polymer({
-        is: 'header-bar',
-
-        properties: {
-          greeting: {
-            type: String,
-            value: 'BrainPower'
-          },
-          selected: {
-            type: Number,
-            value: 0
-          },
-          lang: {
-            type: String,
-            notify: true
-          },
-          subtitle: {
-            type: Object,
-            value: {
-              "es": "El poder de la mente avocado a la Ingenieria",
-              "en": "The brain power advocated to the engineering"
-            }
-          },
-          home: {
-            type: Object,
-            value: {
-              "es": "Inicio",
-              "en": "Home"
-            }
-          },
-          product: {
-            type: Object,
-            value: {
-              "es": "Productos",
-              "en": "Products"
-            }
-          },
-          service: {
-            type: Object,
-            value: {
-              "es": "Servicios",
-              "en": "Services"
-            }
-          },
-          contact: {
-            type: Object,
-            value: {
-              "es": "Contacto",
-              "en": "Contact"
-            }
-          }
-        },
-        changeTab: function() {
-
-        },
-
-        getElementByLang: function(elemRecord, currentLang) {
-          return elemRecord[currentLang];
-        }
-
-      });
-    })();
-  </script>
-</dom-module>
-<!--
-Material design: [Menus](https://www.google.com/design/spec/components/menus.html)
-
-`<paper-listbox>` implements an accessible listbox control with Material Design styling. The focused item
-is highlighted, and the selected item has bolded text.
-
-    <paper-listbox>
-      <paper-item>Item 1</paper-item>
-      <paper-item>Item 2</paper-item>
-    </paper-listbox>
-
-An initial selection can be specified with the `selected` attribute.
-
-    <paper-listbox selected="0">
-      <paper-item>Item 1</paper-item>
-      <paper-item>Item 2</paper-item>
-    </paper-listbox>
-
-Make a multi-select listbox with the `multi` attribute. Items in a multi-select listbox can be deselected,
-and multiple item can be selected.
-
-    <paper-listbox multi>
-      <paper-item>Item 1</paper-item>
-      <paper-item>Item 2</paper-item>
-    </paper-listbox>
-
-### Styling
-
-The following custom properties and mixins are available for styling:
-
-Custom property | Description | Default
-----------------|-------------|----------
-`--paper-listbox-background-color`   | Menu background color                                            | `--primary-background-color`
-`--paper-listbox-color`              | Menu foreground color                                            | `--primary-text-color`
-`--paper-listbox`                    | Mixin applied to the listbox                                        | `{}`
-
-### Accessibility
-
-`<paper-listbox>` has `role="listbox"` by default. A multi-select listbox will also have
-`aria-multiselectable` set. It implements key bindings to navigate through the listbox with the up and
-down arrow keys, esc to exit the listbox, and enter to activate a listbox item. Typing the first letter
-of a listbox item will also focus it.
-
-@group Paper Elements
-@element paper-listbox
-@hero hero.svg
-@demo demo/index.html
--->
-
-<dom-module id="paper-listbox" assetpath="bower_components/paper-listbox/">
-  <template>
-    <style>
-      :host {
-        display: block;
-        padding: 8px 0;
-
-        background: var(--paper-listbox-background-color, --primary-background-color);
-        color: var(--paper-listbox-color, --primary-text-color);
-
-        @apply(--paper-listbox);
-      }
-    </style>
-
-    <div class="selectable-content">
-      <content></content>
-    </div>
-  </template>
-
-  <script>
-    (function() {
-      Polymer({
-        is: 'paper-listbox',
-
-        behaviors: [
-          Polymer.IronMenuBehavior
-        ],
-
-        hostAttributes: {
-          role: 'listbox'
-        }
-      });
-    })();
-  </script>
-</dom-module>
 <script>
   /**
   Polymer.IronFormElementBehavior enables a custom element to be included
@@ -24656,39 +22015,2704 @@ respectively.
     })();
   </script>
 </dom-module>
+<script>!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.page=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function (process){
+  /* globals require, module */
+
+  'use strict';
+
+  /**
+   * Module dependencies.
+   */
+
+  var pathtoRegexp = require('path-to-regexp');
+
+  /**
+   * Module exports.
+   */
+
+  module.exports = page;
+
+  /**
+   * Detect click event
+   */
+  var clickEvent = ('undefined' !== typeof document) && document.ontouchstart ? 'touchstart' : 'click';
+
+  /**
+   * To work properly with the URL
+   * history.location generated polyfill in https://github.com/devote/HTML5-History-API
+   */
+
+  var location = ('undefined' !== typeof window) && (window.history.location || window.location);
+
+  /**
+   * Perform initial dispatch.
+   */
+
+  var dispatch = true;
+
+
+  /**
+   * Decode URL components (query string, pathname, hash).
+   * Accommodates both regular percent encoding and x-www-form-urlencoded format.
+   */
+  var decodeURLComponents = true;
+
+  /**
+   * Base path.
+   */
+
+  var base = '';
+
+  /**
+   * Running flag.
+   */
+
+  var running;
+
+  /**
+   * HashBang option
+   */
+
+  var hashbang = false;
+
+  /**
+   * Previous context, for capturing
+   * page exit events.
+   */
+
+  var prevContext;
+
+  /**
+   * Register `path` with callback `fn()`,
+   * or route `path`, or redirection,
+   * or `page.start()`.
+   *
+   *   page(fn);
+   *   page('*', fn);
+   *   page('/user/:id', load, user);
+   *   page('/user/' + user.id, { some: 'thing' });
+   *   page('/user/' + user.id);
+   *   page('/from', '/to')
+   *   page();
+   *
+   * @param {String|Function} path
+   * @param {Function} fn...
+   * @api public
+   */
+
+  function page(path, fn) {
+    // <callback>
+    if ('function' === typeof path) {
+      return page('*', path);
+    }
+
+    // route <path> to <callback ...>
+    if ('function' === typeof fn) {
+      var route = new Route(path);
+      for (var i = 1; i < arguments.length; ++i) {
+        page.callbacks.push(route.middleware(arguments[i]));
+      }
+      // show <path> with [state]
+    } else if ('string' === typeof path) {
+      page['string' === typeof fn ? 'redirect' : 'show'](path, fn);
+      // start [options]
+    } else {
+      page.start(path);
+    }
+  }
+
+  /**
+   * Callback functions.
+   */
+
+  page.callbacks = [];
+  page.exits = [];
+
+  /**
+   * Current path being processed
+   * @type {String}
+   */
+  page.current = '';
+
+  /**
+   * Number of pages navigated to.
+   * @type {number}
+   *
+   *     page.len == 0;
+   *     page('/login');
+   *     page.len == 1;
+   */
+
+  page.len = 0;
+
+  /**
+   * Get or set basepath to `path`.
+   *
+   * @param {String} path
+   * @api public
+   */
+
+  page.base = function(path) {
+    if (0 === arguments.length) return base;
+    base = path;
+  };
+
+  /**
+   * Bind with the given `options`.
+   *
+   * Options:
+   *
+   *    - `click` bind to click events [true]
+   *    - `popstate` bind to popstate [true]
+   *    - `dispatch` perform initial dispatch [true]
+   *
+   * @param {Object} options
+   * @api public
+   */
+
+  page.start = function(options) {
+    options = options || {};
+    if (running) return;
+    running = true;
+    if (false === options.dispatch) dispatch = false;
+    if (false === options.decodeURLComponents) decodeURLComponents = false;
+    if (false !== options.popstate) window.addEventListener('popstate', onpopstate, false);
+    if (false !== options.click) {
+      document.addEventListener(clickEvent, onclick, false);
+    }
+    if (true === options.hashbang) hashbang = true;
+    if (!dispatch) return;
+    var url = (hashbang && ~location.hash.indexOf('#!')) ? location.hash.substr(2) + location.search : location.pathname + location.search + location.hash;
+    page.replace(url, null, true, dispatch);
+  };
+
+  /**
+   * Unbind click and popstate event handlers.
+   *
+   * @api public
+   */
+
+  page.stop = function() {
+    if (!running) return;
+    page.current = '';
+    page.len = 0;
+    running = false;
+    document.removeEventListener(clickEvent, onclick, false);
+    window.removeEventListener('popstate', onpopstate, false);
+  };
+
+  /**
+   * Show `path` with optional `state` object.
+   *
+   * @param {String} path
+   * @param {Object} state
+   * @param {Boolean} dispatch
+   * @return {Context}
+   * @api public
+   */
+
+  page.show = function(path, state, dispatch, push) {
+    var ctx = new Context(path, state);
+    page.current = ctx.path;
+    if (false !== dispatch) page.dispatch(ctx);
+    if (false !== ctx.handled && false !== push) ctx.pushState();
+    return ctx;
+  };
+
+  /**
+   * Goes back in the history
+   * Back should always let the current route push state and then go back.
+   *
+   * @param {String} path - fallback path to go back if no more history exists, if undefined defaults to page.base
+   * @param {Object} [state]
+   * @api public
+   */
+
+  page.back = function(path, state) {
+    if (page.len > 0) {
+      // this may need more testing to see if all browsers
+      // wait for the next tick to go back in history
+      history.back();
+      page.len--;
+    } else if (path) {
+      setTimeout(function() {
+        page.show(path, state);
+      });
+    }else{
+      setTimeout(function() {
+        page.show(base, state);
+      });
+    }
+  };
+
+
+  /**
+   * Register route to redirect from one path to other
+   * or just redirect to another route
+   *
+   * @param {String} from - if param 'to' is undefined redirects to 'from'
+   * @param {String} [to]
+   * @api public
+   */
+  page.redirect = function(from, to) {
+    // Define route from a path to another
+    if ('string' === typeof from && 'string' === typeof to) {
+      page(from, function(e) {
+        setTimeout(function() {
+          page.replace(to);
+        }, 0);
+      });
+    }
+
+    // Wait for the push state and replace it with another
+    if ('string' === typeof from && 'undefined' === typeof to) {
+      setTimeout(function() {
+        page.replace(from);
+      }, 0);
+    }
+  };
+
+  /**
+   * Replace `path` with optional `state` object.
+   *
+   * @param {String} path
+   * @param {Object} state
+   * @return {Context}
+   * @api public
+   */
+
+
+  page.replace = function(path, state, init, dispatch) {
+    var ctx = new Context(path, state);
+    page.current = ctx.path;
+    ctx.init = init;
+    ctx.save(); // save before dispatching, which may redirect
+    if (false !== dispatch) page.dispatch(ctx);
+    return ctx;
+  };
+
+  /**
+   * Dispatch the given `ctx`.
+   *
+   * @param {Object} ctx
+   * @api private
+   */
+
+  page.dispatch = function(ctx) {
+    var prev = prevContext,
+      i = 0,
+      j = 0;
+
+    prevContext = ctx;
+
+    function nextExit() {
+      var fn = page.exits[j++];
+      if (!fn) return nextEnter();
+      fn(prev, nextExit);
+    }
+
+    function nextEnter() {
+      var fn = page.callbacks[i++];
+
+      if (ctx.path !== page.current) {
+        ctx.handled = false;
+        return;
+      }
+      if (!fn) return unhandled(ctx);
+      fn(ctx, nextEnter);
+    }
+
+    if (prev) {
+      nextExit();
+    } else {
+      nextEnter();
+    }
+  };
+
+  /**
+   * Unhandled `ctx`. When it's not the initial
+   * popstate then redirect. If you wish to handle
+   * 404s on your own use `page('*', callback)`.
+   *
+   * @param {Context} ctx
+   * @api private
+   */
+
+  function unhandled(ctx) {
+    if (ctx.handled) return;
+    var current;
+
+    if (hashbang) {
+      current = base + location.hash.replace('#!', '');
+    } else {
+      current = location.pathname + location.search;
+    }
+
+    if (current === ctx.canonicalPath) return;
+    page.stop();
+    ctx.handled = false;
+    location.href = ctx.canonicalPath;
+  }
+
+  /**
+   * Register an exit route on `path` with
+   * callback `fn()`, which will be called
+   * on the previous context when a new
+   * page is visited.
+   */
+  page.exit = function(path, fn) {
+    if (typeof path === 'function') {
+      return page.exit('*', path);
+    }
+
+    var route = new Route(path);
+    for (var i = 1; i < arguments.length; ++i) {
+      page.exits.push(route.middleware(arguments[i]));
+    }
+  };
+
+  /**
+   * Remove URL encoding from the given `str`.
+   * Accommodates whitespace in both x-www-form-urlencoded
+   * and regular percent-encoded form.
+   *
+   * @param {str} URL component to decode
+   */
+  function decodeURLEncodedURIComponent(val) {
+    if (typeof val !== 'string') { return val; }
+    return decodeURLComponents ? decodeURIComponent(val.replace(/\+/g, ' ')) : val;
+  }
+
+  /**
+   * Initialize a new "request" `Context`
+   * with the given `path` and optional initial `state`.
+   *
+   * @param {String} path
+   * @param {Object} state
+   * @api public
+   */
+
+  function Context(path, state) {
+    if ('/' === path[0] && 0 !== path.indexOf(base)) path = base + (hashbang ? '#!' : '') + path;
+    var i = path.indexOf('?');
+
+    this.canonicalPath = path;
+    this.path = path.replace(base, '') || '/';
+    if (hashbang) this.path = this.path.replace('#!', '') || '/';
+
+    this.title = document.title;
+    this.state = state || {};
+    this.state.path = path;
+    this.querystring = ~i ? decodeURLEncodedURIComponent(path.slice(i + 1)) : '';
+    this.pathname = decodeURLEncodedURIComponent(~i ? path.slice(0, i) : path);
+    this.params = {};
+
+    // fragment
+    this.hash = '';
+    if (!hashbang) {
+      if (!~this.path.indexOf('#')) return;
+      var parts = this.path.split('#');
+      this.path = parts[0];
+      this.hash = decodeURLEncodedURIComponent(parts[1]) || '';
+      this.querystring = this.querystring.split('#')[0];
+    }
+  }
+
+  /**
+   * Expose `Context`.
+   */
+
+  page.Context = Context;
+
+  /**
+   * Push state.
+   *
+   * @api private
+   */
+
+  Context.prototype.pushState = function() {
+    page.len++;
+    history.pushState(this.state, this.title, hashbang && this.path !== '/' ? '#!' + this.path : this.canonicalPath);
+  };
+
+  /**
+   * Save the context state.
+   *
+   * @api public
+   */
+
+  Context.prototype.save = function() {
+    history.replaceState(this.state, this.title, hashbang && this.path !== '/' ? '#!' + this.path : this.canonicalPath);
+  };
+
+  /**
+   * Initialize `Route` with the given HTTP `path`,
+   * and an array of `callbacks` and `options`.
+   *
+   * Options:
+   *
+   *   - `sensitive`    enable case-sensitive routes
+   *   - `strict`       enable strict matching for trailing slashes
+   *
+   * @param {String} path
+   * @param {Object} options.
+   * @api private
+   */
+
+  function Route(path, options) {
+    options = options || {};
+    this.path = (path === '*') ? '(.*)' : path;
+    this.method = 'GET';
+    this.regexp = pathtoRegexp(this.path,
+      this.keys = [],
+      options.sensitive,
+      options.strict);
+  }
+
+  /**
+   * Expose `Route`.
+   */
+
+  page.Route = Route;
+
+  /**
+   * Return route middleware with
+   * the given callback `fn()`.
+   *
+   * @param {Function} fn
+   * @return {Function}
+   * @api public
+   */
+
+  Route.prototype.middleware = function(fn) {
+    var self = this;
+    return function(ctx, next) {
+      if (self.match(ctx.path, ctx.params)) return fn(ctx, next);
+      next();
+    };
+  };
+
+  /**
+   * Check if this route matches `path`, if so
+   * populate `params`.
+   *
+   * @param {String} path
+   * @param {Object} params
+   * @return {Boolean}
+   * @api private
+   */
+
+  Route.prototype.match = function(path, params) {
+    var keys = this.keys,
+      qsIndex = path.indexOf('?'),
+      pathname = ~qsIndex ? path.slice(0, qsIndex) : path,
+      m = this.regexp.exec(decodeURIComponent(pathname));
+
+    if (!m) return false;
+
+    for (var i = 1, len = m.length; i < len; ++i) {
+      var key = keys[i - 1];
+      var val = decodeURLEncodedURIComponent(m[i]);
+      if (val !== undefined || !(hasOwnProperty.call(params, key.name))) {
+        params[key.name] = val;
+      }
+    }
+
+    return true;
+  };
+
+
+  /**
+   * Handle "populate" events.
+   */
+
+  var onpopstate = (function () {
+    var loaded = false;
+    if ('undefined' === typeof window) {
+      return;
+    }
+    if (document.readyState === 'complete') {
+      loaded = true;
+    } else {
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          loaded = true;
+        }, 0);
+      });
+    }
+    return function onpopstate(e) {
+      if (!loaded) return;
+      if (e.state) {
+        var path = e.state.path;
+        page.replace(path, e.state);
+      } else {
+        page.show(location.pathname + location.hash, undefined, undefined, false);
+      }
+    };
+  })();
+  /**
+   * Handle "click" events.
+   */
+
+  function onclick(e) {
+
+    if (1 !== which(e)) return;
+
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+    if (e.defaultPrevented) return;
+
+
+
+    // ensure link
+    var el = e.target;
+    while (el && 'A' !== el.nodeName) el = el.parentNode;
+    if (!el || 'A' !== el.nodeName) return;
+
+
+
+    // Ignore if tag has
+    // 1. "download" attribute
+    // 2. rel="external" attribute
+    if (el.hasAttribute('download') || el.getAttribute('rel') === 'external') return;
+
+    // ensure non-hash for the same path
+    var link = el.getAttribute('href');
+    if (!hashbang && el.pathname === location.pathname && (el.hash || '#' === link)) return;
+
+
+
+    // Check for mailto: in the href
+    if (link && link.indexOf('mailto:') > -1) return;
+
+    // check target
+    if (el.target) return;
+
+    // x-origin
+    if (!sameOrigin(el.href)) return;
+
+
+
+    // rebuild path
+    var path = el.pathname + el.search + (el.hash || '');
+
+    // strip leading "/[drive letter]:" on NW.js on Windows
+    if (typeof process !== 'undefined' && path.match(/^\/[a-zA-Z]:\//)) {
+      path = path.replace(/^\/[a-zA-Z]:\//, '/');
+    }
+
+    // same page
+    var orig = path;
+
+    if (path.indexOf(base) === 0) {
+      path = path.substr(base.length);
+    }
+
+    if (hashbang) path = path.replace('#!', '');
+
+    if (base && orig === path) return;
+
+    e.preventDefault();
+    page.show(orig);
+  }
+
+  /**
+   * Event button.
+   */
+
+  function which(e) {
+    e = e || window.event;
+    return null === e.which ? e.button : e.which;
+  }
+
+  /**
+   * Check if `href` is the same origin.
+   */
+
+  function sameOrigin(href) {
+    var origin = location.protocol + '//' + location.hostname;
+    if (location.port) origin += ':' + location.port;
+    return (href && (0 === href.indexOf(origin)));
+  }
+
+  page.sameOrigin = sameOrigin;
+
+}).call(this,require('_process'))
+},{"_process":2,"path-to-regexp":3}],2:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],3:[function(require,module,exports){
+var isarray = require('isarray')
+
+/**
+ * Expose `pathToRegexp`.
+ */
+module.exports = pathToRegexp
+module.exports.parse = parse
+module.exports.compile = compile
+module.exports.tokensToFunction = tokensToFunction
+module.exports.tokensToRegExp = tokensToRegExp
+
+/**
+ * The main path matching regexp utility.
+ *
+ * @type {RegExp}
+ */
+var PATH_REGEXP = new RegExp([
+  // Match escaped characters that would otherwise appear in future matches.
+  // This allows the user to escape special characters that won't transform.
+  '(\\\\.)',
+  // Match Express-style parameters and un-named parameters with a prefix
+  // and optional suffixes. Matches appear as:
+  //
+  // "/:test(\\d+)?" => ["/", "test", "\d+", undefined, "?", undefined]
+  // "/route(\\d+)"  => [undefined, undefined, undefined, "\d+", undefined, undefined]
+  // "/*"            => ["/", undefined, undefined, undefined, undefined, "*"]
+  '([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^()])+)\\))?|\\(((?:\\\\.|[^()])+)\\))([+*?])?|(\\*))'
+].join('|'), 'g')
+
+/**
+ * Parse a string for the raw tokens.
+ *
+ * @param  {String} str
+ * @return {Array}
+ */
+function parse (str) {
+  var tokens = []
+  var key = 0
+  var index = 0
+  var path = ''
+  var res
+
+  while ((res = PATH_REGEXP.exec(str)) != null) {
+    var m = res[0]
+    var escaped = res[1]
+    var offset = res.index
+    path += str.slice(index, offset)
+    index = offset + m.length
+
+    // Ignore already escaped sequences.
+    if (escaped) {
+      path += escaped[1]
+      continue
+    }
+
+    // Push the current path onto the tokens.
+    if (path) {
+      tokens.push(path)
+      path = ''
+    }
+
+    var prefix = res[2]
+    var name = res[3]
+    var capture = res[4]
+    var group = res[5]
+    var suffix = res[6]
+    var asterisk = res[7]
+
+    var repeat = suffix === '+' || suffix === '*'
+    var optional = suffix === '?' || suffix === '*'
+    var delimiter = prefix || '/'
+    var pattern = capture || group || (asterisk ? '.*' : '[^' + delimiter + ']+?')
+
+    tokens.push({
+      name: name || key++,
+      prefix: prefix || '',
+      delimiter: delimiter,
+      optional: optional,
+      repeat: repeat,
+      pattern: escapeGroup(pattern)
+    })
+  }
+
+  // Match any characters still remaining.
+  if (index < str.length) {
+    path += str.substr(index)
+  }
+
+  // If the path exists, push it onto the end.
+  if (path) {
+    tokens.push(path)
+  }
+
+  return tokens
+}
+
+/**
+ * Compile a string to a template function for the path.
+ *
+ * @param  {String}   str
+ * @return {Function}
+ */
+function compile (str) {
+  return tokensToFunction(parse(str))
+}
+
+/**
+ * Expose a method for transforming tokens into the path function.
+ */
+function tokensToFunction (tokens) {
+  // Compile all the tokens into regexps.
+  var matches = new Array(tokens.length)
+
+  // Compile all the patterns before compilation.
+  for (var i = 0; i < tokens.length; i++) {
+    if (typeof tokens[i] === 'object') {
+      matches[i] = new RegExp('^' + tokens[i].pattern + '$')
+    }
+  }
+
+  return function (obj) {
+    var path = ''
+    var data = obj || {}
+
+    for (var i = 0; i < tokens.length; i++) {
+      var token = tokens[i]
+
+      if (typeof token === 'string') {
+        path += token
+
+        continue
+      }
+
+      var value = data[token.name]
+      var segment
+
+      if (value == null) {
+        if (token.optional) {
+          continue
+        } else {
+          throw new TypeError('Expected "' + token.name + '" to be defined')
+        }
+      }
+
+      if (isarray(value)) {
+        if (!token.repeat) {
+          throw new TypeError('Expected "' + token.name + '" to not repeat, but received "' + value + '"')
+        }
+
+        if (value.length === 0) {
+          if (token.optional) {
+            continue
+          } else {
+            throw new TypeError('Expected "' + token.name + '" to not be empty')
+          }
+        }
+
+        for (var j = 0; j < value.length; j++) {
+          segment = encodeURIComponent(value[j])
+
+          if (!matches[i].test(segment)) {
+            throw new TypeError('Expected all "' + token.name + '" to match "' + token.pattern + '", but received "' + segment + '"')
+          }
+
+          path += (j === 0 ? token.prefix : token.delimiter) + segment
+        }
+
+        continue
+      }
+
+      segment = encodeURIComponent(value)
+
+      if (!matches[i].test(segment)) {
+        throw new TypeError('Expected "' + token.name + '" to match "' + token.pattern + '", but received "' + segment + '"')
+      }
+
+      path += token.prefix + segment
+    }
+
+    return path
+  }
+}
+
+/**
+ * Escape a regular expression string.
+ *
+ * @param  {String} str
+ * @return {String}
+ */
+function escapeString (str) {
+  return str.replace(/([.+*?=^!:${}()[\]|\/])/g, '\\$1')
+}
+
+/**
+ * Escape the capturing group by escaping special characters and meaning.
+ *
+ * @param  {String} group
+ * @return {String}
+ */
+function escapeGroup (group) {
+  return group.replace(/([=!:$\/()])/g, '\\$1')
+}
+
+/**
+ * Attach the keys as a property of the regexp.
+ *
+ * @param  {RegExp} re
+ * @param  {Array}  keys
+ * @return {RegExp}
+ */
+function attachKeys (re, keys) {
+  re.keys = keys
+  return re
+}
+
+/**
+ * Get the flags for a regexp from the options.
+ *
+ * @param  {Object} options
+ * @return {String}
+ */
+function flags (options) {
+  return options.sensitive ? '' : 'i'
+}
+
+/**
+ * Pull out keys from a regexp.
+ *
+ * @param  {RegExp} path
+ * @param  {Array}  keys
+ * @return {RegExp}
+ */
+function regexpToRegexp (path, keys) {
+  // Use a negative lookahead to match only capturing groups.
+  var groups = path.source.match(/\((?!\?)/g)
+
+  if (groups) {
+    for (var i = 0; i < groups.length; i++) {
+      keys.push({
+        name: i,
+        prefix: null,
+        delimiter: null,
+        optional: false,
+        repeat: false,
+        pattern: null
+      })
+    }
+  }
+
+  return attachKeys(path, keys)
+}
+
+/**
+ * Transform an array into a regexp.
+ *
+ * @param  {Array}  path
+ * @param  {Array}  keys
+ * @param  {Object} options
+ * @return {RegExp}
+ */
+function arrayToRegexp (path, keys, options) {
+  var parts = []
+
+  for (var i = 0; i < path.length; i++) {
+    parts.push(pathToRegexp(path[i], keys, options).source)
+  }
+
+  var regexp = new RegExp('(?:' + parts.join('|') + ')', flags(options))
+
+  return attachKeys(regexp, keys)
+}
+
+/**
+ * Create a path regexp from string input.
+ *
+ * @param  {String} path
+ * @param  {Array}  keys
+ * @param  {Object} options
+ * @return {RegExp}
+ */
+function stringToRegexp (path, keys, options) {
+  var tokens = parse(path)
+  var re = tokensToRegExp(tokens, options)
+
+  // Attach keys back to the regexp.
+  for (var i = 0; i < tokens.length; i++) {
+    if (typeof tokens[i] !== 'string') {
+      keys.push(tokens[i])
+    }
+  }
+
+  return attachKeys(re, keys)
+}
+
+/**
+ * Expose a function for taking tokens and returning a RegExp.
+ *
+ * @param  {Array}  tokens
+ * @param  {Array}  keys
+ * @param  {Object} options
+ * @return {RegExp}
+ */
+function tokensToRegExp (tokens, options) {
+  options = options || {}
+
+  var strict = options.strict
+  var end = options.end !== false
+  var route = ''
+  var lastToken = tokens[tokens.length - 1]
+  var endsWithSlash = typeof lastToken === 'string' && /\/$/.test(lastToken)
+
+  // Iterate over the tokens and create our regexp string.
+  for (var i = 0; i < tokens.length; i++) {
+    var token = tokens[i]
+
+    if (typeof token === 'string') {
+      route += escapeString(token)
+    } else {
+      var prefix = escapeString(token.prefix)
+      var capture = token.pattern
+
+      if (token.repeat) {
+        capture += '(?:' + prefix + capture + ')*'
+      }
+
+      if (token.optional) {
+        if (prefix) {
+          capture = '(?:' + prefix + '(' + capture + '))?'
+        } else {
+          capture = '(' + capture + ')?'
+        }
+      } else {
+        capture = prefix + '(' + capture + ')'
+      }
+
+      route += capture
+    }
+  }
+
+  // In non-strict mode we allow a slash at the end of match. If the path to
+  // match already ends with a slash, we remove it for consistency. The slash
+  // is valid at the end of a path match, not in the middle. This is important
+  // in non-ending mode, where "/test/" shouldn't match "/test//route".
+  if (!strict) {
+    route = (endsWithSlash ? route.slice(0, -2) : route) + '(?:\\/(?=$))?'
+  }
+
+  if (end) {
+    route += '$'
+  } else {
+    // In non-ending mode, we need the capturing groups to match as much as
+    // possible by using a positive lookahead to the end or next path segment.
+    route += strict && endsWithSlash ? '' : '(?=\\/|$)'
+  }
+
+  return new RegExp('^' + route, flags(options))
+}
+
+/**
+ * Normalize the given path string, returning a regular expression.
+ *
+ * An empty array can be passed in for the keys, which will hold the
+ * placeholder key descriptions. For example, using `/user/:id`, `keys` will
+ * contain `[{ name: 'id', delimiter: '/', optional: false, repeat: false }]`.
+ *
+ * @param  {(String|RegExp|Array)} path
+ * @param  {Array}                 [keys]
+ * @param  {Object}                [options]
+ * @return {RegExp}
+ */
+function pathToRegexp (path, keys, options) {
+  keys = keys || []
+
+  if (!isarray(keys)) {
+    options = keys
+    keys = []
+  } else if (!options) {
+    options = {}
+  }
+
+  if (path instanceof RegExp) {
+    return regexpToRegexp(path, keys, options)
+  }
+
+  if (isarray(path)) {
+    return arrayToRegexp(path, keys, options)
+  }
+
+  return stringToRegexp(path, keys, options)
+}
+
+},{"isarray":4}],4:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}]},{},[1])(1)
+});</script>
+<script>
+  window.addEventListener('WebComponentsReady', function() {
+
+    // We use Page.js for routing. This is a Micro
+    // client-side router inspired by the Express router
+    // More info: https://visionmedia.github.io/page.js/
+
+    // Removes end / from app.baseUrl which page.base requires for production
+    if (window.location.port === '') {  // if production
+      page.base(app.baseUrl.replace(/\/$/, ''));
+    }
+
+    // Middleware
+    // function scrollToTop(ctx, next) {
+    //   app.scrollPageToTop();
+    //   next();
+    // }
+
+    // Routes
+    // page('*', scrollToTop, function(ctx, next) {
+    page('*', function(ctx, next) {
+      next();
+    });
+
+    page('/', function() {
+      app.route = 'home';
+    });
+
+    page(app.baseUrl, function() {
+      app.route = 'home';
+    });
+
+    page('/home', function() {
+      app.route = 'home';
+    });
+
+    page('/users', function() {
+      app.route = 'users';
+    });
+
+    page('/users/:name', function(data) {
+      app.route = 'user-info';
+      app.params = data.params;
+    });
+
+    page('/contact', function() {
+      app.route = 'contact';
+    });
+
+    page('/product', function() {
+      app.route = 'product';
+    });
+
+    page('/service', function() {
+      app.route = 'service';
+    });
+
+    // 404
+    page('*', function() {
+      app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
+      app.$.toast.show();
+      page.redirect(app.baseUrl);
+    });
+
+    // add #! before urls
+    page({
+      hashbang: false
+    });
+
+  });
+</script>
+<style is="custom-style">
+
+  /*
+   Polymer includes a shim for CSS Custom Properties that we can use for application theming.
+   Below, you'll find the default palette for the Polymer Starter Kit layout. Feel free to play
+   with changing the colors used or generate your own palette of colours at MaterialPalette.com.
+
+   See https://www.polymer-project.org/1.0/docs/devguide/styling.html#xscope-styling-details
+   for further information on custom CSS properties.
+   */
+
+  /* Application theme */
+
+  :root {
+    --primary-text-color: #212121;
+    --primary-background-color: #ffffff;
+    --secondary-text-color: #737373;
+    --disabled-text-color: #9b9b9b;
+    --divider-color: #dbdbdb;
+    --primary-color: #3f51b5;
+    --light-primary-color: #c5cae9;
+    --dark-primary-color: #303f9f;
+    --accent-color: #ff4081;
+    --light-accent-color: #ff80ab;
+    --dark-accent-color: #f50057;
+
+    /* Components */
+
+    /* paper-drawer-panel */
+    --drawer-menu-color: #ffffff;
+    --drawer-border-color: 1px solid #ccc;
+    --drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
+
+    /* paper-menu */
+    --paper-menu-background-color: #fff;
+    --menu-link-color: #111111;
+  }
+
+  /* General styles */
+
+  body {
+    @apply(--layout-fullbleed);
+    @apply(--layout-vertical);
+  }
+
+  .space {
+    @apply(--layout-flex);
+  }
+
+  #drawerToolbar {
+    color: var(--secondary-text-color);
+    background-color: var(--drawer-menu-color);
+    border-bottom: var(--drawer-toolbar-border-color);
+  }
+
+  #drawerToolbar .menu-name {
+    @apply(--paper-font-title);
+  }
+
+  paper-scroll-header-panel {
+    height: 100%;
+  }
+
+  paper-menu {
+    --paper-menu-selected-item: {
+      color: var(--primary-color);
+    }
+
+    --paper-menu-focused-item-after: {
+      background: var(--primary-color);
+    }
+  }
+
+  paper-menu iron-icon {
+    margin-right: 33px;
+    opacity: 0.54;
+  }
+
+  paper-menu a {
+    @apply(--layout-horizontal);
+    @apply(--layout-center);
+
+    text-decoration: none;
+    color: var(--menu-link-color);
+    /*font-family: 'Roboto', 'Noto', sans-serif;*/
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    min-height: 48px;
+    padding: 0 16px;
+  }
+
+  #mainToolbar.tall .app-name {
+    font-size: 40px;
+    font-weight: 300;
+    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+    -webkit-transform-origin: left center;
+    transform-origin: left center;
+  }
+
+  #mainToolbar .middle-container,
+  #mainToolbar .bottom-container {
+    @apply(--layout-horizontal);
+    @apply(--layout-center);
+  }
+
+  #mainToolbar .middle-container  {
+    height: 100%;
+    margin-left: 48px;
+  }
+
+  #mainToolbar:not(.tall) .middle-container {
+    font-size: 18px;
+    padding-bottom: 0;
+  }
+
+  #mainToolbar .bottom-container {
+    @apply(--paper-font-subhead);
+
+    margin-left: 48px;
+    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+    -webkit-transform-origin: left center;
+    transform-origin: left center;
+  }
+
+  /* Height of the scroll area */
+  .content {
+    height: 900px;
+    min-height: 100%;
+  }
+
+  section[data-route="home"] paper-material {
+    @apply(--paper-font-body2);
+  }
+
+  section[data-route="home"] paper-material .subhead {
+    @apply(--paper-font-subhead);
+  }
+
+  paper-material {
+    border-radius: 2px;
+    height: 100%;
+    padding: 16px 0 16px 0;
+    width: calc(98.66% - 16px);
+    margin: 16px auto;
+    background: white;
+  }
+
+  #toast .toast-hide-button {
+    color: #eeff41;
+    margin: 10px;
+  }
+
+  /* Breakpoints */
+
+  /* Small */
+  @media (max-width: 600px) {
+
+    #drawer .paper-toolbar {
+      margin-left: 16px;
+    }
+
+    #mainToolbar.tall .app-name {
+      font-size: 24px;
+      font-weight: 400;
+    }
+
+    paper-material {
+      --menu-container-display: none;
+      width: calc(97.33% - 32px);
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+  }
+
+  /* Tablet+ */
+  @media (min-width: 601px) {
+
+    #drawer.paper-drawer-panel > [drawer] {
+      border-right: 1px solid rgba(0, 0, 0, 0.14);
+    }
+
+    iron-pages {
+      padding: 48px 62px;
+    }
+
+    paper-material {
+      width: calc(98% - 46px);
+      margin-bottom: 32px;
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+
+  }
+
+  /* Material Design Adaptive Breakpoints */
+  /*
+    Below you'll find CSS media queries based on the breakpoint guidance
+    published by the Material Design team. You can choose to use, customise
+    or remove these breakpoints based on your needs.
+
+    http://www.google.com/design/spec/layout/adaptive-ui.html#adaptive-ui-breakpoints
+   */
+
+  /* mobile-small */
+  @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) { }
+  /* mobile-large */
+  @media all and (min-width: 361px) and (orientation: portrait) { }
+  /* mobile-small-landscape */
+  @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
+  /* mobile-large-landscape */
+  @media all and (min-width: 481px) and (orientation: landscape) { }
+  /* tablet-small-landscape */
+  @media all and (min-width: 600px) and (max-width: 960px) and (orientation: landscape) { }
+  /* tablet-large-landscape */
+  @media all and (min-width: 961px) and (orientation: landscape) { }
+  /* tablet-small */
+  @media all and (min-width: 600px) and (orientation: portrait) { }
+  /* tablet-large */
+  @media all and (min-width: 601px) and (max-width: 840px) and (orientation : portrait) { }
+  /* desktop-x-small-landscape */
+  @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
+  /* desktop-x-small */
+  @media all and (min-width: 0) and (max-width: 480px) and (max-aspect-ratio: 4/3) { }
+  /* desktop-small-landscape */
+  @media all and (min-width: 481px) and (max-width: 840px) and (orientation: landscape) { }
+  /* desktop-small */
+  @media all and (min-width: 481px) and (max-width: 840px) and (max-aspect-ratio: 4/3) { }
+  /* desktop-medium-landscape */
+  @media all and (min-width: 841px) and (max-width: 1280px) and (orientation: landscape) { }
+  /* desktop-medium */
+  @media all and (min-width: 841px) and (max-width: 1280px) and (max-aspect-ratio: 4/3) { }
+  /* desktop-large */
+  @media all and (min-width: 1281px) and (max-width: 1600px) { }
+  /* desktop-xlarge */
+  @media all and (min-width: 1601px) and (max-width: 1920px) { }
+</style>
+<!-- shared styles for all elements and index.html -->
+<dom-module id="shared-styles" assetpath="styles/">
+  <template>
+    <style>
+      .page-title {
+        @apply(--paper-font-display2);
+      }
+      paper-scroll-header-panel div.content {
+        height: auto;
+      }
+      paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
+        pointer-events: none;
+      }
+      
+      .language-selector-bottom {
+        display: none;
+      }
+
+      paper-menu {
+        --paper-menu-selected-item: {
+          color: var(--primary-color);
+        }
+
+        --paper-menu-focused-item-after: {
+          background: var(--primary-color);
+        }
+      }
+
+      paper-menu iron-icon {
+        margin-right: 33px;
+        opacity: 0.54;
+      }
+
+      paper-menu a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+
+        text-decoration: none;
+        color: var(--menu-link-color);
+        /*font-family: 'Roboto', 'Noto', sans-serif;*/
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+        min-height: 48px;
+        padding: 0 16px;
+      }
+      paper-material {
+        border-radius: 2px;
+        height: 100%;
+        padding: 16px 0 16px 0;
+        width: calc(98.66% - 16px);
+        margin: 16px auto;
+        background: white;
+      }
+      section[data-route="home"] paper-material {
+        @apply(--paper-font-body2);
+      }
+
+      section[data-route="home"] paper-material .subhead {
+        @apply(--paper-font-subhead);
+      }
+
+      @media (max-width: 600px) {
+        .page-title {
+          font-size: 24px!important;
+        }
+        .language-selector-bottom {
+          float: right;
+          display: flex;
+        }
+        paper-material {
+          --menu-container-display: none;
+          width: calc(97.33% - 32px);
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+      }
+
+      /* Tablet+ */
+      @media (min-width: 601px) {
+        #drawer.paper-drawer-panel > [drawer] {
+          border-right: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
+        iron-pages {
+          padding: 48px 62px;
+        }
+
+        paper-material {
+          width: calc(98% - 46px);
+          margin-bottom: 32px;
+          padding-left: 30px;
+          padding-right: 30px;
+        }
+      }
+    </style>
+  </template>
+</dom-module>
+<!-- <link rel="import" href="../../bower_components/iron-image/iron-image.html"> -->
+
+<dom-module id="slider-component" assetpath="elements/slider-component/">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      @keyframes slidy {
+        0% { left: 0%; }
+        20% { left: 0%; }
+        25% { left: -100%; }
+        45% { left: -100%; }
+        50% { left: -200%; }
+        70% { left: -200%; }
+        75% { left: -300%; }
+        95% { left: -300%; }
+        100% { left: -400%; }
+      }
+
+      body { margin: 0; }
+      div.slider { overflow: hidden; }
+      div.slider figure img { width: 20%; float: left; }
+      /*div.slider figure iron-image {
+        width: 20%; float: left;
+        background-color: lightgray;
+      }*/
+      div.slider figure {
+        position: relative;
+        width: 500%;
+        margin: 0;
+        left: 0;
+        text-align: left;
+        font-size: 0;
+        animation: 30s slidy infinite;
+      }
+
+    </style>
+
+
+    <div class="slider">
+      <figure>
+        <template is="dom-repeat" items="{{pictures}}">
+          <!-- <iron-image src="{{item}}" preload sizing="contain"></iron-image> -->
+          <img src="{{item}}" alt="">
+        </template>
+      </figure>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'slider-component',
+
+        properties: {
+          greeting: {
+            type: String,
+            value: 'Welcome!'
+          },
+          pictures: {
+            type: Object
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>
+<dom-module id="my-greeting" assetpath="elements/my-greeting/">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      span,
+      input {
+        @apply(--paper-font-body2);
+      }
+      slider-component {
+        width: 60%;
+        height: 220px;
+        overflow: hidden;
+      }
+    </style>
+    <b>{{defaultLang}}</b>
+    <h2 class="page-title">{{greeting}}</h2>
+    <span>Update text to change the greeting.</span>
+    <!-- Listens for "input" event and sets greeting to <input>.value -->
+    <input value="{{greeting::input}}">
+    <slider-component pictures="[[pictures]]"></slider-component>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'my-greeting',
+
+        properties: {
+          greeting: {
+            type: String,
+            value: 'Welcome!'
+          },
+          pictures: {
+            type: Array,
+            value: [
+              '/images/services/serv2.png',
+              '/images/services/serv3.png'
+            ]
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>
+<dom-module id="my-list" assetpath="elements/my-list/">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      span {
+        @apply(--paper-font-body1);
+      }
+    </style>
+
+    <ul>
+      <template is="dom-repeat" items="{{items}}">
+        <li><span>{{item}}</span></li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'my-list',
+
+        properties: {
+          items: {
+            type: Array,
+            notify: true,
+          }
+        },
+
+        ready: function() {
+          this.items = [
+            'Responsive Web App boilerplate',
+            'Iron Elements and Paper Elements',
+            'End-to-end Build Tooling (including Vulcanize)',
+            'Unit testing with Web Component Tester',
+            'Routing with Page.js',
+            'Offline support with the Platinum Service Worker Elements'
+          ];
+        }
+      });
+    })();
+  </script>
+</dom-module>
+<script>
+
+  /**
+   * `Polymer.IronMenubarBehavior` implements accessible menubar behavior.
+   *
+   * @polymerBehavior Polymer.IronMenubarBehavior
+   */
+  Polymer.IronMenubarBehaviorImpl = {
+
+    hostAttributes: {
+      'role': 'menubar'
+    },
+
+    keyBindings: {
+      'left': '_onLeftKey',
+      'right': '_onRightKey'
+    },
+
+    _onUpKey: function(event) {
+      this.focusedItem.click();
+      event.detail.keyboardEvent.preventDefault();
+    },
+
+    _onDownKey: function(event) {
+      this.focusedItem.click();
+      event.detail.keyboardEvent.preventDefault();
+    },
+
+    _onLeftKey: function() {
+      this._focusPrevious();
+    },
+
+    _onRightKey: function() {
+      this._focusNext();
+    },
+
+    _onKeydown: function(event) {
+      if (this.keyboardEventMatchesKeys(event, 'up down left right esc')) {
+        return;
+      }
+
+      // all other keys focus the menu item starting with that character
+      this._focusWithKeyboardEvent(event);
+    }
+
+  };
+
+  /** @polymerBehavior Polymer.IronMenubarBehavior */
+  Polymer.IronMenubarBehavior = [
+    Polymer.IronMenuBehavior,
+    Polymer.IronMenubarBehaviorImpl
+  ];
+
+</script>
+<iron-iconset-svg name="paper-tabs" size="24">
+<svg><defs>
+<g id="chevron-left"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></g>
+<g id="chevron-right"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></g>
+</defs></svg>
+</iron-iconset-svg>
+<!--
+`paper-tab` is styled to look like a tab.  It should be used in conjunction with
+`paper-tabs`.
+
+Example:
+
+    <paper-tabs selected="0">
+      <paper-tab>TAB 1</paper-tab>
+      <paper-tab>TAB 2</paper-tab>
+      <paper-tab>TAB 3</paper-tab>
+    </paper-tabs>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-tab-ink` | Ink color | `--paper-yellow-a100`
+`--paper-tab` | Mixin applied to the tab | `{}`
+`--paper-tab-content` | Mixin applied to the tab content | `{}`
+`--paper-tab-content-unselected` | Mixin applied to the tab content when the tab is not selected | `{}`
+
+-->
+
+<dom-module id="paper-tab" assetpath="bower_components/paper-tabs/">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-inline);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+        @apply(--layout-flex);
+
+        position: relative;
+        padding: 0 12px;
+        overflow: hidden;
+        cursor: pointer;
+
+        @apply(--paper-tab);
+      }
+
+      :host(:focus) {
+        outline: none;
+      }
+
+      :host([link]) {
+        padding: 0;
+      }
+
+      .tab-content {
+        height: 100%;
+        transform: translateZ(0);
+          -webkit-transform: translateZ(0);
+        transition: opacity 0.1s cubic-bezier(0.4, 0.0, 1, 1);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        @apply(--layout-flex-auto);
+        @apply(--paper-tab-content);
+      }
+
+      :host(:not(.iron-selected)) > .tab-content {
+        opacity: 0.8;
+
+        @apply(--paper-tab-content-unselected);
+      }
+
+      :host(:focus) .tab-content {
+        opacity: 1;
+        font-weight: 700;
+      }
+
+      paper-ripple {
+        color: var(--paper-tab-ink, --paper-yellow-a100);
+      }
+
+      .tab-content > ::content > a {
+        @apply(--layout-flex)
+
+        height: 100%;
+      }
+    </style>
+
+    <div class="tab-content">
+      <content></content>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'paper-tab',
+
+      behaviors: [
+        Polymer.IronControlState,
+        Polymer.IronButtonState,
+        Polymer.PaperRippleBehavior
+      ],
+
+      hostAttributes: {
+        role: 'tab'
+      },
+
+      listeners: {
+        down: '_updateNoink'
+      },
+
+      ready: function() {
+        var ripple = this.getRipple();
+        ripple.initialOpacity = 0.95;
+        ripple.opacityDecayVelocity = 0.98;
+      },
+
+      attached: function() {
+        this._updateNoink();
+      },
+
+      get _parentNoink () {
+        var parent = Polymer.dom(this).parentNode;
+        return !!parent && !!parent.noink;
+      },
+
+      _updateNoink: function() {
+        this.noink = !!this.noink || !!this._parentNoink;
+      }
+    });
+  </script>
+</dom-module>
+<!--
+Material design: [Tabs](https://www.google.com/design/spec/components/tabs.html)
+
+`paper-tabs` makes it easy to explore and switch between different views or functional aspects of
+an app, or to browse categorized data sets.
+
+Use `selected` property to get or set the selected tab.
+
+Example:
+
+    <paper-tabs selected="0">
+      <paper-tab>TAB 1</paper-tab>
+      <paper-tab>TAB 2</paper-tab>
+      <paper-tab>TAB 3</paper-tab>
+    </paper-tabs>
+
+See <a href="#paper-tab">paper-tab</a> for more information about
+`paper-tab`.
+
+A common usage for `paper-tabs` is to use it along with `iron-pages` to switch
+between different views.
+
+    <paper-tabs selected="{{selected}}">
+      <paper-tab>Tab 1</paper-tab>
+      <paper-tab>Tab 2</paper-tab>
+      <paper-tab>Tab 3</paper-tab>
+    </paper-tabs>
+
+    <iron-pages selected="{{selected}}">
+      <div>Page 1</div>
+      <div>Page 2</div>
+      <div>Page 3</div>
+    </iron-pages>
+
+
+To use links in tabs, add `link` attribute to `paper-tab` and put an `<a>`
+element in `paper-tab`.
+
+Example:
+
+    <style is="custom-style">
+      .link {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
+    }
+    </style>
+
+    <paper-tabs selected="0">
+      <paper-tab link>
+        <a href="#link1" class="link">TAB ONE</a>
+      </paper-tab>
+      <paper-tab link>
+        <a href="#link2" class="link">TAB TWO</a>
+      </paper-tab>
+      <paper-tab link>
+        <a href="#link3" class="link">TAB THREE</a>
+      </paper-tab>
+    </paper-tabs>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-tabs-selection-bar-color` | Color for the selection bar | `--paper-yellow-a100`
+`--paper-tabs` | Mixin applied to the tabs | `{}`
+
+@hero hero.svg
+@demo demo/index.html
+-->
+
+<dom-module id="paper-tabs" assetpath="bower_components/paper-tabs/">
+  <template>
+    <style>
+      :host {
+        @apply(--layout);
+        @apply(--layout-center);
+
+        height: 48px;
+        font-size: 14px;
+        font-weight: 500;
+        overflow: hidden;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+
+        @apply(--paper-tabs);
+      }
+
+      :host-context([dir=rtl]) {
+        @apply(--layout-horizontal-reverse);
+      }
+
+      #tabsContainer {
+        position: relative;
+        height: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        @apply(--layout-flex);
+      }
+
+      #tabsContent {
+        height: 100%;
+      }
+
+      #tabsContent.scrollable {
+        position: absolute;
+        white-space: nowrap;
+      }
+
+      #tabsContent.horizontal {
+        @apply(--layout-horizontal);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .not-visible {
+        opacity: 0;
+        cursor: default;
+      }
+
+      paper-icon-button {
+        width: 48px;
+        height: 48px;
+        padding: 12px;
+        margin: 0 4px;
+      }
+
+      #selectionBar {
+        position: absolute;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--paper-tabs-selection-bar-color, --paper-yellow-a100);
+          -webkit-transform: scale(0);
+        transform: scale(0);
+          -webkit-transform-origin: left center;
+        transform-origin: left center;
+          transition: -webkit-transform;
+        transition: transform;
+
+        @apply(--paper-tabs-selection-bar);
+      }
+
+      #selectionBar.align-bottom {
+        top: 0;
+        bottom: auto;
+      }
+
+      #selectionBar.expand {
+        transition-duration: 0.15s;
+        transition-timing-function: cubic-bezier(0.4, 0.0, 1, 1);
+      }
+
+      #selectionBar.contract {
+        transition-duration: 0.18s;
+        transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+      }
+
+      #tabsContent > ::content > *:not(#selectionBar) {
+        height: 100%;
+      }
+    </style>
+
+    <paper-icon-button icon="paper-tabs:chevron-left" class$="[[_computeScrollButtonClass(_leftHidden, scrollable, hideScrollButtons)]]" on-up="_onScrollButtonUp" on-down="_onLeftScrollButtonDown" tabindex="-1"></paper-icon-button>
+
+    <div id="tabsContainer" on-track="_scroll" on-down="_down">
+      <div id="tabsContent" class$="[[_computeTabsContentClass(scrollable)]]">
+        <content select="*"></content>
+        <div id="selectionBar" class$="[[_computeSelectionBarClass(noBar, alignBottom)]]" on-transitionend="_onBarTransitionEnd"></div>
+      </div>
+    </div>
+
+    <paper-icon-button icon="paper-tabs:chevron-right" class$="[[_computeScrollButtonClass(_rightHidden, scrollable, hideScrollButtons)]]" on-up="_onScrollButtonUp" on-down="_onRightScrollButtonDown" tabindex="-1"></paper-icon-button>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'paper-tabs',
+
+      behaviors: [
+        Polymer.IronResizableBehavior,
+        Polymer.IronMenubarBehavior
+      ],
+
+      properties: {
+        /**
+         * If true, ink ripple effect is disabled. When this property is changed,
+         * all descendant `<paper-tab>` elements have their `noink` property
+         * changed to the new value as well.
+         */
+        noink: {
+          type: Boolean,
+          value: false,
+          observer: '_noinkChanged'
+        },
+
+        /**
+         * If true, the bottom bar to indicate the selected tab will not be shown.
+         */
+        noBar: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * If true, the slide effect for the bottom bar is disabled.
+         */
+        noSlide: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * If true, tabs are scrollable and the tab width is based on the label width.
+         */
+        scrollable: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * If true, dragging on the tabs to scroll is disabled.
+         */
+        disableDrag: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * If true, scroll buttons (left/right arrow) will be hidden for scrollable tabs.
+         */
+        hideScrollButtons: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * If true, the tabs are aligned to bottom (the selection bar appears at the top).
+         */
+        alignBottom: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Gets or sets the selected element. The default is to use the index of the item.
+         */
+        selected: {
+          type: String,
+          notify: true
+        },
+
+        selectable: {
+          type: String,
+          value: 'paper-tab'
+        },
+
+        _step: {
+          type: Number,
+          value: 10
+        },
+
+        _holdDelay: {
+          type: Number,
+          value: 1
+        },
+
+        _leftHidden: {
+          type: Boolean,
+          value: false
+        },
+
+        _rightHidden: {
+          type: Boolean,
+          value: false
+        },
+
+        _previousTab: {
+          type: Object
+        }
+      },
+
+      hostAttributes: {
+        role: 'tablist'
+      },
+
+      listeners: {
+        'iron-resize': '_onResize',
+        'iron-select': '_onIronSelect',
+        'iron-deselect': '_onIronDeselect'
+      },
+
+      created: function() {
+        this._holdJob = null;
+      },
+
+      ready: function() {
+        this.setScrollDirection('y', this.$.tabsContainer);
+      },
+
+      _noinkChanged: function(noink) {
+        var childTabs = Polymer.dom(this).querySelectorAll('paper-tab');
+        childTabs.forEach(noink ? this._setNoinkAttribute : this._removeNoinkAttribute);
+      },
+
+      _setNoinkAttribute: function(element) {
+        element.setAttribute('noink', '');
+      },
+
+      _removeNoinkAttribute: function(element) {
+        element.removeAttribute('noink');
+      },
+
+      _computeScrollButtonClass: function(hideThisButton, scrollable, hideScrollButtons) {
+        if (!scrollable || hideScrollButtons) {
+          return 'hidden';
+        }
+
+        if (hideThisButton) {
+          return 'not-visible';
+        }
+
+        return '';
+      },
+
+      _computeTabsContentClass: function(scrollable) {
+        return scrollable ? 'scrollable' : 'horizontal';
+      },
+
+      _computeSelectionBarClass: function(noBar, alignBottom) {
+        if (noBar) {
+          return 'hidden';
+        } else if (alignBottom) {
+          return 'align-bottom';
+        }
+
+        return '';
+      },
+
+      // TODO(cdata): Add `track` response back in when gesture lands.
+
+      _onResize: function() {
+        this.debounce('_onResize', function() {
+          this._scroll();
+          this._tabChanged(this.selectedItem);
+        }, 10);
+      },
+
+      _onIronSelect: function(event) {
+        this._tabChanged(event.detail.item, this._previousTab);
+        this._previousTab = event.detail.item;
+        this.cancelDebouncer('tab-changed');
+      },
+
+      _onIronDeselect: function(event) {
+        this.debounce('tab-changed', function() {
+          this._tabChanged(null, this._previousTab);
+        // See polymer/polymer#1305
+        }, 1);
+      },
+
+      get _tabContainerScrollSize () {
+        return Math.max(
+          0,
+          this.$.tabsContainer.scrollWidth -
+            this.$.tabsContainer.offsetWidth
+        );
+      },
+
+
+      _scroll: function(e, detail) {
+        if (!this.scrollable) {
+          return;
+        }
+
+        var ddx = (detail && -detail.ddx) || 0;
+        this._affectScroll(ddx);
+      },
+
+      _down: function(e) {
+        // go one beat async to defeat IronMenuBehavior
+        // autorefocus-on-no-selection timeout
+        this.async(function() {
+          if (this._defaultFocusAsync) {
+            this.cancelAsync(this._defaultFocusAsync);
+            this._defaultFocusAsync = null;
+          }
+        }, 1);
+      },
+
+      _affectScroll: function(dx) {
+        this.$.tabsContainer.scrollLeft += dx;
+
+        var scrollLeft = this.$.tabsContainer.scrollLeft;
+
+        this._leftHidden = scrollLeft === 0;
+        this._rightHidden = scrollLeft === this._tabContainerScrollSize;
+      },
+
+      _onLeftScrollButtonDown: function() {
+        this._scrollToLeft();
+        this._holdJob = setInterval(this._scrollToLeft.bind(this), this._holdDelay);
+      },
+
+      _onRightScrollButtonDown: function() {
+        this._scrollToRight();
+        this._holdJob = setInterval(this._scrollToRight.bind(this), this._holdDelay);
+      },
+
+      _onScrollButtonUp: function() {
+        clearInterval(this._holdJob);
+        this._holdJob = null;
+      },
+
+      _scrollToLeft: function() {
+        this._affectScroll(-this._step);
+      },
+
+      _scrollToRight: function() {
+        this._affectScroll(this._step);
+      },
+
+      _tabChanged: function(tab, old) {
+        if (!tab) {
+          this._positionBar(0, 0);
+          return;
+        }
+
+        var r = this.$.tabsContent.getBoundingClientRect();
+        var w = r.width;
+        var tabRect = tab.getBoundingClientRect();
+        var tabOffsetLeft = tabRect.left - r.left;
+
+        this._pos = {
+          width: this._calcPercent(tabRect.width, w),
+          left: this._calcPercent(tabOffsetLeft, w)
+        };
+
+        if (this.noSlide || old == null) {
+          // position bar directly without animation
+          this._positionBar(this._pos.width, this._pos.left);
+          return;
+        }
+
+        var oldRect = old.getBoundingClientRect();
+        var oldIndex = this.items.indexOf(old);
+        var index = this.items.indexOf(tab);
+        var m = 5;
+
+        // bar animation: expand
+        this.$.selectionBar.classList.add('expand');
+
+        if (oldIndex < index) {
+          this._positionBar(this._calcPercent(tabRect.left + tabRect.width - oldRect.left, w) - m,
+              this._left);
+        } else {
+          this._positionBar(this._calcPercent(oldRect.left + oldRect.width - tabRect.left, w) - m,
+              this._calcPercent(tabOffsetLeft, w) + m);
+        }
+
+        if (this.scrollable) {
+          this._scrollToSelectedIfNeeded(tabRect.width, tabOffsetLeft);
+        }
+      },
+
+      _scrollToSelectedIfNeeded: function(tabWidth, tabOffsetLeft) {
+        var l = tabOffsetLeft - this.$.tabsContainer.scrollLeft;
+        if (l < 0) {
+          this.$.tabsContainer.scrollLeft += l;
+        } else {
+          l += (tabWidth - this.$.tabsContainer.offsetWidth);
+          if (l > 0) {
+            this.$.tabsContainer.scrollLeft += l;
+          }
+        }
+      },
+
+      _calcPercent: function(w, w0) {
+        return 100 * w / w0;
+      },
+
+      _positionBar: function(width, left) {
+        width = width || 0;
+        left = left || 0;
+
+        this._width = width;
+        this._left = left;
+        this.transform(
+            'translate3d(' + left + '%, 0, 0) scaleX(' + (width / 100) + ')',
+            this.$.selectionBar);
+      },
+
+      _onBarTransitionEnd: function(e) {
+        var cl = this.$.selectionBar.classList;
+        // bar animation: expand -> contract
+        if (cl.contains('expand')) {
+          cl.remove('expand');
+          cl.add('contract');
+          this._positionBar(this._pos.width, this._pos.left);
+        // bar animation done
+        } else if (cl.contains('contract')) {
+          cl.remove('contract');
+        }
+      }
+    });
+  </script>
+</dom-module>
+<dom-module id="header-bar" assetpath="elements/header-bar/">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --color-selected: rgba(45, 45, 45, 0.6);
+        --color-background: rgba(158, 156, 156, 0.52);
+        --color-hover-tab: lightblue;
+        --paper-tab-ink: var(--color-selected);
+      }
+      span, input {
+        @apply(--paper-font-body2);
+      }
+
+      a.link {
+        color: black;
+        background-color: inherit;
+        display: flex;
+        justify-content: center;
+        text-decoration: none;
+        height: 100%;
+        align-items: center;
+        font-size: 20px;
+        font-weight: bold;
+        transition: color 0.5s;
+      }
+      .language-selector {
+        display: inline-flex;
+
+        position: relative;
+        float: right;
+        margin: 10px 5px;
+      }
+      .name {
+        display: inline-flex;
+      }
+      .middle-header {
+        margin-top: 0;
+        margin-bottom: 12px;
+      }
+      .middle-header, .top-header {
+        margin-left: 25%;
+        color: white;
+      }
+      .top-header .name {
+        font-size: 6vw;
+      }
+      .middle-header .subtitle {
+        font-size: 3vw;
+      }
+      .bottom-header {
+      }
+
+      .bottom-header paper-tab {
+        background-color: var(--color-background);
+        transition: background-color 0.5s ease;
+      }
+      .bottom-header paper-tab:hover:not(.iron-selected) {
+        background-color: var(--color-hover-tab);
+      }
+      .bottom-header paper-tab.iron-selected {
+        background-color: var(--color-selected);
+      }
+      .bottom-header paper-tab.iron-selected a.link {
+        color: white;
+      }
+
+      /*Media queries*/
+      @media (max-width: 600px) {
+        .top-header .name {
+          font-size: 9vw;
+        }
+        .middle-header .subtitle {
+          font-size: 4vw;
+        }
+        .language-selector {
+          display: none;
+        }
+        a.link {
+          font-size: 3.5vw;
+        }
+      }
+    </style>
+
+    <div class="top-header">
+      <b class="name">BrainPower</b>
+      <language-selector lang="{{lang}}" class="language-selector"></language-selector>
+    </div>
+
+    <div class="middle-header">
+      <b class="subtitle">{{getElementByLang(subtitle,lang)}}</b>
+    </div>
+
+    <div class="bottom-header">
+      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab" no-bar="" noink="">
+        <paper-tab link=""><a href="{{baseUrl}}home" class="link">{{getElementByLang(home,lang)}}</a></paper-tab>
+        <!-- <paper-tab link><a href="{{baseUrl}}product" class="link">{{getElementByLang(product,lang)}}</a></paper-tab> -->
+        <paper-tab link=""><a href="{{baseUrl}}service" class="link">{{getElementByLang(service,lang)}}</a></paper-tab>
+        <paper-tab link=""><a href="{{baseUrl}}contact" class="link">{{getElementByLang(contact,lang)}}</a></paper-tab>
+      </paper-tabs>
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'header-bar',
+
+        properties: {
+          greeting: {
+            type: String,
+            value: 'BrainPower'
+          },
+          selected: {
+            type: Number,
+            value: 0
+          },
+          lang: {
+            type: String,
+            notify: true
+          },
+          subtitle: {
+            type: Object,
+            value: {
+              "es": "El poder de la mente avocado a la Ingenieria",
+              "en": "The brain power advocated to the engineering"
+            }
+          },
+          home: {
+            type: Object,
+            value: {
+              "es": "Inicio",
+              "en": "Home"
+            }
+          },
+          product: {
+            type: Object,
+            value: {
+              "es": "Productos",
+              "en": "Products"
+            }
+          },
+          service: {
+            type: Object,
+            value: {
+              "es": "Servicios",
+              "en": "Services"
+            }
+          },
+          contact: {
+            type: Object,
+            value: {
+              "es": "Contacto",
+              "en": "Contact"
+            }
+          }
+        },
+        changeTab: function() {
+
+        },
+
+        getElementByLang: function(elemRecord, currentLang) {
+          return elemRecord[currentLang];
+        }
+
+      });
+    })();
+  </script>
+</dom-module>
+<!--
+Material design: [Menus](https://www.google.com/design/spec/components/menus.html)
+
+`<paper-listbox>` implements an accessible listbox control with Material Design styling. The focused item
+is highlighted, and the selected item has bolded text.
+
+    <paper-listbox>
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-listbox>
+
+An initial selection can be specified with the `selected` attribute.
+
+    <paper-listbox selected="0">
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-listbox>
+
+Make a multi-select listbox with the `multi` attribute. Items in a multi-select listbox can be deselected,
+and multiple item can be selected.
+
+    <paper-listbox multi>
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-listbox>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-listbox-background-color`   | Menu background color                                            | `--primary-background-color`
+`--paper-listbox-color`              | Menu foreground color                                            | `--primary-text-color`
+`--paper-listbox`                    | Mixin applied to the listbox                                        | `{}`
+
+### Accessibility
+
+`<paper-listbox>` has `role="listbox"` by default. A multi-select listbox will also have
+`aria-multiselectable` set. It implements key bindings to navigate through the listbox with the up and
+down arrow keys, esc to exit the listbox, and enter to activate a listbox item. Typing the first letter
+of a listbox item will also focus it.
+
+@group Paper Elements
+@element paper-listbox
+@hero hero.svg
+@demo demo/index.html
+-->
+
+<dom-module id="paper-listbox" assetpath="bower_components/paper-listbox/">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 8px 0;
+
+        background: var(--paper-listbox-background-color, --primary-background-color);
+        color: var(--paper-listbox-color, --primary-text-color);
+
+        @apply(--paper-listbox);
+      }
+    </style>
+
+    <div class="selectable-content">
+      <content></content>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      Polymer({
+        is: 'paper-listbox',
+
+        behaviors: [
+          Polymer.IronMenuBehavior
+        ],
+
+        hostAttributes: {
+          role: 'listbox'
+        }
+      });
+    })();
+  </script>
+</dom-module>
 <dom-module id="language-selector" assetpath="elements/language-selector/">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
-        width: 82px;
+        width: 100px;
       }
-
+      iron-icon {
+        width: 100%;
+        height: auto;
+        color: white;
+      }
+      .container-icon {
+        width: 15%;
+        align-self: center;
+      }
+      .container-dropdown {
+        width: 80%;
+      }
+      .container-lang-selector {
+        display: flex;
+        justify-content: space-around;
+      }
+      paper-dropdown-menu {
+        --paper-dropdown-menu-icon: {
+          color: white;
+        }
+        --paper-input-container-input: {
+          color: white;
+        }
+        --paper-input-container-underline: {
+           visibility:hidden;
+        }
+      }
     </style>
-    <style is="custom-style">
-       paper-dropdown-menu.custom {
-         width: 70%;
-         /* no underline */
-         --paper-input-container-underline: {
-           display: none;
-         }
-         --paper-input-container-input: {
-           color: white;
-         }
-       }
-       iron-icon {
-         width: 25%;
-         height: auto;
-       }
-     </style>
 
-    <iron-icon icon="icons:language"></iron-icon>
-    <paper-dropdown-menu class="custom" label="language" no-label-float="">
-      <paper-listbox class="dropdown-content" selected="{{lang}}" attr-for-selected="name">
-        <paper-item name="es">Español</paper-item>
-        <paper-item name="en">English</paper-item>
-      </paper-listbox>
-    </paper-dropdown-menu>
+     <div class="container-lang-selector">
+       <div class="container-icon">
+         <iron-icon icon="icons:language"></iron-icon>
+       </div>
+       <div class="container-dropdown">
+         <paper-dropdown-menu class="custom" label="language" no-label-float="">
+           <paper-listbox class="dropdown-content" selected="{{lang}}" attr-for-selected="name">
+             <paper-item name="es">Español</paper-item>
+             <paper-item name="en">English</paper-item>
+           </paper-listbox>
+         </paper-dropdown-menu>
+       </div>
+     </div>
+
   </template>
 
   <script>
@@ -24771,29 +24795,41 @@ respectively.
         background-color: var(--color-background);
         color: white;
         --color-background: rgb(158, 156, 156);
+        min-height: 79px;
       }
       .language-selector {
-        display: inline-flex;
-        width: 90px;
-        position: relative;
-        left: calc(80% - 100px);
+        /*float: right;*/
       }
       .name {
-        display: inline-flex;
+        /*display: inline-flex;*/
+        /*flex-grow: 2;*/
       }
       b.name {
-        font-size: 3vw;
+        font-size: 20px;
       }
       .container {
-        height: 100px;
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
       }
       .fb-share-button {
         width: 20px;
       }
+      .logo-link {
+        padding: 10px;
+      }
     </style>
+
     <div class="container">
       <b class="name">BrainPower</b>
       <facebook-share></facebook-share>
+      <a class="logo-link" href="http://performancetrends.com/" target="_blank">
+        <img src="/images/logos/performance-trends.jpg" alt="Preformance Trend logo">
+      </a>
+      <language-selector lang="{{lang}}" class="language-selector"></language-selector>
+
     </div>
 
 
@@ -24809,12 +24845,18 @@ respectively.
         properties: {
           lang: {
             type: String,
-            value: 'en'
+            value: 'en',
+            notify: true
           },
           greet: {
             type: String,
             value: 'Welcome!'
           }
+        },
+        attached: function() {
+          var dropDownSelector = this.getElementsByTagName('paper-dropdown-menu')[0];
+          dropDownSelector.setAttribute('vertical-align','bottom');
+          dropDownSelector.setAttribute('horizontal-align','right');
         }
       });
     })();
@@ -26045,17 +26087,13 @@ element.
 
           <section data-route="service">
             <service-section lang="{{lang}}"></service-section>
-
           </section>
 
         </iron-pages>
-        <footer-bar lang="{{lang}}"></footer-bar>
-        <language-selector lang="{{lang}}" class="language-selector-bottom"></language-selector>
+
       </div>
+      <footer-bar lang="{{lang}}"></footer-bar>
     </paper-scroll-header-panel>
-
-
-
 
     <paper-toast id="toast">
       <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
@@ -26104,7 +26142,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   if (window.location.port === '') {  // if production
     // Uncomment app.baseURL below and
     // set app.baseURL to '/your-pathname/' if running from folder in production
-    // app.baseUrl = '/polymer-starter-kit/';
+    app.baseUrl = '/brainpower/';
   }
 
   app.displayInstalledToast = function() {
