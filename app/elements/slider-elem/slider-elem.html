@@ -59,8 +59,11 @@
       <figure>
         <template is="dom-repeat" items="{{pictures}}">
           <!-- <iron-image src="{{item}}" preload sizing="contain"></iron-image> -->
+
           <iron-image src="{{item}}" class="hidden"
-            fade prevent-load preload sizing="cover" alt=""></iron-image>
+            fade prevent-load preload sizing="cover"
+            alt="" ></iron-image>
+
         </template>
       </figure>
     </div>
@@ -125,7 +128,7 @@
         },
         changeImg: function() {
           if(location.pathname == this.lastPath) {
-            console.log('changeImg from ',this.lastPath);
+
             var prev = this.elements[this.currentIndex];
             prev.classList.remove('current');
             prev.classList.add('hidden');

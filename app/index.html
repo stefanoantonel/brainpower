@@ -75,7 +75,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <section data-route="home">
             <paper-material elevation="1">
-              
+
               <my-greeting></my-greeting
               <p class="subhead">You now have:</p>
               <my-list></my-list
@@ -117,6 +117,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <section data-route="service">
             <service-section lang="{{lang}}"></service-section>
+          </section>
+
+          <section data-route="detail">
+            <paper-material elevation="1" id="section-service-detail">
+              <service-detail lang="{{lang}}" service="{}"></service-detail>
+            </paper-material>
           </section>
 
         </iron-pages>

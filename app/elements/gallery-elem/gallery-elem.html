@@ -1,0 +1,46 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<dom-module id="gallery-elem">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      span,
+      input {
+        @apply(--paper-font-body2);
+      }
+
+
+    </style>
+
+    <div class="container">
+      <h2>hdhhdhhd</h2>
+      <template is="dom-repeat" items="{{pictures}}">
+        <iron-image src="{{item}}" class="hidden"
+          fade preload sizing="cover" alt=""></iron-image>
+      </template>
+
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'gallery-elem',
+
+        properties: {
+          pictures: {
+            type: Array,
+            value: []
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

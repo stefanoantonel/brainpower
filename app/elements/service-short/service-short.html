@@ -38,8 +38,8 @@
         margin: auto;
         max-height: 450px;
       }
-    </style>
 
+    </style>
 
     <div class="service">
       <div class="description">
@@ -50,10 +50,7 @@
       <div class="image">
         <slider-elem last-path="/service" class="slider" pictures="{{service.images}}"></slider-elem>
       </div>
-
     </div>
-
-
   </template>
 
   <script>
@@ -69,12 +66,20 @@
             value: 'en',
             notify: true
           },
-          service: Object
+          service: Object,
+          selected: {
+            type: String,
+            notify: true
+          },
+          index: {
+            type: Number
+          }
         },
 
         getElementByLang: function(elemRecord, currentLang) {
           return elemRecord[currentLang];
-        }
+        },
+
 
       });
     })();

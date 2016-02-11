@@ -1,0 +1,85 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../gallery-elem/gallery-elem.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+
+<dom-module id="service-detail">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      span,
+      input {
+        @apply(--paper-font-body2);
+      }
+
+    </style>
+
+    <div class="service-detail" on-tap="func">
+      <div class="description">
+        <b>{{getElementByLang(service.title,lang)}}</b>
+        <br>
+        <b>{{getElementByLang(service.description,lang)}}</b>
+      </div>
+      <div class="image">
+
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'service-detail',
+
+        properties: {
+          lang: {
+            type: String,
+            notify: true,
+            observer: '_disabledChanged'
+          },
+          service: {
+            type: Object,
+            value: {}
+          },
+          animationConfig: {
+            value: function() {
+              return {
+                'entry': {
+                  name: 'slide-from-left-animation',
+                  node: this
+                },
+                'exit': {
+                  name: 'fade-out-animation',
+                  node: this
+                }
+              }
+            }
+          }
+        },
+        _disabledChanged: function(newValue, oldValue) {
+          console.log("------ Change in Service-Detail --------");
+          console.log("newValue ", newValue);
+          console.log("oldValue ", oldValue);
+
+        },
+        attributeChanged: function() {
+          // console.log("------- attribute change detail ----------");
+          // console.log(this.lang);
+          // console.log(this.service);
+        },
+        getElementByLang: function(elemRecord, currentLang) {
+          return elemRecord[currentLang];
+        },
+        func: function() {
+
+        }
+      });
+    })();
+  </script>
+</dom-module>

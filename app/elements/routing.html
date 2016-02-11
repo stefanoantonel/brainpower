@@ -22,10 +22,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     // Middleware
-    // function scrollToTop(ctx, next) {
-    //   app.scrollPageToTop();
-    //   next();
-    // }
+    function scrollToTop(ctx, next) {
+      app.scrollPageToTop();
+      next();
+    }
 
     // Routes
     // page('*', scrollToTop, function(ctx, next) {
@@ -64,6 +64,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     page('/service', function() {
       app.route = 'service';
+    });
+
+    page('/detail', scrollToTop, function(ctx, next) {
+      app.route = 'detail';
     });
 
     // 404

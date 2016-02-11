@@ -1,6 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-right-animation.html">
 
 <dom-module id="service-section">
   <template>
@@ -9,7 +13,16 @@
       :host {
         display: block;
       }
-
+      index {
+        display: none;
+      }
+      service-detail {
+        /*display: none;*/
+      }
+      a {
+        text-decoration: inherit;
+        color: inherit;
+      }
     </style>
 
     <iron-ajax
@@ -20,14 +33,20 @@
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
+    <!-- class="fullbleed layout vertical" -->
 
-    <template is="dom-repeat" items="{{services}}">
-      <paper-material elevation="1">
-        <service-short service={{item}} lang="{{lang}}"></service-short>
-      </paper-material>
-    </template>
 
-  <!-- END TEMPLATE -->
+    <div class="service-short-section">
+      <template is="dom-repeat" items="{{services}}">
+        <a href="{{baseUrl}}detail">
+        <paper-material elevation="1" on-tap="showDetails">
+          <index>{{index}}</index>
+          <service-short service={{item}} lang="{{lang}}"></service-short>
+        </paper-material>
+        </a>
+      </template>
+    </div>
+
   </template>
 
   <script>
@@ -37,18 +56,44 @@
       Polymer({
         is: 'service-section',
 
+        behaviors: [Polymer.NeonAnimatableBehavior],
+
         properties: {
           lang: {
             type: String,
             value: 'en',
             notify: true
           },
-          services: Object
+          services: {
+            type: Object
+          },
+          selected: {
+            type: Number,
+            value: 0
+          },
         },
 
+        computeService: function() {
+          if(this.service) {
+            return this.service;
+          }
+        },
+        attached: function() {
+
+        },
         handleResponse: function(event, res) {
           this.services = res.response;
+        },
+
+        showDetails: function(e) {
+          var index = e.currentTarget.getElementsByTagName("index")[0].innerHTML;
+          var service = this.services[index];
+          var mainPages = document.getElementById("main-pages");
+          var detailElem = mainPages.getElementsByTagName("service-detail")[0];
+          detailElem.service = service;
+          mainPages.selected = "detail";
         }
+
       });
     })();
   </script>
