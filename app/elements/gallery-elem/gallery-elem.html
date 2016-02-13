@@ -14,14 +14,23 @@
         @apply(--paper-font-body2);
       }
 
-
+      .container img {
+        margin: 0 auto;
+      }
+      iron-image {
+        width: 93%;
+        padding: 21px;
+        /*height: 300px;*/
+      }
+      iron-image img {
+        margin: 0 auto;
+      }
     </style>
 
     <div class="container">
       <h2>hdhhdhhd</h2>
       <template is="dom-repeat" items="{{pictures}}">
-        <iron-image src="{{item}}" class="hidden"
-          fade preload sizing="cover" alt=""></iron-image>
+        <iron-image src="{{item}}" preload fade alt=""></iron-image>
       </template>
 
     </div>
