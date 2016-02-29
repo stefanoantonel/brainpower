@@ -12,6 +12,7 @@
       .slider {
         width: 350px;
         height: 350px;
+        margin: 10px auto;
       }
       iron-image {
         width: 350px;
@@ -32,6 +33,9 @@
         -webkit-animation: show 6s ; /* Chrome, Safari, Opera */
         animation: show 6s ;
       }
+      figure {
+        margin: 0;
+      }
 
       /*Animation fade */
       /* Standard syntax */
@@ -51,6 +55,10 @@
         5%  {opacity: 1;}
         95%  {opacity: 1;}
         100% {opacity: 0;}
+      }
+
+      @media (max-width: 600px) {
+
       }
     </style>
 

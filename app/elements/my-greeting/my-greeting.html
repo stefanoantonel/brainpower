@@ -6,12 +6,19 @@
   <template>
     <style include="shared-styles">
       :host {
-        display: block;
+        display: flex;
+        justify-content: space-around;
       }
 
       span,
       input {
         @apply(--paper-font-body2);
+      }
+      .text-container {
+        width: 45%;
+      }
+      .slider-container {
+        width: 45%;
       }
       slider-component {
         width: 60%;
@@ -19,12 +26,19 @@
         overflow: hidden;
       }
     </style>
-    <b>{{defaultLang}}</b>
-    <h2 class="page-title">{{greeting}}</h2>
-    <span>Update text to change the greeting.</span>
-    <!-- Listens for "input" event and sets greeting to <input>.value -->
-    <input value="{{greeting::input}}">
-    <slider-elem last-path="/home" pictures="[[pictures]]"></slider-elem>
+
+    <div class="text-container">
+      <b>{{defaultLang}}</b>
+      <h2 class="page-title">{{greeting}}</h2>
+      <span>Update text to change the greeting.</span>
+      <!-- Listens for "input" event and sets greeting to <input>.value -->
+      <input value="{{greeting::input}}">
+    </div>
+
+    <div class="slider-container">
+      <slider-elem last-path="/home" pictures="[[pictures]]"></slider-elem>
+    </div>
+
   </template>
 
   <script>

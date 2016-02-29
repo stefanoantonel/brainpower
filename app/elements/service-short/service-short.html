@@ -26,8 +26,8 @@
         background-color: lightgray;*/
       }
       .service {
-        /*display: flex;
-        justify-content: space-around;*/
+        display: flex;
+        justify-content: space-between;
       }
       .service b {
         font-size: 2.5vw;
@@ -37,6 +37,23 @@
         max-width: 63%;
         margin: auto;
         max-height: 450px;
+      }
+
+      @media (max-width: 600px) {
+        .service {
+          display: block;
+        }
+        .slider {
+          overflow: hidden;
+          /* margin: 00; */
+          /* background-color: red; */
+          height: 200px;
+          width: 100%;
+        }
+        .service b {
+          font-size: 14px;
+        }
+
       }
 
     </style>
