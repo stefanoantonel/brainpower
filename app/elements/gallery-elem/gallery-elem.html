@@ -18,19 +18,20 @@
         margin: 0 auto;
       }
       iron-image {
-        width: 93%;
-        padding: 21px;
-        /*height: 300px;*/
+        width: 97%;
+        height: 440px;
+        padding: 11px;
       }
-      iron-image img {
-        margin: 0 auto;
+      iron-image {
+        margin: 20px auto;
       }
     </style>
 
     <div class="container">
-      <h2>hdhhdhhd</h2>
       <template is="dom-repeat" items="{{pictures}}">
-        <iron-image src="{{item}}" preload fade alt=""></iron-image>
+        <a href="{{item}}">
+          <iron-image src="{{item}}" preload fade sizing="contain" alt=""></iron-image>
+        </a>
       </template>
 
     </div>

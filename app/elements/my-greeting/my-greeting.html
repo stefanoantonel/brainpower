@@ -19,15 +19,24 @@
       }
       .slider-container {
         width: 45%;
+        border-style: double;
       }
       slider-component {
         width: 60%;
         height: 220px;
         overflow: hidden;
       }
-      @media (max-width: 600px) {
+      @media (max-width: 800px) {
         :host {
           display: block;
+        }
+        .text-container {
+          width: 100%;
+        }
+        .slider-container {
+          width: 100%;
+          border-style: none;
+          margin-top: 10px;
         }
       }
     </style>
