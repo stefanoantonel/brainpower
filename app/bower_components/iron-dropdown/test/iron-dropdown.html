@@ -118,13 +118,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         contentRect.height > 0;
     }
 
-    function runAfterOpen(overlay, cb) {
-      overlay.addEventListener('iron-overlay-opened', function () {
-        Polymer.Base.async(cb, 1);
-      });
-      overlay.open();
-    }
-
     suite('<iron-dropdown>', function() {
       var dropdown;
       var content;
@@ -140,20 +133,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
 
         test('shows dropdown content when opened', function(done) {
-          runAfterOpen(dropdown, function () {
+          dropdown.open();
+
+          Polymer.Base.async(function() {
             expect(elementIsVisible(content)).to.be.equal(true);
             done();
           });
         });
 
         test('hides dropdown content when outside is clicked', function(done) {
-          runAfterOpen(dropdown, function () {
+          dropdown.open();
+
+          Polymer.Base.async(function() {
             expect(elementIsVisible(content)).to.be.equal(true);
-            MockInteractions.tap(dropdown.parentNode);
+
+            // The document capture-click listeners are set async.
+            // Note(noms): I think this bit in iron-overlay-behavior is pretty
+            // brittle, so if the tests start failing in the future, make sure
+            // _toggleListeners is getting called at the right time.
             Polymer.Base.async(function() {
-              expect(elementIsVisible(content)).to.be.equal(false);
-              done();
-            }, 10);
+              MockInteractions.tap(dropdown.parentNode);
+              Polymer.Base.async(function() {
+                expect(elementIsVisible(content)).to.be.equal(false);
+                done();
+              }, 100);
+            }, 1);
           });
         });
 
@@ -163,7 +167,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             content = Polymer.dom(dropdown).querySelector('.dropdown-content');
           });
           test('focuses the content when opened', function(done) {
-            runAfterOpen(dropdown, function () {
+            dropdown.open();
+
+            Polymer.Base.async(function() {
               expect(document.activeElement).to.be.equal(content);
               done();
             });
@@ -173,7 +179,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             var focusableChild = Polymer.dom(content).querySelector('div[tabindex]');
             dropdown.focusTarget = focusableChild;
 
-            runAfterOpen(dropdown, function () {
+            dropdown.open();
+
+            Polymer.Base.async(function() {
               expect(document.activeElement).to.not.be.equal(content);
               expect(document.activeElement).to.be.equal(focusableChild);
               done();
@@ -186,39 +194,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var dropdown;
 
         setup(function() {
-          dropdown = fixture('TrivialDropdown');
-        });
-
-        test('should lock, only once', function(done) {
-          var openCount = 0;
-          runAfterOpen(dropdown, function() {
-            expect(Polymer.IronDropdownScrollManager._lockingElements.length)
-              .to.be.equal(1);
-            expect(Polymer.IronDropdownScrollManager.elementIsScrollLocked(document.body))
-              .to.be.equal(true);
-              
-            if(openCount === 0) {
-              // This triggers a second `pushScrollLock` with the same element, however
-              // that should not add the element to the `_lockingElements` stack twice
-              dropdown.close();
-              dropdown.open();
-            } else {
-              done();
-            }
-            openCount++;
-          });
-        });
-      });
-
-      suite('non locking scroll', function() {
-        var dropdown;
-
-        setup(function() {
           dropdown = fixture('NonLockingDropdown');
         });
 
         test('can be disabled with `allowOutsideScroll`', function(done) {
-          runAfterOpen(dropdown, function () {
+          dropdown.open();
+
+          Polymer.Base.async(function() {
             expect(Polymer.IronDropdownScrollManager.elementIsScrollLocked(document.body))
               .to.be.equal(false);
             done();
@@ -237,7 +219,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var parentRect;
           var dropdownRect;
 
-          runAfterOpen(dropdown, function () {
+          dropdown.opened = true;
+
+          Polymer.Base.async(function() {
             dropdownRect = dropdown.getBoundingClientRect();
             parentRect = parent.getBoundingClientRect();
 
@@ -246,7 +230,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             expect(dropdownRect.top).to.be.closeTo(parentRect.top, 0.1);
             expect(dropdownRect.right).to.be.closeTo(parentRect.right, 0.1);
             done();
-          });
+          }, 1);
         });
 
         test('can be re-aligned to the bottom', function(done) {
@@ -254,7 +238,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var dropdownRect;
 
           dropdown.verticalAlign = 'bottom';
-          runAfterOpen(dropdown, function () {
+          dropdown.opened = true;
+
+          Polymer.Base.async(function() {
             parentRect = parent.getBoundingClientRect();
             dropdownRect = dropdown.getBoundingClientRect();
 
@@ -263,7 +249,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             expect(dropdownRect.bottom).to.be.closeTo(parentRect.bottom, 0.1);
             expect(dropdownRect.right).to.be.closeTo(parentRect.right, 0.1);
             done();
-          });
+          }, 1);
         });
       });
 
@@ -277,7 +263,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
 
         test('can be offset towards the bottom right', function(done) {
-          runAfterOpen(dropdown, function () {
+          dropdown.opened = true;
+
+          Polymer.Base.async(function() {
             dropdownRect = dropdown.getBoundingClientRect();
 
             dropdown.verticalOffset = 10;
@@ -289,11 +277,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             // horizontalAlign is left, so a positive offset moves to the right.
             expect(dropdownRect.left + 10).to.be.closeTo(offsetDropdownRect.left, 0.1);
             done();
-          });
+          }, 1);
         });
 
         test('can be offset towards the top left', function(done) {
-          runAfterOpen(dropdown, function () {
+          dropdown.opened = true;
+
+          Polymer.Base.async(function() {
             dropdownRect = dropdown.getBoundingClientRect();
 
             dropdown.verticalOffset = -10;
@@ -305,7 +295,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             // horizontalAlign is left, so a negative offset moves to the left.
             expect(dropdownRect.left - 10).to.be.closeTo(offsetDropdownRect.left, 0.1);
             done();
-          });
+          }, 1);
         });
       });
 
@@ -319,7 +309,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
 
         test('can be offset towards the top left', function(done) {
-          runAfterOpen(dropdown, function () {
+          dropdown.opened = true;
+
+          Polymer.Base.async(function() {
             dropdownRect = dropdown.getBoundingClientRect();
 
             dropdown.verticalOffset = 10;
@@ -331,11 +323,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             // horizontalAlign is right, so a positive offset moves to the left.
             expect(dropdownRect.right - 10).to.be.closeTo(offsetDropdownRect.right, 0.1);
             done();
-          });
+          }, 1);
         });
 
         test('can be offset towards the bottom right', function(done) {
-          runAfterOpen(dropdown, function () {
+          dropdown.opened = true;
+
+          Polymer.Base.async(function() {
             dropdownRect = dropdown.getBoundingClientRect();
 
             dropdown.verticalOffset = -10;
@@ -347,7 +341,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             // horizontalAlign is right, so a positive offset moves to the right.
             expect(dropdownRect.right + 10).to.be.closeTo(offsetDropdownRect.right, 0.1);
             done();
-          });
+          }, 1);
         });
       });
 
@@ -358,7 +352,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         test('with horizontalAlign=left', function(done) {
           var parent = fixture('RTLDropdownLeft');
           dropdown = parent.querySelector('iron-dropdown');
-          runAfterOpen(dropdown, function () {
+          dropdown.open();
+
+          Polymer.Base.async(function() {
             // In RTL, if `horizontalAlign` is "left", that's the same as
             // being right-aligned in LTR. So the dropdown should be in the top
             // right corner.
@@ -372,7 +368,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         test('with horizontalAlign=right', function(done) {
           var parent = fixture('RTLDropdownRight');
           dropdown = parent.querySelector('iron-dropdown');
-          runAfterOpen(dropdown, function () {
+          dropdown.open();
+
+          Polymer.Base.async(function() {
             // In RTL, if `horizontalAlign` is "right", that's the same as
             // being left-aligned in LTR. So the dropdown should be in the top
             // left corner.

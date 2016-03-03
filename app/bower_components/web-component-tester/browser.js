@@ -8,8 +8,7 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-(function () {
-'use strict';
+(function () { 'use strict';
 
 /**
  * @param {function()} callback A function to call when the active web component
@@ -589,10 +588,6 @@ var jsSuites$1   = [];
 
 // We process grep ourselves to avoid loading suites that will be filtered.
 var GREP = getParam('grep');
-// work around mocha bug (https://github.com/mochajs/mocha/issues/2070)
-if (GREP) {
-  GREP = GREP.replace(/\\\./g, '.');
-}
 
 /**
  * Loads suites of tests, supporting both `.js` and `.html` files.
@@ -1991,5 +1986,5 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-}());
+})();
 //# sourceMappingURL=browser.js.map

@@ -15,8 +15,7 @@ var _self = (typeof window !== 'undefined')
 var Prism = (function(){
 
 // Private helper vars
-var lang = /\blang(?:uage)?-(\w+)\b/i;
-var uniqueId = 0;
+var lang = /\blang(?:uage)?-(?!\*)(\w+)\b/i;
 
 var _ = _self.Prism = {
 	util: {
@@ -32,13 +31,6 @@ var _ = _self.Prism = {
 
 		type: function (o) {
 			return Object.prototype.toString.call(o).match(/\[object (\w+)\]/)[1];
-		},
-
-		objId: function (obj) {
-			if (!obj['__id']) {
-				Object.defineProperty(obj, '__id', { value: ++uniqueId });
-			}
-			return obj['__id'];
 		},
 
 		// Deep clone a language definition (e.g. to extend it)
@@ -133,19 +125,16 @@ var _ = _self.Prism = {
 		},
 
 		// Traverse a language definition with Depth First Search
-		DFS: function(o, callback, type, visited) {
-			visited = visited || {};
+		DFS: function(o, callback, type) {
 			for (var i in o) {
 				if (o.hasOwnProperty(i)) {
 					callback.call(o, i, o[i], type || i);
 
-					if (_.util.type(o[i]) === 'Object' && !visited[_.util.objId(o[i])]) {
-						visited[_.util.objId(o[i])] = true;
-						_.languages.DFS(o[i], callback, null, visited);
+					if (_.util.type(o[i]) === 'Object') {
+						_.languages.DFS(o[i], callback);
 					}
-					else if (_.util.type(o[i]) === 'Array' && !visited[_.util.objId(o[i])]) {
-						visited[_.util.objId(o[i])] = true;
-						_.languages.DFS(o[i], callback, i, visited);
+					else if (_.util.type(o[i]) === 'Array') {
+						_.languages.DFS(o[i], callback, i);
 					}
 				}
 			}
@@ -418,8 +407,10 @@ if (!_self.document) {
 	return _self.Prism;
 }
 
-//Get current script and highlight
-var script = document.currentScript || [].slice.call(document.getElementsByTagName("script")).pop();
+// Get current script and highlight
+var script = document.getElementsByTagName('script');
+
+script = script[script.length - 1];
 
 if (script) {
 	_.filename = script.src;

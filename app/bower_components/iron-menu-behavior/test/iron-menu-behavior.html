@@ -70,11 +70,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         test('first item gets focus when menu is focused', function(done) {
           var menu = fixture('basic');
-          MockInteractions.focus(menu);
+          menu.focus();
           setTimeout(function() {
-            var ownerRoot = Polymer.dom(menu.firstElementChild).getOwnerRoot() || document;
-            var activeElement = Polymer.dom(ownerRoot).activeElement;
-            assert.equal(activeElement, menu.firstElementChild, 'menu.firstElementChild is focused');
+            assert.equal(document.activeElement, menu.firstElementChild, 'document.activeElement is first item')
             done();
           // wait for async in _onFocus
           }, 200);
@@ -83,24 +81,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         test('selected item gets focus when menu is focused', function(done) {
           var menu = fixture('basic');
           menu.selected = 1;
-          MockInteractions.focus(menu);
+          menu.focus();
           setTimeout(function() {
-            var ownerRoot = Polymer.dom(menu.selectedItem).getOwnerRoot() || document;
-            var activeElement = Polymer.dom(ownerRoot).activeElement;
-            assert.equal(activeElement, menu.selectedItem, 'menu.selectedItem is focused');
-            done();
-          // wait for async in _onFocus
-          }, 200);
-        });
-
-        test('focusing non-item content does not auto-focus an item', function(done) {
-          var menu = fixture('basic');
-          menu.extraContent.focus();
-          setTimeout(function() {
-            var menuOwnerRoot = Polymer.dom(menu.extraContent).getOwnerRoot() || document;
-            var menuActiveElement = Polymer.dom(menuOwnerRoot).activeElement;
-            assert.equal(menuActiveElement, menu.extraContent, 'menu.extraContent is focused');
-            assert.equal(Polymer.dom(document).activeElement, menu, 'menu is document.activeElement');
+            assert.equal(document.activeElement, menu.selectedItem, 'document.activeElement is selected item');
             done();
           // wait for async in _onFocus
           }, 200);
@@ -111,9 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           menu.selected = 0;
           menu.items[1].click();
           setTimeout(function() {
-            var ownerRoot = Polymer.dom(menu.items[1]).getOwnerRoot() || document;
-            var activeElement = Polymer.dom(ownerRoot).activeElement;
-            assert.equal(activeElement, menu.items[1], 'menu.items[1] is focused');
+            assert.equal(document.activeElement, menu.items[1], 'document.activeElement is last activated item');
             done();
           // wait for async in _onFocus
           }, 200);
@@ -124,9 +105,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           menu.selected = 0;
           menu.items[0].click();
           setTimeout(function() {
-            var ownerRoot = Polymer.dom(menu.items[0]).getOwnerRoot() || document;
-            var activeElement = Polymer.dom(ownerRoot).activeElement;
-            assert.equal(activeElement, menu.items[0], 'menu.items[0] is focused');
+            assert.equal(document.activeElement, menu.items[0], 'document.activeElement is last activated item');
             done();
           // wait for async in _onFocus
           }, 200);

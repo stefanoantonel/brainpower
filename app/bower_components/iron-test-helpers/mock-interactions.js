@@ -19,11 +19,6 @@
     return has;
   })();
 
-  /*
-   * Returns the (x,y) coordinates representing the middle of a node.
-   *
-   * @param {HTMLElement} node An element.
-   */
   function middleOfNode(node) {
     var bcr = node.getBoundingClientRect();
     return {
@@ -32,11 +27,6 @@
     };
   }
 
-  /*
-   * Returns the (x,y) coordinates representing the top left corner of a node.
-   *
-   * @param {HTMLElement} node An element.
-   */
   function topLeftOfNode(node) {
     var bcr = node.getBoundingClientRect();
     return {
@@ -45,14 +35,6 @@
     };
   }
 
-  /*
-   * Fires a mouse event on a specific node, at a given set of coordinates.
-   * This event bubbles and is cancellable.
-   *
-   * @param {String} type The type of mouse event (such as 'tap' or 'down').
-   * @param {Object} xy The (x,y) coordinates the mouse event should be fired from.
-   * @param {HTMLElement} node The node to fire the event on.
-   */
   function makeEvent(type, xy, node) {
     var props = {
       bubbles: true,
@@ -85,16 +67,11 @@
     node.dispatchEvent(e);
   }
 
-  /*
-   * Simulates a mouse move action by firing a `move` mouse event on a
-   * specific node, between a set of coordinates.
-   *
-   * @param {HTMLElement} node The node to fire the event on.
-   * @param {Object} fromXY The (x,y) coordinates the dragging should start from.
-   * @param {Object} toXY The (x,y) coordinates the dragging should end at.
-   * @param {Object} steps Optional. The numbers of steps in the move motion.
-   *    If not specified, the default is 5.
-   */
+  function down(node, xy) {
+    xy = xy || middleOfNode(node);
+    makeEvent('down', xy, node);
+  }
+
   function move(node, fromXY, toXY, steps) {
     steps = steps || 5;
     var dx = Math.round((fromXY.x - toXY.x) / steps);
@@ -114,15 +91,45 @@
     }, node);
   }
 
-  /*
-   * Simulates a mouse dragging action originating in the middle of a specific node.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   * @param {Number} dx The horizontal displacement.
-   * @param {Object} dy The vertical displacement
-   * @param {Object} steps Optional. The numbers of steps in the dragging motion.
-   *    If not specified, the default is 5.
-   */
+  function up(node, xy) {
+    xy = xy || middleOfNode(node);
+    makeEvent('up', xy, node);
+  }
+
+  function tap(node) {
+    // Respect nodes that are disabled in the UI.
+    if (window.getComputedStyle(node)['pointer-events'] === 'none')
+      return;
+    var xy = middleOfNode(node);
+    down(node, xy);
+    up(node, xy);
+    makeEvent('tap', xy, node);
+  }
+
+  function focus(target) {
+    Polymer.Base.fire('focus', {}, {
+      bubbles: false,
+      node: target
+    });
+  }
+
+  function blur(target) {
+    Polymer.Base.fire('blur', {}, {
+      bubbles: false,
+      node: target
+    });
+  }
+
+  function downAndUp(target, callback) {
+    down(target);
+    Polymer.Base.async(function() {
+      up(target);
+      tap(target);
+
+      callback && callback();
+    });
+  }
+
   function track(target, dx, dy, steps) {
     dx = dx | 0;
     dy = dy | 0;
@@ -137,100 +144,7 @@
     up(target, xy2);
   }
 
-  /*
-   * Fires a `down` mouse event on a specific node, at a given set of coordinates.
-   * This event bubbles and is cancellable. If the (x,y) coordinates are
-   * not specified, the middle of the node will be used instead.
-   *
-   * @param {HTMLElement} node The node to fire the event on.
-   * @param {Object} xy Optional. The (x,y) coordinates the mouse event should be fired from.
-   */
-  function down(node, xy) {
-    xy = xy || middleOfNode(node);
-    makeEvent('down', xy, node);
-  }
-
-  /*
-   * Fires an `up` mouse event on a specific node, at a given set of coordinates.
-   * This event bubbles and is cancellable. If the (x,y) coordinates are
-   * not specified, the middle of the node will be used instead.
-   *
-   * @param {HTMLElement} node The node to fire the event on.
-   * @param {Object} xy Optional. The (x,y) coordinates the mouse event should be fired from.
-   */
-  function up(node, xy) {
-    xy = xy || middleOfNode(node);
-    makeEvent('up', xy, node);
-  }
-
-  /*
-   * Simulates a complete mouse click by firing a `down` mouse event, followed
-   * by an asynchronous `up` and `tap` events on a specific node. Calls the
-   *`callback` after the `tap` event is fired.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   * @param {Object} callback Optional. The function to be called after the action ends.
-   */
-  function downAndUp(target, callback) {
-    down(target);
-    Polymer.Base.async(function() {
-      up(target);
-      tap(target);
-
-      callback && callback();
-    });
-  }
-
-  /*
-   * Fires a 'tap' mouse event on a specific node. This respects the pointer-events
-   * set on the node, and will not fire on disabled nodes.
-   *
-   * @param {HTMLElement} node The node to fire the event on.
-   * @param {Object} xy Optional. The (x,y) coordinates the mouse event should be fired from.
-   */
-  function tap(node) {
-    // Respect nodes that are disabled in the UI.
-    if (window.getComputedStyle(node)['pointer-events'] === 'none')
-      return;
-    var xy = middleOfNode(node);
-    down(node, xy);
-    up(node, xy);
-    makeEvent('tap', xy, node);
-  }
-
-  /*
-   * Focuses a node by firing a `focus` event. This event does not bubble.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   */
-  function focus(target) {
-    Polymer.Base.fire('focus', {}, {
-      bubbles: false,
-      node: target
-    });
-  }
-
-  /*
-   * Blurs a node by firing a `blur` event. This event does not bubble.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   */
-  function blur(target) {
-    Polymer.Base.fire('blur', {}, {
-      bubbles: false,
-      node: target
-    });
-  }
-
-  /*
-   * Returns a keyboard event. This event bubbles and is cancellable.
-   *
-   * @param {String} type The type of keyboard event (such as 'keyup' or 'keydown').
-   * @param {Number} keyCode The keyCode for the event.
-   * @param {?String|[String]} modifiers The key modifiers for the event.
-   * Accepted values are shift, ctrl, alt, meta.
-   */
-  function keyboardEventFor(type, keyCode, modifiers) {
+  function keyboardEventFor(type, keyCode) {
     var event = new CustomEvent(type, {
       bubbles: true,
       cancelable: true
@@ -239,87 +153,32 @@
     event.keyCode = keyCode;
     event.code = keyCode;
 
-    modifiers = modifiers || [];
-    if (typeof modifiers === 'string') {
-      modifiers = [modifiers];
-    }
-    event.shiftKey = modifiers.indexOf('shift') !== -1;
-    event.altKey = modifiers.indexOf('alt') !== -1;
-    event.ctrlKey = modifiers.indexOf('ctrl') !== -1;
-    event.metaKey = modifiers.indexOf('meta') !== -1;
-
     return event;
   }
 
-  /*
-   * Fires a keyboard event on a specific node. This event bubbles and is cancellable.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   * @param {String} type The type of keyboard event (such as 'keyup' or 'keydown').
-   * @param {Number} keyCode The keyCode for the event.
-   * @param {?String|[String]} modifiers The key modifiers for the event.
-   * Accepted values are shift, ctrl, alt, meta.
-   */
-  function keyEventOn(target, type, keyCode, modifiers) {
-    target.dispatchEvent(keyboardEventFor(type, keyCode, modifiers));
+  function keyEventOn(target, type, keyCode) {
+    target.dispatchEvent(keyboardEventFor(type, keyCode));
   }
 
-  /*
-   * Fires a 'keydown' event on a specific node. This event bubbles and is cancellable.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   * @param {Number} keyCode The keyCode for the event.
-   * @param {?String|[String]} modifiers The key modifiers for the event.
-   * Accepted values are shift, ctrl, alt, meta.
-   */
-  function keyDownOn(target, keyCode, modifiers) {
-    keyEventOn(target, 'keydown', keyCode, modifiers);
+  function keyDownOn(target, keyCode) {
+    keyEventOn(target, 'keydown', keyCode);
   }
 
-  /*
-   * Fires a 'keyup' event on a specific node. This event bubbles and is cancellable.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   * @param {Number} keyCode The keyCode for the event.
-   * @param {?String|[String]} modifiers The key modifiers for the event.
-   * Accepted values are shift, ctrl, alt, meta.
-   */
-  function keyUpOn(target, keyCode, modifiers) {
-    keyEventOn(target, 'keyup', keyCode, modifiers);
+  function keyUpOn(target, keyCode) {
+    keyEventOn(target, 'keyup', keyCode);
   }
 
-  /*
-   * Simulates a complete key press by firing a `keydown` keyboard event, followed
-   * by an asynchronous `keyup` event on a specific node.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   * @param {Number} keyCode The keyCode for the event.
-   * @param {?String|[String]} modifiers The key modifiers for the event.
-   * Accepted values are shift, ctrl, alt, meta.
-   */
-  function pressAndReleaseKeyOn(target, keyCode, modifiers) {
-    keyDownOn(target, keyCode, modifiers);
+  function pressAndReleaseKeyOn(target, keyCode) {
+    keyDownOn(target, keyCode);
     Polymer.Base.async(function() {
-      keyUpOn(target, keyCode, modifiers);
+      keyUpOn(target, keyCode);
     }, 1);
   }
 
-  /*
-   * Simulates a complete 'enter' key press by firing a `keydown` keyboard event,
-   * followed by an asynchronous `keyup` event on a specific node.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   */
   function pressEnter(target) {
     pressAndReleaseKeyOn(target, 13);
   }
 
-  /*
-   * Simulates a complete 'space' key press by firing a `keydown` keyboard event,
-   * followed by an asynchronous `keyup` event on a specific node.
-   *
-   * @param {HTMLElement} target The node to fire the event on.
-   */
   function pressSpace(target) {
     pressAndReleaseKeyOn(target, 32);
   }
@@ -337,7 +196,6 @@
     pressSpace: pressSpace,
     keyDownOn: keyDownOn,
     keyUpOn: keyUpOn,
-    keyEventOn: keyEventOn,
     middleOfNode: middleOfNode,
     topLeftOfNode: topLeftOfNode
   };

@@ -19,16 +19,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
   <link rel="import" href="../../paper-styles/demo-pages.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="demo-snippet.html">
   <link rel="import" href="../iron-flex-layout.html">
 
-  <style is="custom-style" include="demo-pages-shared-styles">
-    demo-snippet {
-      --demo-snippet-demo: {
-        padding: 0;
-      }
-    }
+  <style>
     .container {
       background-color: #ccc;
       padding: 5px;
@@ -41,15 +35,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       min-height: 20px;
     }
 
-    .vertical-section-container {
-      max-width: 700px
+    demo-snippet {
+      width: 100%;
+    }
+
+    .vertical-section {
+      padding: 0 !important;
     }
   </style>
 
 </head>
 <body unresolved class="fullbleed">
-  <div class="vertical-section-container centered">
-    <h4>Horizontal and vertical layout</h4>
+
+  <h4>Horizontal and vertical layout</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -57,6 +56,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             @apply(--layout-horizontal);
           }
         </style>
+
         <div class="container flex">
           <div>one</div>
           <div>two</div>
@@ -64,8 +64,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Flexible children</h4>
+  <h4>Flexible children</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -84,8 +86,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Flexible children in vertical layouts</h4>
+  <h4>Flexible children in vertical layouts</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -105,8 +109,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Flex ratios</h4>
+  <h4>Flex ratios</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -131,8 +137,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Cross-axis stretch alignment (default)</h4>
+  <h4>Cross-axis stretch alignment (default)</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -147,8 +155,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Cross-axis center alignment</h4>
+  <h4>Cross-axis center alignment</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -164,8 +174,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Cross-axis start alignment</h4>
+  <h4>Cross-axis start alignment</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -181,8 +193,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Cross-axis end alignment</h4>
+  <h4>Cross-axis end alignment</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -198,8 +212,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Justification, start justified</h4>
+  <h4>Justification, start justified</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -214,8 +230,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Justification, start justified</h4>
+  <h4>Justification, start justified</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -230,8 +248,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Justification, end justified</h4>
+  <h4>Justification, end justified</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -246,8 +266,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Justification, equal space between elements</h4>
+  <h4>Justification, equal space between elements</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -264,8 +286,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Justification, equal space around each element</h4>
+  <h4>Justification, equal space around each element</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -281,8 +305,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Self alignment</h4>
+  <h4>Self alignment</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -316,8 +342,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Wrapping</h4>
+  <h4>Wrapping</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -336,8 +364,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>Reversed layouts</h4>
+  <h4>Reversed layouts</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
@@ -354,8 +384,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
       </template>
     </demo-snippet>
+  </div>
 
-    <h4>General purpose rules</h4>
+  <h4>General purpose ruls</h4>
+  <div class="vertical-section">
     <demo-snippet>
       <template>
         <style is="custom-style">
