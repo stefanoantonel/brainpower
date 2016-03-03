@@ -1,0 +1,95 @@
+<link rel="import" href="../bower_components/polymer/polymer.html"><link rel="import" href="../bower_components/paper-styles/typography.html"><dom-module id="shared-styles"><template><style>
+      .page-title {
+        @apply(--paper-font-display2);
+      }
+      paper-scroll-header-panel div.content {
+        height: auto;
+      }
+      paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
+        pointer-events: none;
+      }
+      
+      .language-selector-bottom {
+        display: none;
+      }
+
+      paper-menu {
+        --paper-menu-selected-item: {
+          color: var(--primary-color);
+        }
+
+        --paper-menu-focused-item-after: {
+          background: var(--primary-color);
+        }
+      }
+
+      paper-menu iron-icon {
+        margin-right: 33px;
+        opacity: 0.54;
+      }
+
+      paper-menu a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+
+        text-decoration: none;
+        color: var(--menu-link-color);
+        /*font-family: 'Roboto', 'Noto', sans-serif;*/
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+        min-height: 48px;
+        padding: 0 16px;
+      }
+      paper-material {
+        border-radius: 2px;
+        height: 100%;
+        padding: 16px 0 16px 0;
+        width: calc(98.66% - 16px);
+        margin: 16px auto;
+        background: white;
+      }
+      section[data-route="home"] paper-material {
+        @apply(--paper-font-body2);
+      }
+
+      section[data-route="home"] paper-material .subhead {
+        @apply(--paper-font-subhead);
+      }
+
+      @media (max-width: 600px) {
+        .page-title {
+          font-size: 24px!important;
+        }
+        .language-selector-bottom {
+          float: right;
+          display: flex;
+        }
+        paper-material {
+          --menu-container-display: none;
+          width: calc(97.33% - 32px);
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+      }
+
+      /* Tablet+ */
+      @media (min-width: 601px) {
+        #drawer.paper-drawer-panel > [drawer] {
+          border-right: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
+        iron-pages {
+          padding: 48px 62px;
+        }
+
+        paper-material {
+          width: calc(98% - 46px);
+          margin-bottom: 32px;
+          padding-left: 30px;
+          padding-right: 30px;
+        }
+      }
+    </style></template></dom-module>
