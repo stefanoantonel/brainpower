@@ -98,7 +98,7 @@
     </div>
 
     <div class="bottom-header">
-      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab" no-bar noink>
+      <paper-tabs selected="{{selected}}" class="custom-link" on-tap="changeTab" no-bar on-mouseover="hover" noink>
         <paper-tab link><a href="{{baseUrl}}home" class="link">{{getElementByLang(home,lang)}}</a></paper-tab>
         <!-- <paper-tab link><a href="{{baseUrl}}product" class="link">{{getElementByLang(product,lang)}}</a></paper-tab> -->
         <paper-tab link><a href="{{baseUrl}}service" class="link">{{getElementByLang(service,lang)}}</a></paper-tab>
@@ -106,6 +106,7 @@
       </paper-tabs>
     </div>
 
+    <audio id="hoverSound" src="./hover.mp3" type="audio/mpeg"></audio>
   </template>
 
   <script>
@@ -167,7 +168,9 @@
         changeTab: function() {
 
         },
-
+        hover: function(e) {
+          this.querySelector('#hoverSound').play();
+        },
         getElementByLang: function(elemRecord, currentLang) {
           return elemRecord[currentLang];
         }
