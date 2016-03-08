@@ -9,9 +9,9 @@
       "en": "We made the design thinking about you"
     },
     "images": [
-      "/images/services/serv1.png",
-      "/images/services/serv2.png",
-      "/images/services/serv3.png"
+      "images/services/serv1.png",
+      "images/services/serv2.png",
+      "images/services/serv3.png"
     ]
   },
   {
@@ -24,9 +24,9 @@
       "en": "We made the simulation thinking about you"
     },
     "images": [
-      "/images/services/serv3.png",
-      "/images/services/serv2.png",
-      "/images/services/serv1.png"
+      "images/services/serv3.png",
+      "images/services/serv2.png",
+      "images/services/serv1.png"
     ]
   },
   {
@@ -39,9 +39,9 @@
       "en": "We made the test thinking about you"
     },
     "images": [
-      "/images/services/serv2.png",
-      "/images/services/serv1.png",
-      "/images/services/serv3.png"
+      "images/services/serv2.png",
+      "images/services/serv1.png",
+      "images/services/serv3.png"
     ]
   }
 ]
