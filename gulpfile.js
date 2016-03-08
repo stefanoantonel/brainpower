@@ -162,6 +162,15 @@ gulp.task('html', function() {
     dist());
 });
 
+// Copy Sounds to dist
+gulp.task('assets', function() {
+  return gulp.src(['app/assets/**'])
+    .pipe(gulp.dest(dist('assets')))
+    .pipe($.size({
+      title: 'assets'
+    }));
+});
+
 // Vulcanize granular configuration
 gulp.task('vulcanize', function() {
   return gulp.src('app/elements/elements.html')
@@ -273,7 +282,7 @@ gulp.task('default', ['clean'], function(cb) {
   runSequence(
     ['ensureFiles', 'copy', 'styles'],
     'elements',
-    ['images', 'fonts', 'html'],
+    ['images', 'fonts', 'html','assets'],
     'vulcanize', // 'cache-config',
     cb);
 });
