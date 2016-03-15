@@ -161,7 +161,7 @@ gulp.task('html', function() {
     dist());
 });
 
-// Copy Sounds to dist
+// Copy Sounds and json to dist
 gulp.task('assets', function() {
   return gulp.src(['app/assets/**'])
     .pipe(gulp.dest(dist('assets')))
@@ -281,6 +281,7 @@ gulp.task('default', ['clean'], function(cb) {
   runSequence(
     ['ensureFiles', 'copy', 'styles'],
     ['images', 'fonts', 'html'],
+    'assets',
     'vulcanize', // 'cache-config',
     cb);
 });
