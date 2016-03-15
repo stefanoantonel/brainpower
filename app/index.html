@@ -54,7 +54,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- Because this project uses vulcanize this should be your only html import
        in this file. All other imports should go in elements.html -->
   <link rel="import" href="elements/elements.html">
-  <!-- <link rel="import" href="elements/elements.vulcanized.html"> -->
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
@@ -106,7 +105,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <section data-route="product">
             <paper-material elevation="1">
-              <h2 class="page-title">product</h2>
+              <h2 class="page-title">Products</h2>
               <p>This is the product section</p>
             </paper-material>
           </section>
@@ -126,6 +125,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       <footer-bar lang='{{lang}}'></footer-bar>
     </paper-scroll-header-panel>
+
 
     <paper-toast id="toast">
       <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>

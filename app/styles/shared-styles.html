@@ -14,7 +14,7 @@
       paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
         pointer-events: none;
       }
-      
+
       .language-selector-bottom {
         display: none;
       }
@@ -63,6 +63,17 @@
 
       section[data-route="home"] paper-material .subhead {
         @apply(--paper-font-subhead);
+      }
+
+      .app-menu {
+        --paper-menu-selected-item: {
+          color: #fff;
+          background: var(--light-primary-color);
+        }
+      }
+
+      paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
+        pointer-events: none;
       }
 
       @media (max-width: 600px) {

@@ -19,4 +19,10 @@ body {
   /*background: linear-gradient(rgba(14, 10, 105, 0.95), rgba(0, 255, 0, 0.3), rgba(255, 0, 0, 0.94)); */
   /*font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
   /*color: #333;*/
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+.page-title {
+  outline: none;
 }
