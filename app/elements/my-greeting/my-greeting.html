@@ -1,8 +1,7 @@
-<<<<<<< HEAD
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<!-- <link rel="import" href="../../bower_components/paper-styles/typography.html"> -->
 <link rel="import" href="../slider-elem/slider-elem.html">
-=======
+
 <!--
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
@@ -12,10 +11,6 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-styles/typography.html">
->>>>>>> ce5ce8fa70c3b74b2c74b220435c118ffae80766
 
 <dom-module id="my-greeting">
   <template>
@@ -89,7 +84,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               'images/services/ex2.png'
             ]
           }
-        }
+        },
+        // ready: function() {
+        //   this.importHref('elements/header-bar/header-bar.html', function(e) {
+        //       // e.target.import is the import document.
+        //       console.log("added header")
+        //   }, function(e) {
+        //       // loading error
+        //   });
+        // },
       });
     })();
   </script>
