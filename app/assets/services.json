@@ -51,10 +51,9 @@
       "images/services/simulaciones_dinamicas/1.png"
     ],
     "videos": [
-      "ANIMACION  CINEMATICA BOTADOR 2.avi",
-      "Animacion Stress Cigueñal Original 1 - copia.avi",
-      "Animacion Stress Cigueñal Original 1.avi",
-      "FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement4.avi"
+      "images/services/simulaciones_dinamicas/ANIMACION_CINEMATICA_BOTADOR_2.ogv",
+      "images/services/simulaciones_dinamicas/Animacion_Stress_Cigue_al_Original_1_-_copia_.ogv",
+      "images/services/simulaciones_dinamicas/FSAE_FRAME-Natural_Frequency_Study_1-Displacement-.ogv"
     ]
   },
   {
@@ -73,8 +72,8 @@
       "images/services/simulaciones_estaticas/16.png"
     ],
     "videos": [
-      "FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement3 - copia.avi",
-      "FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement3.avi"
+      "images/services/simulaciones_estaticas/FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement3 - copia.avi",
+      "images/services/simulaciones_estaticas/FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement3.avi"
     ]
   },
   {
@@ -189,8 +188,7 @@
       "images/calculo_de_estructuras/ESTRUCTURA NAVE-vista frontal 1.png"
     ],
     "videos": [
-      "Animacion robot acomodador de bobinas V1 Rapida - copia.avi",
-      "Animacion robot acomodador de bobinas V1 Rapida"
+      "images/calculo_de_estructuras/Animacion_robot_acomodador_de_bobinas_V1_Rapida.ogv"
     ]
   }
 

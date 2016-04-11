@@ -33,6 +33,16 @@
           <iron-image src="{{item}}" preload fade sizing="contain" alt=""></iron-image>
         <!-- </a> -->
       </template>
+      <template is="dom-repeat" items="{{videos}}">
+        <!-- <a href="{{item}}"> -->
+        <h1>Video</h1>
+          <iron-image src="{{item}}" preload fade sizing="contain" alt=""></iron-image>
+        <!-- </a> -->
+        <video width="100%" height="356px" controls>
+          <source src="{{item}}" type="video/ogg">
+        Your browser does not support the video tag.
+        </video>
+      </template>
 
     </div>
   </template>
