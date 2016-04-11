@@ -1,22 +1,32 @@
 [
   {
     "title": {
-      "es": "Diseño",
-      "en": "Design"
+      "es": "Diseño de Productos",
+      "en": "Products Design"
     },
     "description": {
       "es": "Hacemos diseño a medida",
       "en": "We made the design thinking about you"
     },
     "images": [
-      "images/services/serv1.png",
-      "images/services/serv2.png",
-      "images/services/serv3.png"
-    ]
+      "images/services/disenio_de_productos/1.JPG",
+      "images/services/disenio_de_productos/1.png",
+      "images/services/disenio_de_productos/2.png",
+      "images/services/disenio_de_productos/3.png",
+      "images/services/disenio_de_productos/3.JPG",
+      "images/services/disenio_de_productos/7.JPG",
+      "images/services/disenio_de_productos/9.jpg",
+      "images/services/disenio_de_productos/9.png",
+      "images/services/disenio_de_productos/10.png",
+      "images/services/disenio_de_productos/18.png",
+      "images/services/disenio_de_productos/19.png",
+      "images/services/disenio_de_productos/20.png"
+    ],
+    "videos": []
   },
   {
     "title": {
-      "es": "Simulacion",
+      "es": "Simulaciones de Flujo de Fluidos",
       "en": "Simulation"
     },
     "description": {
@@ -24,10 +34,64 @@
       "en": "We made the simulation thinking about you"
     },
     "images": [
-      "images/services/serv3.png",
-      "images/services/serv2.png",
-      "images/services/serv1.png"
+      "images/services/simulaciones_de_flujo_de_fluidos/1.png"
+    ],
+    "videos": []
+  },
+  {
+    "title": {
+      "es": "Simulaciones Dinamicas",
+      "en": "Simulation"
+    },
+    "description": {
+      "es": "Hacemos simulacion a medida",
+      "en": "We made the simulation thinking about you"
+    },
+    "images": [
+      "images/services/simulaciones_dinamicas/1.png"
+    ],
+    "videos": [
+      "ANIMACION  CINEMATICA BOTADOR 2.avi",
+      "Animacion Stress Cigueñal Original 1 - copia.avi",
+      "Animacion Stress Cigueñal Original 1.avi",
+      "FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement4.avi"
     ]
+  },
+  {
+    "title": {
+      "es": "Simulaciones Estaticas",
+      "en": "Simulation"
+    },
+    "description": {
+      "es": "Hacemos simulacion a medida",
+      "en": "We made the simulation thinking about you"
+    },
+    "images": [
+      "images/services/simulaciones_estaticas/4.png",
+      "images/services/simulaciones_estaticas/11.png",
+      "images/services/simulaciones_estaticas/15.png",
+      "images/services/simulaciones_estaticas/16.png"
+    ],
+    "videos": [
+      "FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement3 - copia.avi",
+      "FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement3.avi"
+    ]
+  },
+  {
+    "title": {
+      "es": "Simulaciones Térmicas",
+      "en": "Simulation"
+    },
+    "description": {
+      "es": "Hacemos simulacion a medida",
+      "en": "We made the simulation thinking about you"
+    },
+    "images": [
+      "images/services/simulaciones_termicas/31.png",
+      "images/services/simulaciones_termicas/32.png",
+      "images/services/simulaciones_termicas/33.png"
+    ],
+    "videos": []
   },
   {
     "title": {
@@ -42,6 +106,92 @@
       "images/services/serv2.png",
       "images/services/serv1.png",
       "images/services/serv3.png"
+    ],
+    "videos": []
+  },
+  {
+    "title": {
+      "es": "Construccion de Piezas Soldadas",
+      "en": "Tests"
+    },
+    "description": {
+      "es": "Hacemos pruebas a medida",
+      "en": "We made the test thinking about you"
+    },
+    "images": [
+      "images/construccion_de_piezas_soldadas/serv2.png"
+    ],
+    "videos": []
+  },
+  {
+    "title": {
+      "es": "Calculos de Ingenieria",
+      "en": "Tests"
+    },
+    "description": {
+      "es": "Hacemos pruebas a medida",
+      "en": "We made the test thinking about you"
+    },
+    "images": [
+      "images/calculos_de_ingenieria/12.png",
+      "images/calculos_de_ingenieria/13.png",
+      "images/calculos_de_ingenieria/14.png"
+    ],
+    "videos": []
+  },
+  {
+    "title": {
+      "es": "Calculos de Frecuencias y Modos Naturales de Vibracion",
+      "en": "Tests"
+    },
+    "description": {
+      "es": "Hacemos pruebas a medida",
+      "en": "We made the test thinking about you"
+    },
+    "images": [
+      "images/calculo_de_frecuencias_y_modos_naturales_de_vibracion/5.png",
+      "images/calculo_de_frecuencias_y_modos_naturales_de_vibracion/6.png",
+      "images/calculo_de_frecuencias_y_modos_naturales_de_vibracion/8.png",
+      "images/calculo_de_frecuencias_y_modos_naturales_de_vibracion/7.png"
+    ],
+    "videos": []
+  },
+  {
+    "title": {
+      "es": "Calculos de Estructuras",
+      "en": "Tests"
+    },
+    "description": {
+      "es": "Hacemos pruebas a medida",
+      "en": "We made the test thinking about you"
+    },
+    "images": [
+      "images/calculo_de_estructuras/ESTRUCTURA NAVE-detalle 1.png",
+      "images/calculo_de_estructuras/ESTRUCTURA NAVE-perspectiva 1.png",
+      "images/calculo_de_estructuras/ESTRUCTURA NAVE-perspectiva 2.png",
+      "images/calculo_de_estructuras/ESTRUCTURA NAVE-vista frontal 1.png"
+    ],
+    "videos": []
+  },
+  {
+    "title": {
+      "es": "Animaciones Computacionales",
+      "en": "Tests"
+    },
+    "description": {
+      "es": "Hacemos pruebas a medida",
+      "en": "We made the test thinking about you"
+    },
+    "images": [
+      "images/calculo_de_estructuras/ESTRUCTURA NAVE-detalle 1.png",
+      "images/calculo_de_estructuras/ESTRUCTURA NAVE-perspectiva 1.png",
+      "images/calculo_de_estructuras/ESTRUCTURA NAVE-perspectiva 2.png",
+      "images/calculo_de_estructuras/ESTRUCTURA NAVE-vista frontal 1.png"
+    ],
+    "videos": [
+      "Animacion robot acomodador de bobinas V1 Rapida - copia.avi",
+      "Animacion robot acomodador de bobinas V1 Rapida"
     ]
   }
+
 ]
