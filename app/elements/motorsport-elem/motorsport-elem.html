@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../gallery-elem/gallery-elem.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="motorsport-elem">
   <template>
@@ -15,12 +16,17 @@
 
     </style>
 
+    <iron-ajax
+        auto
+        url='/assets/motorsport.json'
+        params='{"alt":"json", "q":"chrome"}'
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+
     <div class="">
-      <div class="description">
-        <b>{{getElementByLang(service.title,lang)}}</b>
-        <br>
-        <b>Motorsport</b>
-      </div>
+      <gallery-elem pictures="{{services.images}}" videos="{{services.videos}}" lang={{lang}}></gallery-elem>
     </div>
   </template>
 
@@ -46,6 +52,9 @@
         attached: function() {
 
         },
+        handleResponse: function(event, res) {
+          this.services = res.response;
+        }
       });
     })();
   </script>

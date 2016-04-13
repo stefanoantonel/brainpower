@@ -75,6 +75,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.route = 'detail';
     });
 
+    page('/motorsport', scrollToTop, function(ctx, next) {
+      app.route = 'motorsport';
+    });
+
     // 404
     page('*', function() {
       app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
