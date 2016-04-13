@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <!-- <link rel="import" href="../../bower_components/paper-styles/typography.html"> -->
-<link rel="import" href="../slider-elem/slider-elem.html">
+<!-- <link rel="import" href="../slider-elem/slider-elem.html"> -->
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
 
 <dom-module id="service-short">
@@ -35,6 +36,10 @@
       slider-elem.slider {
         border-style: groove;
       }
+      iron-image {
+        width: 300px;
+        height: 200px;
+      }
 
       @media (max-width: 700px) {
         .service {
@@ -63,8 +68,7 @@
         <b>{{getElementByLang(service.description,lang)}}</b>
       </div>
       <div class="image">
-        <slider-elem last-path="/service" class="slider"
-            pictures="{{service.images}}"></slider-elem>
+        <iron-image src="{{image}}" preload fade sizing="contain" alt=""></iron-image>
       </div>
     </div>
   </template>
@@ -89,13 +93,16 @@
           },
           index: {
             type: Number
-          }
+          },
+          image: Object
         },
 
         getElementByLang: function(elemRecord, currentLang) {
           return elemRecord[currentLang];
         },
-
+        ready: function() {
+          this.image = this.service.images[0].image;
+        },
 
       });
     })();

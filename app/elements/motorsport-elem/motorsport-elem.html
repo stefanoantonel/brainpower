@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../gallery-elem/gallery-elem.html">
 
-<dom-module id="service-detail">
+
+<dom-module id="motorsport-elem">
   <template>
     <style include="shared-styles">
       :host {
@@ -15,14 +15,11 @@
 
     </style>
 
-    <div class="service-detail">
+    <div class="">
       <div class="description">
         <b>{{getElementByLang(service.title,lang)}}</b>
         <br>
-        <b>{{getElementByLang(service.description,lang)}}</b>
-      </div>
-      <div class="image">
-        <gallery-elem pictures="{{service.images}}" videos="{{service.videos}}" lang={{lang}}></gallery-elem>
+        <b>Motorsport</b>
       </div>
     </div>
   </template>
@@ -32,7 +29,7 @@
       'use strict';
 
       Polymer({
-        is: 'service-detail',
+        is: 'motorsport-elem',
 
         properties: {
           lang: {

@@ -28,20 +28,22 @@
     </style>
 
     <div class="container">
+
       <template is="dom-repeat" items="{{pictures}}">
-        <!-- <a href="{{item}}"> -->
-          <iron-image src="{{item}}" preload fade sizing="contain" alt=""></iron-image>
-        <!-- </a> -->
+        <template is="dom-if" if="{{notEmpty(item.image)}}">
+          <iron-image src="{{item.image}}" preload fade sizing="contain" alt=""></iron-image>
+          <b>{{getElementByLang(item.description,lang)}}</b>
+        </template>
       </template>
+
       <template is="dom-repeat" items="{{videos}}">
-        <!-- <a href="{{item}}"> -->
-        <h1>Video</h1>
-          <iron-image src="{{item}}" preload fade sizing="contain" alt=""></iron-image>
-        <!-- </a> -->
-        <video width="100%" height="356px" controls>
-          <source src="{{item}}" type="video/ogg">
-        Your browser does not support the video tag.
-        </video>
+        <template is="dom-if" if="{{notEmpty(item.video)}}">
+          <h1>Video</h1>
+          <video width="100%" height="356px" controls>
+            <source src="{{item.video}}" type="video/mp4">
+          </video>
+          <b>{{getElementByLang(item.description,lang)}}</b>
+        </template>
       </template>
 
     </div>
@@ -59,6 +61,16 @@
             type: Array,
             value: []
           }
+        },
+        getElementByLang: function(elemRecord, currentLang) {
+          return elemRecord[currentLang];
+        },
+        notEmpty: function(collection) {
+          debugger
+          if(collection != '') {
+            return true;
+          }
+          return false;
         }
       });
     })();

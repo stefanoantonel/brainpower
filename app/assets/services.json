@@ -9,20 +9,100 @@
       "en": "We made the design thinking about you"
     },
     "images": [
-      "images/services/disenio_de_productos/1.JPG",
-      "images/services/disenio_de_productos/1.png",
-      "images/services/disenio_de_productos/2.png",
-      "images/services/disenio_de_productos/3.png",
-      "images/services/disenio_de_productos/3.JPG",
-      "images/services/disenio_de_productos/7.JPG",
-      "images/services/disenio_de_productos/9.jpg",
-      "images/services/disenio_de_productos/9.png",
-      "images/services/disenio_de_productos/10.png",
-      "images/services/disenio_de_productos/18.png",
-      "images/services/disenio_de_productos/19.png",
-      "images/services/disenio_de_productos/20.png"
+      {
+        "image": "images/services/products_design/1.JPG",
+        "description": {
+          "es": "descripcion del producto",
+          "en": "description of the product"
+        }
+      },
+      {
+        "image": "images/services/products_design/1.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/2.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/3.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/3.JPG" ,
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/7.JPG",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/9.jpg",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/9.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/10.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/18.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/19.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/20.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
-    "videos": []
+    "videos": [
+      {
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
   },
   {
     "title": {
@@ -34,9 +114,23 @@
       "en": "We made the simulation thinking about you"
     },
     "images": [
-      "images/services/simulaciones_de_flujo_de_fluidos/1.png"
+      {
+        "image": "images/services/simulations_of_fluid_flows/1.jpg",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
-    "videos": []
+    "videos": [
+      {
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
   },
   {
     "title": {
@@ -48,12 +142,36 @@
       "en": "We made the simulation thinking about you"
     },
     "images": [
-      "images/services/simulaciones_dinamicas/1.png"
+      {
+        "image": "images/services/dynamic_simulations/1.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
     "videos": [
-      "images/services/simulaciones_dinamicas/ANIMACION_CINEMATICA_BOTADOR_2.ogv",
-      "images/services/simulaciones_dinamicas/Animacion_Stress_Cigue_al_Original_1_-_copia_.ogv",
-      "images/services/simulaciones_dinamicas/FSAE_FRAME-Natural_Frequency_Study_1-Displacement-.ogv"
+      {
+        "video":   "images/services/dynamic_simulations/animacion _cinematica_botador_2.mp4",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "video": "images/services/dynamic_simulations/Animacion_Stress_Ciguenial_Original_1.mp4",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "video": "images/services/dynamic_simulations/fsae_frame-Natural_Frequency_Study_1-Displacement-Displacement4.mp4",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ]
   },
   {
@@ -66,14 +184,43 @@
       "en": "We made the simulation thinking about you"
     },
     "images": [
-      "images/services/simulaciones_estaticas/4.png",
-      "images/services/simulaciones_estaticas/11.png",
-      "images/services/simulaciones_estaticas/15.png",
-      "images/services/simulaciones_estaticas/16.png"
+      {
+        "image": "images/services/static_simulations/4.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/11.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/15.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/16.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
     "videos": [
-      "images/services/simulaciones_estaticas/FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement3 - copia.avi",
-      "images/services/simulaciones_estaticas/FSAE FRAME-Natural Frequency Study 1-Displacement-Displacement3.avi"
+      {
+        "video": "fsae_frame-Natural_Frequency_Study_1-Displacement-Displacement3.mp4",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ]
   },
   {
@@ -86,27 +233,37 @@
       "en": "We made the simulation thinking about you"
     },
     "images": [
-      "images/services/simulaciones_termicas/31.png",
-      "images/services/simulaciones_termicas/32.png",
-      "images/services/simulaciones_termicas/33.png"
+      {
+        "image": "images/services/thermal_simulations/31.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/thermal_simulations/32.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/thermal_simulations/33.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
-    "videos": []
-  },
-  {
-    "title": {
-      "es": "Pruebas",
-      "en": "Tests"
-    },
-    "description": {
-      "es": "Hacemos pruebas a medida",
-      "en": "We made the test thinking about you"
-    },
-    "images": [
-      "images/services/serv2.png",
-      "images/services/serv1.png",
-      "images/services/serv3.png"
-    ],
-    "videos": []
+    "videos": [
+      {
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
   },
   {
     "title": {
@@ -118,9 +275,23 @@
       "en": "We made the test thinking about you"
     },
     "images": [
-      "images/construccion_de_piezas_soldadas/serv2.png"
+      {
+        "image": "images/services/weldment_construction/1.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
-    "videos": []
+    "videos": [
+      {
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
   },
   {
     "title": {
@@ -132,11 +303,37 @@
       "en": "We made the test thinking about you"
     },
     "images": [
-      "images/calculos_de_ingenieria/12.png",
-      "images/calculos_de_ingenieria/13.png",
-      "images/calculos_de_ingenieria/14.png"
+      {
+        "image": "images/services/engineering_calculations/12.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/engineering_calculations/13.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/engineering_calculations/14.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
-    "videos": []
+    "videos": [
+      {
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
   },
   {
     "title": {
@@ -148,12 +345,44 @@
       "en": "We made the test thinking about you"
     },
     "images": [
-      "images/calculo_de_frecuencias_y_modos_naturales_de_vibracion/5.png",
-      "images/calculo_de_frecuencias_y_modos_naturales_de_vibracion/6.png",
-      "images/calculo_de_frecuencias_y_modos_naturales_de_vibracion/8.png",
-      "images/calculo_de_frecuencias_y_modos_naturales_de_vibracion/7.png"
+      {
+        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/5.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/6.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/8.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/7.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
-    "videos": []
+    "videos": [
+      {
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
   },
   {
     "title": {
@@ -165,12 +394,44 @@
       "en": "We made the test thinking about you"
     },
     "images": [
-      "images/calculo_de_estructuras/ESTRUCTURA NAVE-detalle 1.png",
-      "images/calculo_de_estructuras/ESTRUCTURA NAVE-perspectiva 1.png",
-      "images/calculo_de_estructuras/ESTRUCTURA NAVE-perspectiva 2.png",
-      "images/calculo_de_estructuras/ESTRUCTURA NAVE-vista frontal 1.png"
+      {
+        "image": "images/services/calculation_of_structures/estructura_nave_detalle_1.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/calculation_of_structures/estructura_nave_perspectiva_1.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/calculation_of_structures/estructura_nave_perspectiva_2.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/calculation_of_structures/estructura_nave_vista_frontal_1.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
-    "videos": []
+    "videos": [
+      {
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
   },
   {
     "title": {
@@ -182,14 +443,22 @@
       "en": "We made the test thinking about you"
     },
     "images": [
-      "images/calculo_de_estructuras/ESTRUCTURA NAVE-detalle 1.png",
-      "images/calculo_de_estructuras/ESTRUCTURA NAVE-perspectiva 1.png",
-      "images/calculo_de_estructuras/ESTRUCTURA NAVE-perspectiva 2.png",
-      "images/calculo_de_estructuras/ESTRUCTURA NAVE-vista frontal 1.png"
+      {
+        "image": "images/services/computer_animation/estructura_nave_detalle_1.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ],
     "videos": [
-      "images/calculo_de_estructuras/Animacion_robot_acomodador_de_bobinas_V1_Rapida.ogv"
+      {
+        "video": "images/services/computer_animation/Animacion robot acomodador de bobinas V1 Rapida.mp4",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
     ]
   }
-
 ]
