@@ -57,10 +57,7 @@
         is: 'gallery-elem',
 
         properties: {
-          pictures: {
-            type: Array,
-            value: []
-          }
+          pictures: Object
         },
         getElementByLang: function(elemRecord, currentLang) {
           return elemRecord[currentLang];
@@ -70,7 +67,10 @@
             return true;
           }
           return false;
-        }
+        },
+        attached: function() {
+          console.log("attached")
+        },
       });
     })();
   </script>

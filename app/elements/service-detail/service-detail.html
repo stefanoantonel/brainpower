@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../gallery-elem/gallery-elem.html">
+<!-- <link rel="import" href="../gallery-elem/gallery-elem.html"> -->
 
 <dom-module id="service-detail">
   <template>
@@ -21,9 +21,7 @@
         <br>
         <b>{{getElementByLang(service.description,lang)}}</b>
       </div>
-      <div class="image">
-        <gallery-elem pictures="{{service.images}}" videos="{{service.videos}}" lang={{lang}}></gallery-elem>
-      </div>
+      <div class="image gallery-container"></div>
     </div>
   </template>
 
@@ -46,9 +44,43 @@
         getElementByLang: function(elemRecord, currentLang) {
           return elemRecord[currentLang];
         },
-        attached: function() {
-
-        },
+        // loadGallery: function(element) {
+        //   if(!element.galleryIsLoaded) {
+        //     Polymer.Base.importHref('/elements/gallery-elem/gallery-elem.html', function(e) {
+        //       // e.target.import is the import document.
+        //       var node = document.createElement("gallery-elem")
+        //       var container = document.getElementsByClassName("gallery-container")[0]
+        //       node.pictures = element.service.images
+        //       node.videos = element.service.videos
+        //       node.lang = element.lang
+        //       container.appendChild(node);
+        //       element.galleryIsLoaded = true;
+        //     }, function(e) {
+        //       // loading error
+        //       console.error(e);
+        //     });
+        //   }
+        //   else {
+        //     // change language when you change the tab to avoid bad binding
+        //     var galleryElem = element.getElementsByTagName("gallery-elem")[0]
+        //     galleryElem.pictures = element.service.images
+        //     galleryElem.videos = element.service.videos
+        //     galleryElem.lang = element.lang
+        //   }
+        // },
+        // createElem: function() {
+        //   var serviceDetailElem = this
+        //
+        //   var ironPages = document.getElementById("main-pages");
+        //   ironPages.addEventListener("iron-select", function() {
+        //     if(this.selected == "detail") {
+        //         serviceDetailElem.loadGallery(serviceDetailElem)
+        //     }
+        //   });
+        // },
+        // attached: function() {
+        //   this.createElem();
+        // },
       });
     })();
   </script>

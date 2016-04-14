@@ -66,19 +66,50 @@
             type: Number,
             value: 0
           },
+          galleryIsLoaded: {
+            type: Boolean,
+            value: false
+          },
+          serviceSelected: Object,
         },
         handleResponse: function(event, res) {
           this.services = res.response;
         },
+        loadGallery: function(element) {
+          if(!element.galleryIsLoaded) {
+            element.importHref('/elements/gallery-elem/gallery-elem.html', function(e) {
+              // e.target.import is the import document.
+              var galleryElem = document.createElement("gallery-elem")
+              var container = document.getElementById("section-service-detail")
+              galleryElem.pictures = element.serviceSelected.images
+              galleryElem.videos = element.serviceSelected.videos
+              galleryElem.lang = element.lang
+              container.appendChild(galleryElem);
+              element.galleryIsLoaded = true;
+              var mainPages = document.getElementById("main-pages")
+              mainPages.selected = "detail";
+            });
+          }
+          else {
+            var galleryElem = document.getElementById("section-service-detail").getElementsByTagName("gallery-elem")[0]
+            galleryElem.pictures = element.serviceSelected.images
+            galleryElem.videos = element.serviceSelected.videos
+            galleryElem.lang = element.lang
+            var mainPages = document.getElementById("main-pages")
+            mainPages.selected = "detail";
+          }
+        },
         showDetails: function(e) {
           var index = e.currentTarget.getElementsByTagName("index")[0].innerHTML;
-          var service = this.services[index];
-          var mainPages = document.getElementById("main-pages");
-          var detailElem = mainPages.getElementsByTagName("service-detail")[0];
-          detailElem.service = service;
-          console.log(service)
-          mainPages.selected = "detail";
-        }
+          this.serviceSelected = this.services[index];
+
+          // var mainPages = document.getElementById("main-pages");
+          // var detailElem = mainPages.getElementsByTagName("service-detail")[0];
+          var gallery = this.loadGallery(this)
+
+        },
+
+
       });
     })();
   </script>
