@@ -5,8 +5,8 @@ var favicon = require('serve-favicon');
 var express = require('express');
 var fs      = require('fs');
 var app 	  = express();
-var port 	= 8080;
-var index = fs.readFileSync('app/index.html');
+var port    = process.env.PORT || 8080;
+var index   = fs.readFileSync('app/index.html');
 
 
 // app.set('view engine', 'jade');
