@@ -31,8 +31,9 @@
   },
   "scripts": {
     "test": "gulp test:local",
-    "start": "gulp serve"
+    "start": "node index.js"
   },
+  "main": "index.js",
   "engines": {
     "node": ">=0.12.0"
   },
