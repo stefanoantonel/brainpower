@@ -11,13 +11,12 @@
       }
       .slider {
         width: 350px;
-        height: 350px;
+        height: auto;
         margin: 0 auto;
       }
       iron-image {
         width: 350px;
-        height: 350px;
-        background: #ddd;
+        height: 200px;
         /*--iron-image-placeholder: {
           background: #ddd;;
         };*/
@@ -81,7 +80,7 @@
           <!-- <iron-image src="{{item}}" preload sizing="contain"></iron-image> -->
 
           <iron-image src="{{item}}" class="hidden"
-            fade prevent-load preload sizing="cover"
+            fade prevent-load preload sizing="contain"
             alt="" ></iron-image>
 
         </template>
