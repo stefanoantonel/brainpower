@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <!-- <link rel="import" href="../../bower_components/paper-styles/typography.html"> -->
 <!-- <link rel="import" href="../slider-elem/slider-elem.html"> -->
-<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<!-- <link rel="import" href="../../bower_components/iron-image/iron-image.html"> -->
 
 
 <dom-module id="service-short">
@@ -9,6 +9,8 @@
     <style include="shared-styles">
       :host {
         display: block;
+        --size-height: "200px";
+        --size-width: "200px";
       }
       .description {
         /*width: 100%;*/
@@ -36,10 +38,28 @@
       slider-elem.slider {
         border-style: groove;
       }
-      iron-image {
+      /*iron-image {
         width: 300px;
         height: 200px;
+      }*/
+      .path {
+        display: none;
       }
+      iron-image.iron-image-custom {
+        background-color: red;
+        width: 200px;
+        height: 200px;
+        --iron-image-width: 100%;
+        --iron-image-height: 100%;
+        --iron-image-placeholder: {
+          background: #939ed5;
+        };
+      }
+      :host ::content iron-image {
+        width: 210px;
+        min-height: 100px;
+      }
+
 
       @media (max-width: 700px) {
         .service {
@@ -57,6 +77,10 @@
         .service b {
           font-size: 14px;
         }
+        :host ::content iron-image {
+          width: 100%;
+          min-height: 100px;
+        }
       }
 
     </style>
@@ -67,8 +91,9 @@
         <br>
         <p>{{getElementByLang(service.description,lang)}}</p>
       </div>
-      <div class="image">
-        <iron-image src="{{image}}" preload fade sizing="contain" alt=""></iron-image>
+      <div class="image gallery-container">
+        <div class="path">{{image}}</div>
+        <!-- <iron-image path="{{image}}" preload fade sizing="contain" alt=""></iron-image> -->
       </div>
     </div>
   </template>
@@ -94,7 +119,11 @@
           index: {
             type: Number
           },
-          image: Object
+          image: Object,
+          galleryIsLoaded: {
+            type: Boolean,
+            value: false
+          }
         },
 
         getElementByLang: function(elemRecord, currentLang) {
@@ -103,7 +132,55 @@
         ready: function() {
           this.image = this.service.images[0].image;
         },
+        attached: function() {
+          this.createElem()
+        },
+        loadImage: function(element) {
+          if(!element.galleryIsLoaded) {
+            element.importHref('/bower_components/iron-image/iron-image.html', function(e) {
+              // e.target.import is the import document.
+              var galleryElem = document.createElement("iron-image")
+              var path = element.querySelector("div .path")
+              var container = path.parentNode
+              galleryElem.setAttribute("sizing", "contain")
+              galleryElem.setAttribute("preload","")
+              galleryElem.setAttribute("fade","")
+              galleryElem.setAttribute("src",path.innerText)
+              // galleryElem.setAttribute("height",200)
+              // galleryElem.setAttribute("width",200)
+              // galleryElem.setAttribute('style', 'width:200px ; height:200px');
+              galleryElem.classList.add("iron-image-custom")
+              container.appendChild(galleryElem);
+              element.galleryIsLoaded = true;
+            }, function(e) { // loading error
+              console.error(e);
+            });
 
+          }
+          // else {
+          //   var galleryElem = document.createElement("iron-image")
+          //   var container = document.getElementsByClassName("gallery-container")[0]
+          //   galleryElem.setAttribute("sizing", "contain")
+          //   galleryElem.setAttribute("preload","")
+          //   galleryElem.setAttribute("fade","")
+          //   container.appendChild(galleryElem);
+          //   var image = element.getElementsByTagName("iron-image")[0]
+          //   var path = image.previousElementSibling.innerText
+          //   image.src = path
+          // }
+        },
+        createElem: function() {
+          var serviceShortElem = this
+          if(location.pathname == "/service") {
+            this.loadImage(serviceShortElem);
+          }
+          var ironPages = document.getElementById("main-pages");
+          ironPages.addEventListener("iron-select", function() {
+            if(this.selected == "service") {
+                serviceShortElem.loadImage(serviceShortElem)
+            }
+          });
+        },
       });
     })();
   </script>

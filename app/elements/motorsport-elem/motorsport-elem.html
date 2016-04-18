@@ -60,7 +60,7 @@
             element.importHref('/elements/gallery-elem/gallery-elem.html', function(e) {
               // e.target.import is the import document.
               var galleryElem = document.createElement("gallery-elem")
-              var container = document.getElementsByClassName("gallery-container")[0]
+              var container = element.getElementsByClassName("gallery-container")[0]
               galleryElem.pictures = element.services.images
               galleryElem.videos = element.services.videos
               galleryElem.lang = element.lang
