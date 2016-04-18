@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <!-- <link rel="import" href="../../bower_components/paper-styles/typography.html"> -->
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../service-short/service-short.html">
 
 <dom-module id="service-section">
   <template>
@@ -102,14 +103,10 @@
         showDetails: function(e) {
           var index = e.currentTarget.getElementsByTagName("index")[0].innerHTML;
           this.serviceSelected = this.services[index];
-
           // var mainPages = document.getElementById("main-pages");
           // var detailElem = mainPages.getElementsByTagName("service-detail")[0];
           var gallery = this.loadGallery(this)
-
         },
-
-
       });
     })();
   </script>
