@@ -88,7 +88,7 @@
               container.appendChild(galleryElem);
               element.galleryIsLoaded = true;
               var mainPages = document.getElementById("main-pages")
-              mainPages.selected = "detail";
+              mainPages.select("detail")
             });
           }
           else {
@@ -97,7 +97,8 @@
             galleryElem.videos = element.serviceSelected.videos
             galleryElem.lang = element.lang
             var mainPages = document.getElementById("main-pages")
-            mainPages.selected = "detail";
+            // mainPages.selected = "detail";
+            mainPages.select("detail")
           }
         },
         showDetails: function(e) {
