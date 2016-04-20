@@ -56,10 +56,14 @@
         };
       }
       :host ::content iron-image {
-        width: 210px;
-        min-height: 100px;
+        width: 220px;
+        min-height: 130px;
+        margin-left: 40px;
+        margin-top: 25px;
       }
-
+      p {
+        text-align: justify;
+      }
 
       @media (max-width: 700px) {
         .service {
@@ -75,11 +79,15 @@
           border-style: none;
         }
         .service b {
-          font-size: 14px;
+          font-size: 20px;
+        }
+        .service p {
+          font-size: 18px;
         }
         :host ::content iron-image {
           width: 100%;
           min-height: 100px;
+          margin: 0 auto;
         }
       }
 

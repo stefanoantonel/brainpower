@@ -1,0 +1,234 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../../bower_components/paper-styles/typography.html"> -->
+
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<dom-module id="about-us-elem">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      h2 {
+        margin-bottom: 5px;
+      }
+      .jobs-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      ol.about-us-elem {
+        min-width: 35%;
+      }
+      p {
+        text-align: justify;
+      }
+      b {
+        width: 45%;
+        text-align: center;
+        margin-top: 15px;
+      }
+      @media (max-width: 800px) {
+        b {
+          width: 100%;
+          text-align: center;
+          margin-top: 15px;
+          font-size: 18px;
+        }
+        p {
+          font-size: 16px;
+        }
+      }
+    </style>
+
+    <div class="about-us">
+      <h2 class="page-title">{{getElementByLang(aboutUs.title,lang)}}</h2>
+      <p>{{getElementByLang(aboutUs.description,lang)}}</p>
+    </div>
+
+    <div class="jobs">
+      <h2 class="page-title">{{getElementByLang(whatWeDo.title,lang)}}</h2>
+      <p>{{getElementByLang(whatWeDo.description,lang)}}</p>
+      <div class="jobs-container">
+        <template is="dom-repeat" items="{{whatWeDo.jobs}}">
+          <b>{{getElementByLang(item,lang)}}</b>
+        </template>
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'about-us-elem',
+
+        properties: {
+          greeting: {
+            type: String,
+            value: 'BrainPower!'
+          },
+          aboutUs: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Quienes Somos:",
+                "en": "About Us"
+              },
+              "description": {
+                "es": "Somos un equipo de profesionales que se conocieron que partió de un equipo de tres compañeros de facultad mientras estudiábamos Ingeniería Mecánica, que discutían apasionadamente sobre automóviles, motores, maquinas, etc. Y que compartían una visión en lo referido al diseño de maquinas y productos, criterios y la ambición de poder en un futuro, ser ellos los diseñadores de mejores productos, con mayor calidad y mejor funcionalidad. Luego, este equipo se fue ampliando gracias a nuestros contactos profesionales de otras ramas y gente con mucha experiencia en distintos rubros de la industria.",
+                "en": ""
+              }
+            }
+          },
+          whatWeDo: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Que hacemos:",
+                "en": "What we do"
+              },
+              "description": {
+                "es": "En BrainPower utilizamos la creatividad, la ingeniería, el sentido común, criterio y coherencia, como herramientas fundamentales para resolver cualquier problema que enfrentemos. Nuestros clientes confían en nosotros para: ",
+                "en": ""
+              },
+              "jobs": [
+                {
+                  "es": "Consultoría",
+                  "en": ""
+                },
+                {
+                  "es": "Asesoramiento Profesional",
+                  "en": ""
+                },
+                {
+                  "es": "Bosquejos Conceptuales",
+                  "en": ""
+                },
+                {
+                  "es": "Diseños Esquemáticos",
+                  "en": ""
+                },
+                {
+                  "es": "Generación de Planos de Fabricación",
+                  "en": ""
+                },
+                {
+                  "es": "Ingeniería de Detalle",
+                  "en": ""
+                },
+                {
+                  "es": "Simulaciones Estáticas",
+                  "en": ""
+                },
+                {
+                  "es": "Simulaciones Dinámicas",
+                  "en": ""
+                },
+                {
+                  "es": "Análisis de Mecanismos",
+                  "en": ""
+                },
+                {
+                  "es": "Análisis Vibracional",
+                  "en": ""
+                },
+                {
+                  "es": "Cálculos de Resistencia de Componentes",
+                  "en": ""
+                },
+                {
+                  "es": "Análisis de Durabilidad de Producto (fatiga)",
+                  "en": ""
+                },
+                {
+                  "es": "Digitalización 3D",
+                  "en": ""
+                },
+                {
+                  "es": "Impresión 3D",
+                  "en": ""
+                },
+                {
+                  "es": "Animaciones Computarizadas",
+                  "en": ""
+                },
+                {
+                  "es": "Simulación de Procesos",
+                  "en": ""
+                },
+                {
+                  "es": "Calculos de Ingeniería",
+                  "en": ""
+                },
+                {
+                  "es": "Calculos Estadísticos",
+                  "en": ""
+                },
+                {
+                  "es": "Análisis de Viabilidad de Técnica",
+                  "en": ""
+                },
+                {
+                  "es": "Análisis de Impacto Ambiental de Proyectos",
+                  "en": ""
+                },
+                {
+                  "es": "Simulaciones Térmicas",
+                  "en": ""
+                },
+                {
+                  "es": "Dinámica de Fluidos Computacional (CFD)",
+                  "en": ""
+                },
+                {
+                  "es": "CAD / CAM / CAE",
+                  "en": ""
+                },
+                {
+                  "es": "Renderizados",
+                  "en": ""
+                },
+                {
+                  "es": "Recorridos Virtuales",
+                  "en": ""
+                },
+                {
+                  "es": "Cálculo Estructural",
+                  "en": ""
+                },
+                {
+                  "es": "Análisis Económico de Proyecto",
+                  "en": ""
+                },
+                {
+                  "es": "Diseño de Prototipos",
+                  "en": ""
+                },
+                {
+                  "es": "Validación de Productos",
+                  "en": ""
+                },
+              ]
+            }
+          },
+
+        },
+        getElementByLang: function(elemRecord, currentLang) {
+          return elemRecord[currentLang];
+        },
+      });
+    })();
+  </script>
+</dom-module>

@@ -28,8 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 45%;
       }
       .slider-container {
-        width: 45%;
-        border-style: double;
+        width: 77%;
       }
       slider-component {
         width: 60%;
@@ -48,13 +47,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           border-style: none;
           margin-top: 10px;
         }
+        p {
+          font-size: 16px;
+        }
       }
     </style>
 
     <div class="text-container">
-
-      <h2 class="page-title">{{greeting}}</h2>
-      <p>Descripcion de la empresa... </p>
+      <h2 class="page-title">{{getElementByLang(subtitle1,lang)}}</h2>
+      <p>{{getElementByLang(subtitle2,lang)}}</p>
     </div>
 
     <div class="slider-container">
@@ -73,7 +74,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         properties: {
           greeting: {
             type: String,
-            value: 'Brainpower!'
+            value: 'BrainPower!'
           },
           pictures: {
             type: Array,
@@ -84,16 +85,98 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               'images/services/static_simulations/4.png',
               'images/services/thermal_simulations/31.png',
             ]
-          }
+          },
+          subtitle1: {
+            type: Object,
+            value: {
+              "es": "Si pudo imaginarlo, nosotros podemos hacerlo realidad.",
+              "en": "The brain power advocated to the engineering"
+            }
+          },
+          subtitle2: {
+            type: Object,
+            value: {
+              "es": "En BrainPower aplicamos el arte de la Ingeniería para diseñar, optimizar y construir sus sueños.",
+              "en": "The brain power advocated to the engineering"
+            }
+          },
+          aboutUs: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Quienes Somos:",
+                "en": "About Us"
+              },
+              "description": {
+                "es": "Somos un equipo de profesionales que se conocieron que partió de un equipo de tres compañeros de facultad mientras estudiábamos Ingeniería Mecánica, que discutían apasionadamente sobre automóviles, motores, maquinas, etc. Y que compartían una visión en lo referido al diseño de maquinas y productos, criterios y la ambición de poder en un futuro, ser ellos los diseñadores de mejores productos, con mayor calidad y mejor funcionalidad. Luego, este equipo se fue ampliando gracias a nuestros contactos profesionales de otras ramas y gente con mucha experiencia en distintos rubros de la industria.",
+                "en": ""
+              }
+            }
+          },
+          whatWeDo: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Que hacemos:",
+                "en": "What we do"
+              },
+              "description": {
+                "es": "En BrainPower utilizamos la creatividad, la ingeniería, el sentido común, criterio y coherencia, como herramientas fundamentales para resolver cualquier problema que enfrentemos. Nuestros clientes confían en nosotros para: ",
+                "en": "",
+                "jobs": [
+                  {
+                    "es": "Consultas",
+                    "en": ""
+                  },
+                  {
+                    "es": "Asesoramiento Profesional",
+                    "en": ""
+                  },
+                  {
+                    "es": "Bosquejos Conceptuales",
+                    "en": ""
+                  },
+                  {
+                    "es": "Diseños Esquemáticos",
+                    "en": ""
+                  },
+                  {
+                    "es": "Generación de Planos de Fabricación",
+                    "en": ""
+                  },
+                  {
+                    "es": "Ingeniería de Detalle",
+                    "en": ""
+                  },
+                  {
+                    "es": "Simulaciones  , cálculos y hasta fabricación de productos o entrega de proyectos llave en mano..",
+                    "en": ""
+                  },
+                  {
+                    "es": "Ingeniería de Detalle",
+                    "en": ""
+                  },
+                  {
+                    "es": "Ingeniería de Detalle",
+                    "en": ""
+                  },
+                  {
+                    "es": "Ingeniería de Detalle",
+                    "en": ""
+                  },
+                  {
+                    "es": "Ingeniería de Detalle",
+                    "en": ""
+                  },
+                ]
+              }
+            }
+          },
+
         },
-        // ready: function() {
-        //   this.importHref('elements/header-bar/header-bar.html', function(e) {
-        //       // e.target.import is the import document.
-        //       console.log("added header")
-        //   }, function(e) {
-        //       // loading error
-        //   });
-        // },
+        getElementByLang: function(elemRecord, currentLang) {
+          return elemRecord[currentLang];
+        },
       });
     })();
   </script>
