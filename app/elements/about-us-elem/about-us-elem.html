@@ -36,6 +36,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         text-align: center;
         margin-top: 15px;
       }
+      .logo {
+        display: flex;
+        justify-content: space-around;
+      }
+      .logo a {
+        margin: 30px;
+      }
       @media (max-width: 800px) {
         b {
           width: 100%;
@@ -60,6 +67,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="jobs-container">
         <template is="dom-repeat" items="{{whatWeDo.jobs}}">
           <b>{{getElementByLang(item,lang)}}</b>
+        </template>
+      </div>
+    </div>
+
+    <div class="partners-container">
+      <h2 class="page-title">{{getElementByLang(ourPartners.title,lang)}}</h2>
+      <p>{{getElementByLang(ourPartners.description,lang)}}</p>
+      <div class="logo">
+        <template is="dom-repeat" items="{{ourPartners.companies}}">
+          <a class="logo-link" href="{{item.link}}" target='_blank'>
+            <img src="{{item.logo}}" alt=""/>
+          </a>
         </template>
       </div>
 
@@ -223,7 +242,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               ]
             }
           },
-
+          ourPartners: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Nuestos Socios:",
+                "en": "Our Partners:"
+              },
+              "description": {
+                "es": "Estos son algunos de nuestros socios y clientes comerciales",
+                "en": ""
+              },
+              "companies": [
+                {
+                  "logo": "/images/logos/performance-trends.png",
+                  "link": "http://performancetrends.com/"
+                },
+                {
+                  "logo": "/images/logos/ghea.jpg",
+                  "link": "http://www.facebook.com/metalurgicaghea.antonel"
+                },
+                {
+                  "logo": "",
+                  "link": ""
+                },
+                {
+                  "logo": "",
+                  "link": ""
+                }
+              ]
+            }
+          },
         },
         getElementByLang: function(elemRecord, currentLang) {
           return elemRecord[currentLang];
