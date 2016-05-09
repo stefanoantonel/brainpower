@@ -81,7 +81,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </a>
         </template>
       </div>
+    </div>
 
+    <div class="clients-container">
+      <h2 class="page-title">{{getElementByLang(ourClients.title,lang)}}</h2>
+      <p>{{getElementByLang(ourClients.description,lang)}}</p>
+      <div class="logo">
+        <template is="dom-repeat" items="{{ourClients.companies}}">
+          <a class="logo-link" href="{{item.link}}" target='_blank'>
+            <img src="{{item.logo}}" alt=""/>
+          </a>
+        </template>
+      </div>
     </div>
 
   </template>
@@ -242,6 +253,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               ]
             }
           },
+          ourClients: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Nuestos Clientes:",
+                "en": "Our Clients:"
+              },
+              "description": {
+                "es": "Estos son algunos de nuestros clientes",
+                "en": ""
+              },
+              "companies": [
+                {
+                  "logo": "/images/logos/ghea.jpg",
+                  "link": "http://www.facebook.com/metalurgicaghea.antonel"
+                },
+                {
+                  "logo": "",
+                  "link": ""
+                },
+                {
+                  "logo": "",
+                  "link": ""
+                }
+              ]
+            }
+          },
           ourPartners: {
             type: Object,
             value: {
@@ -250,7 +288,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 "en": "Our Partners:"
               },
               "description": {
-                "es": "Estos son algunos de nuestros socios y clientes comerciales",
+                "es": "Estos son algunos de nuestros socios comerciales",
                 "en": ""
               },
               "companies": [
@@ -259,8 +297,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   "link": "http://performancetrends.com/"
                 },
                 {
-                  "logo": "/images/logos/ghea.jpg",
-                  "link": "http://www.facebook.com/metalurgicaghea.antonel"
+                  "logo": "",
+                  "link": ""
                 },
                 {
                   "logo": "",
