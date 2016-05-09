@@ -11,11 +11,11 @@
       }
     </style>
 
-    <div
-      class="fb-share-button"
-      data-href="https://www.facebook.com/brainpoweringenieria/"
-      data-layout="button"></div>
-    <div id="fb-root"></div>
+<div class="fb-share-button"
+  data-href="https://www.facebook.com/brainpoweringenieria/"
+  data-layout="icon"
+  data-mobile-iframe="true"></div>
+<div id="fb-root"></div>
 
   </template>
 
@@ -41,13 +41,11 @@
           var d = document;
           var s = 'script';
           var id = 'facebook-jssdk';
+
           var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) {
-            return;
-          }
-          js = d.createElement(s);
-          js.id = id;
-          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
           fjs.parentNode.insertBefore(js, fjs);
         },
 
