@@ -24,12 +24,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.baseUrl = '/'
   }
 
-  app.displayInstalledToast = function() {
-    // Check to make sure caching is actually enabled—it won't be in the dev environment.
-    if (!Polymer.dom(document).querySelector('platinum-sw-cache').disabled) {
-      Polymer.dom(document).querySelector('#caching-complete').show();
-    }
-  };
+  // app.displayInstalledToast = function() {
+  //   // Check to make sure caching is actually enabled—it won't be in the dev environment.
+  //   if (!Polymer.dom(document).querySelector('platinum-sw-cache').disabled) {
+  //     Polymer.dom(document).querySelector('#caching-complete').show();
+  //   }
+  // };
 
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page
