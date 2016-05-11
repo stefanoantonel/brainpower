@@ -39,6 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .logo {
         display: flex;
         justify-content: space-around;
+        flex-wrap: wrap;
       }
       .logo a {
         margin: 30px;
@@ -77,7 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="logo">
         <template is="dom-repeat" items="{{ourPartners.companies}}">
           <a class="logo-link" href="{{item.link}}" target='_blank'>
-            <img src="{{item.logo}}" alt=""/>
+            <img name="{{item.logo}}" alt=""/>
           </a>
         </template>
       </div>
@@ -89,7 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="logo">
         <template is="dom-repeat" items="{{ourClients.companies}}">
           <a class="logo-link" href="{{item.link}}" target='_blank'>
-            <img src="{{item.logo}}" alt=""/>
+            <img name="{{item.logo}}" alt=""/>
           </a>
         </template>
       </div>
@@ -270,9 +271,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   "link": "http://www.facebook.com/metalurgicaghea.antonel"
                 },
                 {
-                  "logo": "",
-                  "link": ""
+                  "logo": "/images/logos/renault.jpg",
+                  "link": "https://www.renault.com.ar"
                 },
+                {
+                  "logo": "/images/logos/arcor.jpg",
+                  "link": "http://www.arcor.com.ar/"
+                },
+                {
+                  "logo": "/images/logos/vw.jpg",
+                  "link": "http://www.volkswagen.com.ar/"
+                },
+                {
+                  "logo": "/images/logos/roggio1.jpg",
+                  "link": "http://www.roggio.com.ar/"
+                },
+                {
+                  "logo": "/images/logos/alucor.png",
+                  "link": "http://www.alucor-aluminios.com.ar/"
+                },
+
                 {
                   "logo": "",
                   "link": ""
@@ -297,9 +315,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   "link": "http://performancetrends.com/"
                 },
                 {
-                  "logo": "",
-                  "link": ""
+                  "logo": "/images/logos/autocad.png",
+                  "link": "http://www.autodesk.com/products/autocad/overview"
                 },
+                {
+                  "logo": "/images/logos/simulation-mechanical.jpg",
+                  "link": "http://www.autodesk.com/products/simulation-mechanical/overview"
+                },
+                {
+                  "logo": "/images/logos/robot-structural.jpg",
+                  "link": "http://www.autodesk.com/products/robot-structural-analysis/overwiew"
+                },
+                {
+                  "logo": "/images/logos/inventor.png",
+                  "link": "http://www.autodesk.com/products/inventor/overview"
+                },
+                {
+                  "logo": "/images/logos/nastran.png",
+                  "link": "http://www.autodesk.com/products/nastran-in-cad/overview"
+                },
+
                 {
                   "logo": "",
                   "link": ""
@@ -311,6 +346,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               ]
             }
           },
+        },
+        attached: function() {
+          console.log("attach")
+          this.async(function() {
+            console.log("Assync attached")
+            var imgPartners = this.querySelectorAll(".partners-container img")
+            var imgClients = this.querySelectorAll(".clients-container img")
+            console.log(imgClients)
+            for (var i = 0; i < imgClients.length; i++) {
+              //Getting the source of the image
+              var el = imgClients[i];
+              //loading the image
+              el.src = el.name;
+            }
+            for (var i = 0; i < imgPartners.length; i++) {
+              //Getting the source of the image
+              var el = imgPartners[i];
+              //loading the image
+              el.src = el.name;
+            }
+            console.log("logos loaded")
+          },1500);
         },
         getElementByLang: function(elemRecord, currentLang) {
           return elemRecord[currentLang];

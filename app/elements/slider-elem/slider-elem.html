@@ -113,14 +113,17 @@
           }
         },
 
-        ready: function() {
-          var parent = this.getElementsByClassName('slider')[0];
+        attached: function() {
+          this.async(function() {
+            var parent = this.getElementsByClassName('slider')[0];
 
-          // The dom-change event signifies when the template has stamped its DOM.
-          parent.addEventListener('dom-change', function() {
-            // auto-binding template is ready.
-            this.parentElement.domIsLoaded(this);
-          });
+            // The dom-change event signifies when the template has stamped its DOM.
+            parent.addEventListener('dom-change', function() {
+              // auto-binding template is ready.
+              // this.parentElement.domIsLoaded(this);
+            });
+            this.domIsLoaded(this);
+          },1000);
         },
 
         domIsLoaded: function() {
