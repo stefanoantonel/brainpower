@@ -10,7 +10,7 @@ var index   = fs.readFileSync('app/index.html');
 app.set('port', (process.env.PORT || 5000));
 
 // app.set('view engine', 'jade');
-app.use(favicon(__dirname + '/app/favicon.ico'));
+/*app.use(favicon(__dirname + '/app/favicon.ico'));*/
 app.use(express.static('app'));
 
 app.get("/", function(request, response){ //root dir
