@@ -14,7 +14,7 @@
         --color-hover-tab: lightblue;
         --paper-tab-ink: var(--color-selected);
       }
-      span, input {
+      input {
         @apply(--paper-font-body2);
       }
 
@@ -90,6 +90,9 @@
         width: 100%;
         display: flex;
       }
+      span.gray {
+        color: gray;
+      }
       /*Media queries*/
       @media (max-width: 600px) {
         .top-header .name {
@@ -127,7 +130,8 @@
 
       <div class="right-part">
         <div class="top-header">
-          <b class="name">BrainPower</b>
+          <b class="name"><span class="gray">B</span>rain<span class="gray">P</span>ower
+          </b>
           <language-selector lang="{{lang}}" class="language-selector"></language-selector>
         </div>
 
