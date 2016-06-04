@@ -88,7 +88,7 @@
   <script>
     (function() {
       'use strict';
-
+      var isActive = true;
       Polymer({
         is: 'slider-elem',
 
@@ -118,12 +118,24 @@
             var parent = this.getElementsByClassName('slider')[0];
 
             // The dom-change event signifies when the template has stamped its DOM.
-            parent.addEventListener('dom-change', function() {
+            //parent.addEventListener('dom-change', function() {
               // auto-binding template is ready.
               // this.parentElement.domIsLoaded(this);
-            });
+            //});
             this.domIsLoaded(this);
+
+            //this function prevent to change the slide when this page lost focus to avoid CPU usage.
+            window.onfocus = function () { 
+              isActive = true; 
+            }; 
+
+            window.onblur = function () { 
+              isActive = false; 
+            };
+
           },1000);
+
+
         },
 
         domIsLoaded: function() {
@@ -133,7 +145,8 @@
           /* It's used to pass themselfe to function */
           var context = this;
           setInterval( function() {
-             context.changeImg.call(context)
+             if(isActive) 
+                context.changeImg.call(context)
           }, 3000 );
         },
         loadImages: function() {
@@ -147,7 +160,6 @@
         },
         changeImg: function() {
           if(location.pathname == this.lastPath || location.pathname == '/') {
-            console.log("cambio:",location.pathname);
             var prev = this.elements[this.currentIndex];
             prev.classList.remove('current');
             prev.classList.add('hidden');
@@ -165,7 +177,8 @@
           else {
             this.currentIndex = 0;
           }
-        }
+        },
+
       });
     })();
   </script>

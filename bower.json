@@ -2,12 +2,12 @@
   "name": "BrainPower",
   "version": "0.0.1",
   "authors": [
-      "Stefano Antonel <stefanoantonel@gmail.com>"
+    "Stefano Antonel <stefanoantonel@gmail.com>"
   ],
   "keywords": [
-      "polymer",
-      "desing",
-      "tabs"
+    "polymer",
+    "desing",
+    "tabs"
   ],
   "homepage": "https://www.brainpower.com.ar",
   "private": true,
@@ -22,5 +22,14 @@
   "devDependencies": {
     "web-component-tester": "^4.0.0"
   },
-  "ignore": []
+  "ignore": [],
+  "resolutions": {
+    "iron-image": "^1.2.0",
+    "core-component-page": "^0.4.0",
+    "polymer": "^1.2.1",
+    "platform": "^0.4.0",
+    "web-animations-js": "^2.2.0",
+    "sw-toolbox": "^3.1.1",
+    "chai": "^3.2.0"
+  }
 }
