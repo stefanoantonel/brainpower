@@ -125,9 +125,9 @@ gulp.task('copy', function() {
   var app = gulp.src([
     'app/*',
     '!app/test',
-    '!app/elements',
+    'app/elements',
     '!app/bower_components',
-    '!app/cache-config.json',
+    'app/cache-config.json',
     '!**/.DS_Store'
   ], {
     dot: true
@@ -136,7 +136,7 @@ gulp.task('copy', function() {
   // Copy over only the bower_components we need
   // These are things which cannot be vulcanized
   var bower = gulp.src([
-    'app/bower_components/{webcomponentsjs,platinum-sw,sw-toolbox,promise-polyfill}/**/*'
+    'app/bower_components/{webcomponentsjs,platinum-sw,sw-toolbox,promise-polyfill,iron-ajax,iron-image,polymer}/**/*'
   ]).pipe(gulp.dest(dist('bower_components')));
 
   return merge(app, bower)

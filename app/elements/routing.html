@@ -63,20 +63,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     page('/contact', function() {
+      //Polymer.Base.resolveUrl
+      Polymer.Base.importHref(
+        '/elements/contact-page/contact-page.html', () => {
+          //this.selected = 'browse';
+          app.route = 'contact';
+        }, () => {
+          console.log('Something failed!');
+        }, true
+      );
       app.route = 'contact';
       setFocus(app.route);
+
     });
 
-    page('/service', function() {
-      app.route = 'service';
+    page('/service', () => {
+      // if (Polymer.isInstance(this.$.service)) {
+      // //  this.selected = 'browse';
+      //   app.route = 'service';
+      //   return;
+      // }
+      Polymer.Base.importHref(
+        '/elements/service-section/service-section.html', () => {
+          //this.selected = 'browse';
+          app.route = 'service';
+        }, () => {
+          console.log('Something failed!');
+        }, true
+      );
     });
+
+
+    // page('/service', function() {
+    //   app.route = 'service';
+    // });
 
     page('/detail', scrollToTop, function(ctx, next) {
-      app.route = 'detail';
+      Polymer.Base.importHref(
+        '/elements/service-detail/service-detail.html', () => {
+          //this.selected = 'browse';
+          app.route = 'detail';
+        }, () => {
+          console.log('Something failed!');
+        }, true
+      );
+      // app.route = 'detail';
     });
 
     page('/motorsport', scrollToTop, function(ctx, next) {
-      app.route = 'motorsport';
+      // app.route = 'motorsport';
+      Polymer.Base.importHref(
+        '/elements/motorsport-elem/motorsport-elem.html', () => {
+          //this.selected = 'browse';
+          app.route = 'motorsport';
+        }, () => {
+          console.log('Something failed!');
+        }, true
+      );
     });
 
     // 404

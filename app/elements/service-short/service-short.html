@@ -144,38 +144,21 @@
           this.createElem()
         },
         loadImage: function(element) {
-          if(!element.galleryIsLoaded) {
-            element.importHref('/bower_components/iron-image/iron-image.html', function(e) {
-              // e.target.import is the import document.
-              var galleryElem = document.createElement("iron-image")
-              var path = element.querySelector("div .path")
-              var container = path.parentNode
-              galleryElem.setAttribute("sizing", "contain")
-              galleryElem.setAttribute("preload","")
-              galleryElem.setAttribute("fade","")
-              galleryElem.setAttribute("src",path.innerText)
-              // galleryElem.setAttribute("height",200)
-              // galleryElem.setAttribute("width",200)
-              // galleryElem.setAttribute('style', 'width:200px ; height:200px');
-              galleryElem.classList.add("iron-image-custom")
-              container.appendChild(galleryElem);
-              element.galleryIsLoaded = true;
-            }, function(e) { // loading error
-              console.error(e);
-            });
-
+          if(!this.galleryIsLoaded) {
+            var galleryElem = document.createElement("iron-image")
+            var path = element.querySelector("div .path")
+            var container = path.parentNode
+            galleryElem.setAttribute("sizing", "contain")
+            galleryElem.setAttribute("preload","")
+            galleryElem.setAttribute("fade","")
+            galleryElem.setAttribute("src",path.innerText)
+            // galleryElem.setAttribute("height",200)
+            // galleryElem.setAttribute("width",200)
+            // galleryElem.setAttribute('style', 'width:200px ; height:200px');
+            galleryElem.classList.add("iron-image-custom")
+            container.appendChild(galleryElem);
+            this.galleryIsLoaded = true;
           }
-          // else {
-          //   var galleryElem = document.createElement("iron-image")
-          //   var container = document.getElementsByClassName("gallery-container")[0]
-          //   galleryElem.setAttribute("sizing", "contain")
-          //   galleryElem.setAttribute("preload","")
-          //   galleryElem.setAttribute("fade","")
-          //   container.appendChild(galleryElem);
-          //   var image = element.getElementsByTagName("iron-image")[0]
-          //   var path = image.previousElementSibling.innerText
-          //   image.src = path
-          // }
         },
         createElem: function() {
           var serviceShortElem = this

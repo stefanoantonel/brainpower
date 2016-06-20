@@ -49,7 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- endbuild-->
 
   <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
-  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
   <!-- endbuild -->
 
   <!-- Because this project uses vulcanize this should be your only html import
@@ -58,6 +58,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
+
+  <script>
+
+    // setup Polymer options
+    // window.Polymer = {lazyRegister: true, dom: 'shadow'};
+
+    // load webcomponents polyfills
+    // (function() {
+    //   if ('registerElement' in document
+    //       && 'import' in document.createElement('link')
+    //       && 'content' in document.createElement('template')) {
+    //     // browser has web components
+    //   } else {
+    //     // polyfill web components
+    //     var e = document.createElement('script');
+    //     e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+    //     document.head.appendChild(e);
+    //   }
+    // })();
+
+    // load pre-caching service worker
+    // if ('serviceWorker' in navigator) {
+    //   window.addEventListener('load', function() {
+    //     navigator.serviceWorker.register('/service-worker.js');
+    //   });
+    // }
+
+  </script>
+
 </head>
 
 <body>
@@ -137,16 +166,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-scroll-header-panel>
 
 
-    <paper-toast id="toast">
+   <!--  <paper-toast id="toast">
       <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
-    </paper-toast>
+    </paper-toast> -->
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
 
-    <paper-toast id="caching-complete"
+  <!--   <paper-toast id="caching-complete"
                  duration="6000"
                  text="Caching complete! This app will work offline.">
-    </paper-toast>
+    </paper-toast> -->
 
     <platinum-sw-register auto-register
                           clients-claim

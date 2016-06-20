@@ -348,12 +348,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
         },
         attached: function() {
-          console.log("attach")
           this.async(function() {
-            console.log("Assync attached")
             var imgPartners = this.querySelectorAll(".partners-container img")
             var imgClients = this.querySelectorAll(".clients-container img")
-            console.log(imgClients)
             for (var i = 0; i < imgClients.length; i++) {
               //Getting the source of the image
               var el = imgClients[i];
@@ -366,7 +363,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               //loading the image
               el.src = el.name;
             }
-            console.log("logos loaded")
           },1500);
         },
         getElementByLang: function(elemRecord, currentLang) {
