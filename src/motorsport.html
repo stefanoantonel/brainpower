@@ -1,0 +1,96 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../gallery-elem/gallery-elem.html"> -->
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="motorsport-elem">
+  <template>
+    <style >
+      :host {
+        display: block;
+      }
+
+    </style>
+
+    <iron-ajax
+        auto
+        url='../assets/motorsport.json'
+        params='{"alt":"json", "q":"chrome"}'
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+    </iron-ajax>
+
+    <div class="gallery-container"></div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'motorsport-elem',
+
+        properties: {
+          lang: {
+            type: String,
+            notify: true,
+          },
+          services: {
+            type: Array
+          },
+          galleryIsLoaded: {
+            type: Boolean,
+            value: false
+          },
+        },
+        getElementByLang: function(elemRecord, currentLang) {
+          return elemRecord[currentLang];
+        },
+        attached: function() {
+
+        },
+
+        loadGallery: function(element) {
+          if(!element.galleryIsLoaded) {
+            element.importHref('gallery-elem.html', function(e) {
+              // e.target.import is the import document.
+              var galleryElem = document.createElement("gallery-elem")
+              var container = element.getElementsByClassName("gallery-container")[0]
+              galleryElem.pictures = element.services.images
+              galleryElem.videos = element.services.videos
+              galleryElem.lang = element.lang
+              container.appendChild(galleryElem);
+              element.galleryIsLoaded = true;
+            }, function(e) {
+              // loading error
+              console.error(e);
+            });
+          }
+          else {
+            // change language when you change the tab to avoid bad binding
+            var galleryElem = element.getElementsByTagName("gallery-elem")[0]
+            galleryElem.lang = element.lang
+          }
+        },
+        createElem: function() {
+          var motorsportElem = this
+          if(location.pathname == "/motorsport") {
+            this.loadGallery(motorsportElem);
+          }
+          var ironPages = document.getElementById("main-pages");
+          ironPages.addEventListener("iron-select", function() {
+            if(this.selected == "motorsport") {
+                motorsportElem.loadGallery(motorsportElem)
+            }
+          });
+        },
+        handleResponse: function(event, res) {
+          this.services = res.response;
+          this.createElem();
+        },
+
+      });
+    })();
+    //<gallery-elem pictures="{{services.images}}" videos="{{services.videos}}" lang={{lang}}></gallery-elem>
+  </script>
+</dom-module>
