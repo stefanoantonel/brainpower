@@ -137,7 +137,7 @@
           return elemRecord[currentLang];
         },
         ready: function() {
-          this.image = this.service.images[0].small;
+          this.image = this.service.images[0].image.replace("/0","/small/0")
         },
         attached: function() {
           this.createElem()
@@ -145,16 +145,12 @@
         loadImage: function(element) {
           if(!this.galleryIsLoaded) {
             var galleryElem = document.createElement("iron-image")
-            // var path = element.querySelector("div .path")
             var path = element.shadowRoot.querySelector("div.path")
             var container = path.parentNode
             galleryElem.setAttribute("sizing", "contain")
             galleryElem.setAttribute("preload","")
             galleryElem.setAttribute("fade","")
             galleryElem.setAttribute("src",path.innerText)
-            // galleryElem.setAttribute("height",200)
-            // galleryElem.setAttribute("width",200)
-            // galleryElem.setAttribute('style', 'width:200px ; height:200px');
             galleryElem.classList.add("iron-image-custom")
             container.appendChild(galleryElem);
             this.galleryIsLoaded = true;
@@ -165,12 +161,6 @@
           if(location.pathname == "/service") {
             this.loadImage(serviceShortElem);
           }
-          // var ironPages = document.getElementById("main-pages");
-          // ironPages.addEventListener("iron-select", function() {
-          //   if(this.selected == "service") {
-          //       serviceShortElem.loadImage(serviceShortElem)
-          //   }
-          // });
         },
       });
     })();

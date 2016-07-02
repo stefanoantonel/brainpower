@@ -11,64 +11,70 @@
     },
     "images": [
       {
-        "image": "images/services/products_design/1.JPG",
-        "small": "images/services/products_design/small/1.png",
+        "image": "images/services/products_design/00.png",
         "description": {
           "es": "descripcion del producto",
           "en": "description of the product"
         }
       },
       {
-        "image": "images/services/products_design/11.png",
-        "small": "images/services/products_design/small/11.png",
+        "image": "images/services/products_design/01.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/products_design/2.png",
-        "small": "images/services/products_design/small/2.png",
+        "image": "images/services/products_design/02.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/products_design/31.png",
-        "small": "images/services/products_design/small/31.png",
+        "image": "images/services/products_design/03.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/products_design/3.JPG" ,
-        "small": "images/services/products_design/small/3.png" ,
+        "image": "images/services/products_design/04.png" ,
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/products_design/7.JPG",
-        "small": "images/services/products_design/small/7.png",
+        "image": "images/services/products_design/05.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/products_design/91.jpg",
-        "small": "images/services/products_design/small/91.png",
+        "image": "images/services/products_design/06.jpg",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/products_design/9.png",
-        "small": "images/services/products_design/small/9.png",
+        "image": "images/services/products_design/07.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/08.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/09.png",
         "description": {
           "es": "",
           "en": ""
@@ -76,7 +82,55 @@
       },
       {
         "image": "images/services/products_design/10.png",
-        "small": "images/services/products_design/small/10.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/11.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/12.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/13.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/14.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/15.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/16.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/products_design/17.png",
         "description": {
           "es": "",
           "en": ""
@@ -84,7 +138,6 @@
       },
       {
         "image": "images/services/products_design/18.png",
-        "small": "images/services/products_design/small/18.png",
         "description": {
           "es": "",
           "en": ""
@@ -92,7 +145,6 @@
       },
       {
         "image": "images/services/products_design/19.png",
-        "small": "images/services/products_design/small/19.png",
         "description": {
           "es": "",
           "en": ""
@@ -100,7 +152,6 @@
       },
       {
         "image": "images/services/products_design/20.png",
-        "small": "images/services/products_design/small/20.png",
         "description": {
           "es": "",
           "en": ""
@@ -130,32 +181,70 @@
     },
     "images": [
       {
-        "image": "images/services/static_simulations/4.png",
-        "small": "images/services/static_simulations/small/4.png",
+        "image": "images/services/static_simulations/00.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/static_simulations/11.png",
-        "small": "images/services/static_simulations/small/11.png",
+        "image": "images/services/static_simulations/01.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/static_simulations/15.png",
-        "small": "images/services/static_simulations/small/15.png",
+        "image": "images/services/static_simulations/02.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/static_simulations/16.png",
-        "small": "images/services/static_simulations/small/16.png",
+        "image": "images/services/static_simulations/03.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/04.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/05.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/06.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/07.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/08.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/static_simulations/09.png",
         "description": {
           "es": "",
           "en": ""
@@ -185,8 +274,7 @@
     },
     "images": [
       {
-        "image": "images/services/dynamic_simulations/1.png",
-        "small": "images/services/dynamic_simulations/small/1.png",
+        "image": "images/services/dynamic_simulations/01.png",
         "description": {
           "es": "",
           "en": ""
@@ -195,21 +283,21 @@
     ],
     "videos": [
       {
-        "video":   "images/services/dynamic_simulations/animacion _cinematica_botador_2.mp4",
+        "video": "images/services/dynamic_simulations/animation01.mp4",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "video": "images/services/dynamic_simulations/Animacion_Stress_Ciguenial_Original_1.mp4",
+        "video": "images/services/dynamic_simulations/animation02.mp4",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "video": "images/services/dynamic_simulations/fsae_frame-Natural_Frequency_Study_1-Displacement-Displacement4.mp4",
+        "video": "images/services/dynamic_simulations/animation03.mp4",
         "description": {
           "es": "",
           "en": ""
@@ -230,32 +318,28 @@
     },
     "images": [
       {
-        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/5.png",
-        "small": "images/services/calculating_frequencies_and_natural_modes_of_vibration/small/5.png",
+        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/00.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/6.png",
-        "small": "images/services/calculating_frequencies_and_natural_modes_of_vibration/small/6.png",
+        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/01.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/8.png",
-        "small": "images/services/calculating_frequencies_and_natural_modes_of_vibration/small/8.png",
+        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/02.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/7.png",
-        "small": "images/services/calculating_frequencies_and_natural_modes_of_vibration/small/7.png",
+        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/03.png",
         "description": {
           "es": "",
           "en": ""
@@ -285,24 +369,21 @@
     },
     "images": [
       {
-        "image": "images/services/thermal_simulations/31.png",
-        "small": "images/services/thermal_simulations/small/31.png",
+        "image": "images/services/thermal_simulations/00.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/thermal_simulations/32.png",
-        "small": "images/services/thermal_simulations/small/32.png",
+        "image": "images/services/thermal_simulations/01.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/thermal_simulations/33.png",
-        "small": "images/services/thermal_simulations/small/33.png",
+        "image": "images/services/thermal_simulations/02.png",
         "description": {
           "es": "",
           "en": ""
@@ -332,8 +413,21 @@
     },
     "images": [
       {
-        "image": "images/services/simulations_of_fluid_flows/1.jpg",
-        "small": "images/services/simulations_of_fluid_flows/small/1.png",
+        "image": "images/services/simulations_of_fluid_flows/00.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/simulations_of_fluid_flows/01.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/simulations_of_fluid_flows/02.png",
         "description": {
           "es": "",
           "en": ""
@@ -363,24 +457,28 @@
     },
     "images": [
       {
-        "image": "images/services/engineering_calculations/12.png",
-        "small": "images/services/engineering_calculations/small/12.png",
+        "image": "images/services/engineering_calculations/00.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/engineering_calculations/13.png",
-        "small": "images/services/engineering_calculations/small/13.png",
+        "image": "images/services/engineering_calculations/01.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/engineering_calculations/14.png",
-        "small": "images/services/engineering_calculations/small/14.png",
+        "image": "images/services/engineering_calculations/02.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/engineering_calculations/02.png",
         "description": {
           "es": "",
           "en": ""
@@ -410,32 +508,42 @@
     },
     "images": [
       {
-        "image": "images/services/calculation_of_structures/estructura_nave_detalle_1.png",
-        "small": "images/services/calculation_of_structures/small/estructura_nave_detalle_1.png",
+        "image": "images/services/calculation_of_structures/00.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/calculation_of_structures/estructura_nave_perspectiva_1.png",
-        "small": "images/services/calculation_of_structures/small/estructura_nave_perspectiva_1.png",
+        "image": "images/services/calculation_of_structures/01.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/calculation_of_structures/estructura_nave_perspectiva_2.png",
-        "small": "images/services/calculation_of_structures/small/estructura_nave_perspectiva_2.png",
+        "image": "images/services/calculation_of_structures/02.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/calculation_of_structures/estructura_nave_vista_frontal_1.png",
-        "small": "images/services/calculation_of_structures/small/estructura_nave_vista_frontal_1.png",
+        "image": "images/services/calculation_of_structures/03.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/calculation_of_structures/04.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/calculation_of_structures/05.png",
         "description": {
           "es": "",
           "en": ""
@@ -464,8 +572,14 @@
     },
     "images": [
       {
-        "image": "images/services/computer_animation/estructura_nave_detalle_1.png",
-        "small": "images/services/computer_animation/small/estructura_nave_detalle_1.png",
+        "image": "images/services/computer_animation/00.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/computer_animation/01.png",
         "description": {
           "es": "",
           "en": ""
@@ -474,7 +588,7 @@
     ],
     "videos": [
       {
-        "video": "images/services/computer_animation/Animacion robot acomodador de bobinas V1 Rapida.mp4",
+        "video": "images/services/computer_animation/animation1.mp4",
         "description": {
           "es": "",
           "en": ""
@@ -495,8 +609,21 @@
     },
     "images": [
       {
-        "image": "images/services/weldment_construction/1.png",
-        "small": "images/services/weldment_construction/small/1.png",
+        "image": "images/services/weldment_construction/00.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/weldment_construction/01.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/weldment_construction/02.png",
         "description": {
           "es": "",
           "en": ""
