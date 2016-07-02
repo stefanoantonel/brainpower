@@ -1,9 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <!-- <link rel="import" href="../bower_components/paper-styles/typography.html"> -->
-<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
 
 <dom-module id="language-selector">
   <template>
@@ -11,33 +8,11 @@
       :host {
         display: block;
         width: 110px;
-      }
-      iron-icon {
-        width: 100%;
-        height: auto;
-        color: white;
-      }
-      .container-icon {
-        width: 15%;
-        align-self: center;
-      }
-      .container-dropdown {
-        width: 80%;
+        height: 15px;
       }
       .container-lang-selector {
         display: flex;
         justify-content: space-around;
-      }
-      paper-dropdown-menu {
-        --paper-dropdown-menu-icon: {
-          color: white;
-        }
-        --paper-input-container-input: {
-          color: white;
-        }
-        --paper-input-container-underline: {
-           visibility:hidden;
-        }
       }
       @media (max-width: 600px) {
 
@@ -45,17 +20,11 @@
     </style>
 
      <div class="container-lang-selector">
-       <div class="container-icon">
-         <iron-icon icon="icons:language"></iron-icon>
-       </div>
-       <div class="container-dropdown">
-         <paper-dropdown-menu class="custom" label="language" no-label-float>
-           <paper-listbox class="dropdown-content" selected={{lang}} attr-for-selected="name">
-             <paper-item name="es">Español</paper-item>
-             <paper-item name="en">English</paper-item>
-           </paper-listbox>
-         </paper-dropdown-menu>
-       </div>
+      
+      <paper-toggle-button on-tap="changeLang" active="[[isActive]]">
+        <img src='/images/touch/[[lang]]-flag.png'></img>
+      </paper-toggle-button>
+      
      </div>
 
   </template>
@@ -70,10 +39,26 @@
         properties: {
           lang: {
             type: String,
-            value: 'en',
+            value: 'es',
+            notify: true
+          },
+          isActive: {
+            type: Boolean,
+            value: false,
             notify: true
           }
-        }
+        },
+        changeLang: function() {
+          if(this.lang == 'es') {
+            this.lang = 'en',
+            this.isActive = true;
+          }
+          else {
+            this.lang = 'es',
+            this.isActive = false
+          }
+
+        },
       });
     })();
   </script>

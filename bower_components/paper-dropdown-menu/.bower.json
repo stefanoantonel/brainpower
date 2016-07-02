@@ -53,6 +53,5 @@
   },
   "_source": "git://github.com/polymerelements/paper-dropdown-menu.git",
   "_target": "^1.2.2",
-  "_originalSource": "polymerelements/paper-dropdown-menu",
-  "_direct": true
+  "_originalSource": "polymerelements/paper-dropdown-menu"
 }
