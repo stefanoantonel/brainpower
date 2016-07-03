@@ -143,5 +143,35 @@
         "en": ""
       }
     }
+  ],
+  "partners": [
+    {
+      "logo": "../images/logos/dynomation.jpg",
+      "link": "http://www.motionsoftware.com/Dynomation5.htm"
+    },
+    {
+      "logo": "../images/logos/performance-trends.png",
+      "link": "http://performancetrends.com/"
+    },
+     {
+      "logo": "../images/logos/oreste-berta.jpg",
+      "link": "http://www.oresteberta.com/"
+    },
+    {
+      "logo": "../images/logos/solidworks-simulation.jpg",
+      "link": "https://www.solidworks.com/sw/products/simulation/packages.htm"
+    },
+    {
+      "logo": "../images/logos/solidworks-flow.png",
+      "link": "https://www.solidworks.com/sw/products/simulation/flow-simulation.htm"
+    },
+    {
+      "logo": "../images/logos/solidworks",
+      "link": "https://www.solidworks.com/sw/industries/mechanical-design-industries.htm"
+    },
+    {
+      "logo": "../images/logos/performance-trend.png",
+      "link": "http://performancetrends.com/"
+    }
   ]
 }

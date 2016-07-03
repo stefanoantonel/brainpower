@@ -1,0 +1,17 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+</head><body><dom-module id="motorsport-elem">
+  <template>
+    <style>:host{display:block;}</style>
+
+    <iron-ajax auto="" url="../assets/motorsport.json" params="{&quot;alt&quot;:&quot;json&quot;, &quot;q&quot;:&quot;chrome&quot;}" handle-as="json" on-response="handleResponse" debounce-duration="300">
+    </iron-ajax>
+
+    <div class="gallery-container"></div>
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"motorsport-elem",properties:{lang:{type:String,notify:!0},services:{type:Array},galleryIsLoaded:{type:Boolean,value:!1}},getElementByLang:function(e,t){return e[t]},attached:function(){},loadGallery:function(e){if(e.galleryIsLoaded){var t=e.getElementsByTagName("gallery-elem")[0];t.lang=e.lang}else e.importHref("gallery-elem.html",function(t){var l=document.createElement("gallery-elem"),a=e.getElementsByClassName("gallery-container")[0];l.pictures=e.services.images,l.videos=e.services.videos,l.lang=e.lang,a.appendChild(l),e.galleryIsLoaded=!0},function(e){console.error(e)})},createElem:function(){var e=this;"/motorsport"==location.pathname&&this.loadGallery(e);var t=document.getElementById("main-pages");t.addEventListener("iron-select",function(){"motorsport"==this.selected&&e.loadGallery(e)})},handleResponse:function(e,t){this.services=t.response,this.createElem()}})}();</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,14 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/home.html",
+  "fragments": [
+    "src/contact.html",
+    "src/detail.html",
+    "src/gallery-elem.html",
+    "src/language-selector.html",
+    "src/motorsport.html",
+    "src/service-short.html",
+    "src/service.html",
+    "src/slider-elem.html"
+  ]
+}

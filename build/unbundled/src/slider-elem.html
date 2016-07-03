@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+
+</head><body><dom-module id="slider-elem">
+  <template>
+    <style>:host{display:block;overflow:hidden;}.slider{width:100%;height:auto;margin:0 auto;}iron-image{width:100%;min-height:280px;--iron-image-placeholder:{background:#ddd;};}img.iron-image{width:100%;height:100%;}iron-image.hidden{display:none;}iron-image.current{-webkit-animation:show 6s;animation:show 6s;}figure{margin:0;}@keyframes show{0%{opacity:0;}15%{opacity:1;}85%{opacity:1;}100%{opacity:0;}}@-webkit-keyframes show{0%{opacity:0;}5%{opacity:1;}95%{opacity:1;}100%{opacity:0;}}@media (max-width: 600px){iron-image{width:100%;height:160px;min-height:50px;}.slider{width:100%;height:auto;margin:0 auto;}}</style>
+
+
+    <div class="slider">
+      <figure>
+        <template is="dom-repeat" items="{{pictures}}">
+          <iron-image src="{{item}}" class="hidden" fade="" prevent-load="" preload="" sizing="contain" alt=""></iron-image>
+        </template>
+      </figure>
+    </div>
+  </template>
+
+  <script>!function(){"use strict";var e=!0;Polymer({is:"slider-elem",properties:{pictures:{type:Object},currentIndex:{type:Number,notify:!0},elements:{type:Array,value:[]},lastPath:{type:String}},attached:function(){this.async(function(){this.getElementsByClassName("slider")[0];this.domIsLoaded(this),window.onfocus=function(){e=!0},window.onblur=function(){e=!1}},1e3)},domIsLoaded:function(){this.currentIndex=0,this.elements=this.shadowRoot.querySelectorAll("iron-image"),this.loadImages();var t=this;setInterval(function(){e&&t.changeImg.call(t)},3e3)},loadImages:function(){for(var e=this.elements,t=0,n=e.length;t<n;t++)e[t].removeAttribute("prevent-load");var s=this.elements[this.currentIndex];s.classList.add("current"),s.classList.remove("hidden")},changeImg:function(){if(location.pathname==this.lastPath||"/"==location.pathname){var e=this.elements[this.currentIndex];e.classList.remove("current"),e.classList.add("hidden"),this.getNextElem();var t=this.elements[this.currentIndex];t.classList.add("current"),t.classList.remove("hidden")}},getNextElem:function(){var e=this.currentIndex+1;e<this.elements.length?this.currentIndex=e:this.currentIndex=0}})}();</script>
+</dom-module>
+</body></html>

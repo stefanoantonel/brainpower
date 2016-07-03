@@ -1,0 +1,20 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="home.html"></head><body><dom-module id="service-short">
+  <template>
+    <style>:host{display:block;--size-height:"200px";--size-width:"200px";}.description{}.image{}.image iron-image{}.service{display:flex;justify-content:space-between;}.service b{font-size:2.5vw;}slider-elem.slider{border-style:groove;}.path{display:none;}iron-image.iron-image-custom{width:200px;height:200px;}:host ::content iron-image{width:220px;min-height:130px;margin-left:40px;margin-top:25px;}p{padding-right:20px;text-align:justify;}@media (max-width: 700px){.service{display:block;}.slider{overflow:hidden;height:200px;width:100%;margin-top:10px;border-style:none;}.service b{font-size:20px;}.service p{font-size:18px;padding-right:0;}:host ::content iron-image{width:100%;min-height:180px;margin:0 auto;}iron-image.iron-image-custom{width:100%;}}</style>
+
+    <div class="service">
+      <div class="description">
+        <b>[[getElementByLang(service.title,lang)]]</b>
+        <br>
+        <p>[[getElementByLang(service.description,lang)]]</p>
+      </div>
+      <div class="image gallery-container">
+        <div class="path">{{image}}</div>
+        
+      </div>
+    </div>
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"service-short",properties:{lang:{type:String,value:"en",notify:!0},service:Object,selected:{type:String,notify:!0},index:{type:Number},image:Object,galleryIsLoaded:{type:Boolean,value:!1}},getElementByLang:function(e,t){return e[t]},ready:function(){this.image=this.service.images[0].image.replace("/0","/small/0")},attached:function(){this.createElem()},loadImage:function(e){if(!this.galleryIsLoaded){var t=document.createElement("iron-image"),i=e.shadowRoot.querySelector("div.path"),a=i.parentNode;t.setAttribute("sizing","contain"),t.setAttribute("preload",""),t.setAttribute("fade",""),t.setAttribute("src",i.innerText),t.classList.add("iron-image-custom"),a.appendChild(t),this.galleryIsLoaded=!0}},createElem:function(){var e=this;"/service"==location.pathname&&this.loadImage(e)}})}();</script>
+</dom-module>
+</body></html>

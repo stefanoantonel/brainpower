@@ -1,0 +1,21 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+</head><body><dom-module id="language-selector">
+  <template>
+    <style>:host{display:block;width:110px;height:15px;}.container-lang-selector{display:flex;justify-content:space-around;}@media (max-width: 600px){}</style>
+
+     <div class="container-lang-selector">
+      
+      <paper-toggle-button on-tap="changeLang" checked="[[isActive]]">
+        <img src="/images/touch/[[lang]]-flag.png">
+      </paper-toggle-button>
+      
+     </div>
+
+  </template>
+
+  <script>!function(){"use strict";Polymer({is:"language-selector",properties:{lang:{type:String,value:"es",notify:!0},isActive:{type:Boolean,value:!1,notify:!0}},changeLang:function(){"es"==this.lang?(this.lang="en",this.isActive=!0):(this.lang="es",this.isActive=!1)}})}();</script>
+</dom-module>
+</body></html>
