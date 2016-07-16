@@ -26,10 +26,13 @@
         margin: 16px auto;
         background: rgba(255, 255, 255, 0.5);
       }
-
-}
-
+      .spinner {
+        text-align: center;
+      }
     </style>
+    <div class="spinner">
+      <h1>Loading...</h1>
+    </div>
     <iron-ajax
         auto
         url='../assets/services.json'
@@ -83,6 +86,7 @@
         },
         handleResponse: function(event, res) {
           this.services = res.response;
+          this.shadowRoot.querySelector(".spinner").remove();
         },
         loadGallery: function(element) {
           var body = document.getElementsByTagName("home-app")[0].shadowRoot;
@@ -97,10 +101,7 @@
           // var mainPages = document.getElementById("main-pages");
           // var detailElem = mainPages.getElementsByTagName("service-detail")[0];
           var gallery = this.loadGallery(this)
-        },
-        changeToDetail: function() {
-
-        },
+        }
       });
     })();
   </script>
