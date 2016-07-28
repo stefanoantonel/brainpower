@@ -27,8 +27,9 @@
       }
       .logo {
         display: flex;
-        justify-content: space-around;
+        justify-content: center;
         flex-wrap: wrap;
+        align-items: center;
       }
       .logo a {
         margin: 30px;
@@ -46,6 +47,10 @@
         .logo a {
           margin: 10px;
           overflow: hidden;
+        }
+        .logo-img {
+          width: 100%;
+          height: auto;
         }
       }
     </style>
@@ -71,7 +76,7 @@
       <div class="logo">
         <template is="dom-repeat" items="[[ourPartners.companies]]">
           <a class="logo-link" href="[[item.link]]" target='_blank'>
-            <img name="[[item.logo]]" alt=""/>
+            <img class="logo-img" name="[[item.logo]]" alt=""/>
           </a>
         </template>
       </div>
@@ -83,7 +88,7 @@
       <div class="logo">
         <template is="dom-repeat" items="[[ourClients.companies]]">
           <a class="logo-link" href="[[item.link]]" target='_blank'>
-            <img name="[[item.logo]]" alt=""/>
+            <img class="logo-img" name="[[item.logo]]" alt=""/>
           </a>
         </template>
       </div>
