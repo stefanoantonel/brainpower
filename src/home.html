@@ -184,7 +184,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tail="{{subroute}}"></app-route>
 
 
-    <header-bar lang='{{lang}}'></header-bar>
+    <header-bar lang='{{lang}}' title={{title}}=></header-bar>
 
     <div class="content">
       <!-- <iron-pages role="main" selected="[[page]]" attr-for-selected="name"> -->
@@ -222,7 +222,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </section>
 
         <section data-route="motorsport">
-          <motorsport lang="[[lang]]"></motorsport>
+          <motorsport lang="[[lang]]" title="{{title}}"></motorsport>
           <!-- <paper-material elevation="1">
             <motorsport-elem lang="{{lang}}"></motorsport-elem>
           </paper-material> -->
@@ -281,6 +281,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         lang: {
           type: String,
           value: "es"
+        }, 
+        title: {
+          type: String,
+          value: 'BrainPower',
         }
 
       },
