@@ -4,7 +4,7 @@
 <link rel="import" href="service-short.html">
 
 
-<dom-module id="service-section">
+<dom-module id="motor-sport">
   <template>
 
     <style>
@@ -61,7 +61,7 @@
       'use strict';
 
       Polymer({
-        is: 'service-section',
+        is: 'motor-sport',
 
         properties: {
           lang: {
@@ -79,7 +79,11 @@
           galleryIsLoaded: {
             type: Boolean,
             value: false
+          }, 
+          title: {
+            type: String
           },
+
           galleryElem: String,
           mainPages: Object,
           serviceSelected: Object,
@@ -101,6 +105,12 @@
           // var mainPages = document.getElementById("main-pages");
           // var detailElem = mainPages.getElementsByTagName("service-detail")[0];
           var gallery = this.loadGallery(this)
+        },
+        created: function() {
+          this.title = "BrainPower - Motorsport";
+        },
+        attached: function() {
+          this.title = "BrainPower - Motorsport";
         }
       });
     })();
