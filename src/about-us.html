@@ -95,6 +95,24 @@
       </div>
     </div>
 
+     <div class="policy-container">
+      <h2 class="page-title">[[getElementByLang(policy.title,lang)]]</h2>
+      <p>[[getElementByLang(policy.description,lang)]]</p>
+    </div>
+
+    <div class="mission-container">
+      <h2 class="page-title">[[getElementByLang(mission.title,lang)]]</h2>
+      <p>[[getElementByLang(mission.description,lang)]]</p>
+    </div>
+    
+    <div class="vision-container">
+      <h2 class="page-title">[[getElementByLang(vision.title,lang)]]</h2>
+      <template is="dom-repeat" items="[[vision.description]]">
+        <ul>[[getElementByLang(item,lang)]]</p>
+      </template>
+      
+    </div>vision
+
   </template>
 
   <script>
@@ -117,11 +135,70 @@
                 "en": "About Us"
               },
               "description": {
-                "es": "Somos un equipo de profesionales que se conocieron que partió de un equipo de tres compañeros de facultad mientras estudiábamos Ingeniería Mecánica, que discutían apasionadamente sobre automóviles, motores, maquinas, etc. Y que compartían una visión en lo referido al diseño de maquinas y productos, criterios y la ambición de poder en un futuro, ser ellos los diseñadores de mejores productos, con mayor calidad y mejor funcionalidad. Luego, este equipo se fue ampliando gracias a nuestros contactos profesionales de otras ramas y gente con mucha experiencia en distintos rubros de la industria.",
+                "es": "Somos un equipo de profesionales que se conoció en la universidad, mientras estudiába Ingeniería Mecánica, que discutía apasionadamente sobre automóviles, motores, maquinas, etc. Y que compartía una visión en lo referido al diseño de máquinas y productos, criterios y la ambición de poder en un futuro, ser diseñadores de mejores productos, con mayor calidad y mejor funcionalidad. Luego, este equipo se fue ampliando gracias a nuestros contactos profesionales de otras ramas y gente con mucha experiencia en distintos rubros de la industria.",
                 "en": ""
               }
             }
           },
+          policy: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Políta de Confidencialidad:",
+                "en": "Confidentiality agreement:"
+              },
+              "description": {
+                "es": "Nuestro trabajo es desarrollar tus productos, materializar tus ideas, o satisfacer tus necesidades, por este motivo, tus diseños, ideas, proyectos y documentación son igual o mas importantes que para vos; por ésto, en BrainPower cuidamos minuciosamente la información que se nos brinda como lo hacemos con la propia. Esto, se ve plasmado en el 'Acuerdo de Confidencialidad' que firmamos con cada nuevo cliente",
+                "en": ""
+              }
+            }
+          },
+          mission: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Nuestra Mision:",
+                "en": "Mission:"
+              },
+              "description": {
+                "es": "Entusiasmar a nuestros clientes en todo el mundo con productos innovadores, confiables y amigables con el medio ambiente, así como con servicios de eficientes y de calidad para obtener resultados sobresalientes",
+                "en": ""
+              }
+            }
+          },
+          vision: {
+            type: Object,
+            value: {
+              "title": {
+                "es": "Nuestra Visión:",
+                "en": "Vision:"
+              },
+              "description": [
+                {
+                  "es": "En BranPower utilizamos tecnología de punta para aprovechar las ventajas que nos da el avance en la ciencia y la técnica, para poder lograr desarrollos rapidos, económicos, de alta calidad y respetuosos del medio ambiente.",
+                  "en": ""
+                },
+                {
+                  "es": "Somos un socio comercial atractivo para proveedores y concesionarios, estableciendo con ellos relaciones sustentables",
+                  "en": ""
+                },
+                {
+                  "es": " Somos un equipo de colaboradores competentes y comprometidos, que nunca está satisfecho con sus resultados y que se propone una exigente mejora continua.",
+                  "en": ""
+                }, 
+                {
+                  "es": "Contamos con amplios conocimientos técnicos, sóidas bases teóricas y vasta experiencia práctica que nos permite encontrar soluciones ingeniosas, simples y eficaces a sus problemas.",
+                  "en": ""
+                }, 
+                { 
+                  "es": "BrainPower aspira a ser un socio comercial atractivo para un amplio mercado que involucra al diseño, cálculo y optimización de productos y procesos inmersos en el mundo globalizado de hoy y de mañana.",
+                  "en": ""
+                }
+              ],
+            }
+          },
+
+          
           whatWeDo: {
             type: Object,
             value: {
@@ -370,10 +447,12 @@
                   "logo": "../images/logos/dynomation.jpg",
                   "link": "http://www.motionsoftware.com/Dynomation5.htm"
                 },
+                /*
                 {
                   "logo": "../images/logos/oreste-berta.jpg",
                   "link": "http://www.oresteberta.com/"
                 },
+                */
               ]
             }
           },

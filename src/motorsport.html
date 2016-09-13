@@ -1,16 +1,38 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<!-- <link rel="import" href="../gallery-elem/gallery-elem.html"> -->
+<!-- <link rel="import" href="../../bower_components/paper-styles/typography.html"> -->
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="service-short.html">
 
-<dom-module id="motorsport-elem">
+
+<dom-module id="service-section">
   <template>
-    <style >
+
+    <style>
       :host {
         display: block;
       }
-
+      index {
+        display: none;
+      }
+      a {
+        text-decoration: inherit;
+        color: inherit;
+      }
+      paper-material {
+        border-radius: 2px;
+        height: 100%;
+        padding: 16px 0 16px 0;
+        padding: 16px;
+        margin: 16px auto;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .spinner {
+        text-align: center;
+      }
     </style>
-
+    <div class="spinner">
+      <h1>Loading...</h1>
+    </div>
     <iron-ajax
         auto
         url='../assets/motorsport.json'
@@ -19,8 +41,19 @@
         on-response="handleResponse"
         debounce-duration="300">
     </iron-ajax>
+    <!-- class="fullbleed layout vertical" -->
 
-    <div class="gallery-container"></div>
+    <div class="service-short-section">
+      <template is="dom-repeat" items="{{services}}">
+        <a href="{{baseUrl}}detail" on-tap="showDetails">
+          <paper-material elevation="1">
+            <index>{{index}}</index>
+            <service-short service="{{item}}" lang="{{lang}}"></service-short>
+          </paper-material>
+        </a>
+      </template>
+    </div>
+
   </template>
 
   <script>
@@ -28,69 +61,48 @@
       'use strict';
 
       Polymer({
-        is: 'motorsport-elem',
+        is: 'service-section',
 
         properties: {
           lang: {
             type: String,
-            notify: true,
+            value: 'en',
+            notify: true
           },
           services: {
-            type: Array
+            type: Object
+          },
+          selected: {
+            type: Number,
+            value: 0
           },
           galleryIsLoaded: {
             type: Boolean,
             value: false
           },
-        },
-        getElementByLang: function(elemRecord, currentLang) {
-          return elemRecord[currentLang];
-        },
-        attached: function() {
-
-        },
-
-        loadGallery: function(element) {
-          if(!element.galleryIsLoaded) {
-            element.importHref('gallery-elem.html', function(e) {
-              // e.target.import is the import document.
-              var galleryElem = document.createElement("gallery-elem")
-              var container = element.getElementsByClassName("gallery-container")[0]
-              galleryElem.pictures = element.services.images
-              galleryElem.videos = element.services.videos
-              galleryElem.lang = element.lang
-              container.appendChild(galleryElem);
-              element.galleryIsLoaded = true;
-            }, function(e) {
-              // loading error
-              console.error(e);
-            });
-          }
-          else {
-            // change language when you change the tab to avoid bad binding
-            var galleryElem = element.getElementsByTagName("gallery-elem")[0]
-            galleryElem.lang = element.lang
-          }
-        },
-        createElem: function() {
-          var motorsportElem = this
-          if(location.pathname == "/motorsport") {
-            this.loadGallery(motorsportElem);
-          }
-          var ironPages = document.getElementById("main-pages");
-          ironPages.addEventListener("iron-select", function() {
-            if(this.selected == "motorsport") {
-                motorsportElem.loadGallery(motorsportElem)
-            }
-          });
+          galleryElem: String,
+          mainPages: Object,
+          serviceSelected: Object,
         },
         handleResponse: function(event, res) {
           this.services = res.response;
-          this.createElem();
+          this.shadowRoot.querySelector(".spinner").remove();
         },
-
+        loadGallery: function(element) {
+          var body = document.getElementsByTagName("home-app")[0].shadowRoot;
+          var detail = body.getElementById("service-detail");
+          detail.pictures = element.serviceSelected.images;
+          detail.videos = element.serviceSelected.videos;
+        },
+        showDetails: function(e) {
+          // var index = e.currentTarget.getElementsByTagName("index")[0].innerHTML;
+          var index = e.currentTarget.querySelector("index").innerHTML
+          this.serviceSelected = this.services[index];
+          // var mainPages = document.getElementById("main-pages");
+          // var detailElem = mainPages.getElementsByTagName("service-detail")[0];
+          var gallery = this.loadGallery(this)
+        }
       });
     })();
-    //<gallery-elem pictures="{{services.images}}" videos="{{services.videos}}" lang={{lang}}></gallery-elem>
   </script>
 </dom-module>
