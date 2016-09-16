@@ -283,21 +283,14 @@
     ],
     "videos": [
       {
-        "video": "images/services/dynamic_simulations/animation01.mp4",
+        "video": "https://goo.gl/photos/",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "video": "images/services/dynamic_simulations/animation02.mp4",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
-        "video": "images/services/dynamic_simulations/animation03.mp4",
+        "video": "https://goo.gl/photos/",
         "description": {
           "es": "",
           "en": ""
@@ -588,7 +581,7 @@
     ],
     "videos": [
       {
-        "video": "images/services/computer_animation/animation1.mp4",
+        "video": "https://gogl",
         "description": {
           "es": "",
           "en": ""
