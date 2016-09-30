@@ -184,7 +184,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tail="{{subroute}}"></app-route>
 
 
-    <header-bar lang='{{lang}}' title={{title}}=></header-bar>
+    <header-bar lang='{{lang}}' title=[[title]]></header-bar>
 
     <div class="content">
       <!-- <iron-pages role="main" selected="[[page]]" attr-for-selected="name"> -->
@@ -285,6 +285,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         title: {
           type: String,
           value: 'BrainPower',
+        },
+        motorsport: {
+            type: String, 
+            value: 'BrainPower - Motorsport'
+        },
+        brainpower: {
+            type: String, 
+            value: 'BrainPower'
         }
 
       },
@@ -298,6 +306,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _pageChanged: function(page) {
+        if(page == 'motorsport') {
+            this.title = this.motorsport;
+        }
+        else {
+            this.title = this.brainpower;
+        }
         // load page import on demand.
         this.importHref(
           this.resolveUrl(page + '.html'), null, null, true);
