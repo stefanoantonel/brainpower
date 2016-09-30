@@ -10,5 +10,11 @@
     "src/service-short.html",
     "src/service.html",
     "src/slider-elem.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json",
+    "assets/**/*"
   ]
 }
