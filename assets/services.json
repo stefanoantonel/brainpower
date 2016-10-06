@@ -11,13 +11,6 @@
     },
     "images": [
       {
-        "image": "images/services/products_design/00.png",
-        "description": {
-          "es": "descripcion del producto",
-          "en": "description of the product"
-        }
-      },
-      {
         "image": "images/services/products_design/01.png",
         "description": {
           "es": "",
@@ -53,7 +46,7 @@
         }
       },
       {
-        "image": "images/services/products_design/06.jpg",
+        "image": "images/services/products_design/06.png",
         "description": {
           "es": "",
           "en": ""
@@ -156,6 +149,13 @@
           "es": "",
           "en": ""
         }
+      },
+      {
+        "image": "images/services/products_design/21.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
       }
     ],
     "videos": [
@@ -180,13 +180,6 @@
       "en": "Static simulations are the first stage to calculate the resistance of a component or a structure. What is more, many a time these simulations are the first and most important indicator of the effectiveness of a specific design. This is why you should think about the ideal performance you expect from your design before prototyping. This is one of our most requested services due to its low cost, great simplicity and speed, and high impact in the next stages of the design, even when proceeding with the manufacture of a prototype."
     },
     "images": [
-      {
-        "image": "images/services/static_simulations/00.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
       {
         "image": "images/services/static_simulations/01.png",
         "description": {
@@ -221,34 +214,6 @@
           "es": "",
           "en": ""
         }
-      },
-      {
-        "image": "images/services/static_simulations/06.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
-        "image": "images/services/static_simulations/07.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
-        "image": "images/services/static_simulations/08.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
-        "image": "images/services/static_simulations/09.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
       }
     ],
     "videos": [
@@ -279,25 +244,25 @@
           "es": "",
           "en": ""
         }
+      },
+      {
+        "image": "images/services/dynamic_simulations/02.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
       }
     ],
     "videos": [
       {
-        "video": "images/services/dynamic_simulations/animation01.mp4",
+        "video": "https://goo.gl/photos/",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "video": "images/services/dynamic_simulations/animation02.mp4",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
-        "video": "images/services/dynamic_simulations/animation03.mp4",
+        "video": "https://goo.gl/photos/",
         "description": {
           "es": "",
           "en": ""
@@ -318,28 +283,137 @@
     },
     "images": [
       {
-        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/00.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
         "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/01.png",
         "description": {
           "es": "",
           "en": ""
         }
-      },
+      }
+    ],
+    "videos": [
       {
-        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/02.png",
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
+  },
+
+  {
+    "title": {
+      "es": "Oil and Gas",
+      "en": "Oil and Gas "
+    },
+    "description": {
+      "es": "Contamos con experiencia y conocimientos para diseñar cualquier sistema de tuberias, tanques de almacenamiento y redes de transporte o distribucion en general.",
+
+      "en": "-----translate ------."
+    },
+    "images": [
+      {
+        "image": "images/services/oil_and_gas/00.png",
         "description": {
           "es": "",
           "en": ""
         }
       },
       {
-        "image": "images/services/calculating_frequencies_and_natural_modes_of_vibration/03.png",
+        "image": "images/services/oil_and_gas/01.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/oil_and_gas/02.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/oil_and_gas/03.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/oil_and_gas/04.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/oil_and_gas/05.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ],
+    "videos": [
+      {
+        "video": "",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      }
+    ]
+  },
+
+  {
+    "title": {
+      "es": "Oil and Gas",
+      "en": "Oil and Gas "
+    },
+    "description": {
+      "es": "El método de prueba y error que aun hoy en día se sigue utilizando, ha quedado obsoleto frente al poder del método de los elementos finitos y sus aplicaciones. A través de softwares muy potentes podemos optimizar cualquier componente de su diseño utilizando los criterios que usted desee o los que nosotros consideremos aplicables, haciendolos mas eficientes, económicos y asegurando siempre la funcionalidad.",
+
+      "en": "-----translate ------."
+    },
+    "images": [
+      {
+        "image": "images/services/optimization/00.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/optimization/01.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/optimization/02.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/optimization/03.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/optimization/04.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/optimization/05.png",
         "description": {
           "es": "",
           "en": ""
@@ -370,20 +444,6 @@
     "images": [
       {
         "image": "images/services/thermal_simulations/00.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
-        "image": "images/services/thermal_simulations/01.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
-        "image": "images/services/thermal_simulations/02.png",
         "description": {
           "es": "",
           "en": ""
@@ -478,7 +538,7 @@
         }
       },
       {
-        "image": "images/services/engineering_calculations/02.png",
+        "image": "images/services/engineering_calculations/03.png",
         "description": {
           "es": "",
           "en": ""
@@ -507,13 +567,6 @@
       "en": "Our most experienced engineers are able to calculate several features, including the support needed for a machine, the number of bolts required for a bridge deck, and the complete deformation of an industrial unit."
     },
     "images": [
-      {
-        "image": "images/services/calculation_of_structures/00.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
       {
         "image": "images/services/calculation_of_structures/01.png",
         "description": {
@@ -588,7 +641,7 @@
     ],
     "videos": [
       {
-        "video": "images/services/computer_animation/animation1.mp4",
+        "video": "https://gogl",
         "description": {
           "es": "",
           "en": ""
@@ -609,13 +662,6 @@
     },
     "images": [
       {
-        "image": "images/services/weldment_construction/00.png",
-        "description": {
-          "es": "",
-          "en": ""
-        }
-      },
-      {
         "image": "images/services/weldment_construction/01.png",
         "description": {
           "es": "",
@@ -624,6 +670,27 @@
       },
       {
         "image": "images/services/weldment_construction/02.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/weldment_construction/03.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/weldment_construction/04.png",
+        "description": {
+          "es": "",
+          "en": ""
+        }
+      },
+      {
+        "image": "images/services/weldment_construction/05.png",
         "description": {
           "es": "",
           "en": ""
