@@ -1,0 +1,16 @@
+{
+  "name": "brainpower",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "polymer": "polymer",
+    "bower": "bower"
+  },
+  "author": "stefanoantonel@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "polymer-cli": "^1.5.4"
+  }
+}
